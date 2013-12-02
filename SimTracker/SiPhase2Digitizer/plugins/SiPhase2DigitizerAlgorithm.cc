@@ -737,10 +737,10 @@ void SiPhase2DigitizerAlgorithm::drift(const PSimHit& hit,
   float stripPitch     = pixdet->specificTopology().pitch().first;
  
  
-   int rowsPerRoc = pixdet->specificTopology().rowsperroc();	//D.B.:debug
-   int colsPerRoc = pixdet->specificTopology().colsperroc();	//D.B.:debug
-   int nColumns = pixdet->specificTopology().ncolumns();	//D.B.:debug
-   int nRows = pixdet->specificTopology().nrows();	//D.B.:debug
+  //  int rowsPerRoc = pixdet->specificTopology().rowsperroc();	//D.B.:debug
+  //  int colsPerRoc = pixdet->specificTopology().colsperroc();	//D.B.:debug
+  //  int nColumns = pixdet->specificTopology().ncolumns();	//D.B.:debug
+  //  int nRows = pixdet->specificTopology().nrows();	//D.B.:debug
  
 #ifdef TP_DEBUG
   LogDebug ("Pixel Digitizer")
@@ -804,7 +804,7 @@ void SiPhase2DigitizerAlgorithm::drift(const PSimHit& hit,
     Sigma_x = Sigma / CosLorenzAngleX ;
     Sigma_y = Sigma / CosLorenzAngleY ;
     //    if (rowsPerRoc==143) {//D.B.:debug
-    std::cout<<" stripPitch="<<stripPitch<<" rowsPerRoc="<<rowsPerRoc<<" colsPerRoc="<<colsPerRoc<<" nColumns="<<nColumns<<" nRows"<<nRows<<std::endl;//D.B.: for debug
+    //    std::cout<<" stripPitch="<<stripPitch<<" rowsPerRoc="<<rowsPerRoc<<" colsPerRoc="<<colsPerRoc<<" nColumns="<<nColumns<<" nRows"<<nRows<<std::endl;//D.B.: for debug
     //    }
 
     // Insert a charge loss due to Rad Damage here
