@@ -1,12 +1,24 @@
 // -*- C++ -*-
 //
-//
-// Producer of a L1TkElectronParticle, for the algorithm matching a L1Track to the L1EG object.
-// This code is just an example, I simply pick up the L1Track that is closest to the
-// L1EG algorithm.
-// The proper producer will be provided by Suchandra & Atanu. 
+// Package:    L1TrackTriggerObjects
+// Class:      L1TkElectronTrackMatchAlgo
 // 
+/**\class L1TkElectronTrackMatchAlgo 
 
+ Description: Producer of a L1TkElectronParticle, for the algorithm matching a L1Track to the L1EG object
+
+ Implementation:
+     [Notes on implementation]
+*/
+//
+// Original Author:  S. Dutta and A. Modak
+//         Created:  Wed Dec 4 12 11:55:35 CET 2013
+// $Id$
+//
+//
+// -*- C++ -*-
+//
+//
 // system include files
 #include <memory>
 
@@ -32,6 +44,11 @@
 
 // for L1Tracks:
 #include "SimDataFormats/SLHC/interface/StackedTrackerTypes.h"
+
+// Matching Algorithm
+#include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronTrackMatchAlgo.h"
+
+#include "DataFormats/Math/interface/deltaPhi.h"
 
 #include <string>
 #include "TMath.h"
@@ -64,11 +81,29 @@ class L1TkElectronTrackProducer : public edm::EDProducer {
       //virtual void beginLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
       //virtual void endLuminosityBlock(edm::LuminosityBlock&, edm::EventSetup const&);
 
+      float isolation(const edm::Handle<L1TkTrackCollectionType> & trkHandle, int match_index);
+
       // ----------member data ---------------------------
 	edm::InputTag L1EGammaInputTag;
 	edm::InputTag L1TrackInputTag;
 	std::string label;
+         
+	float ETmin; 	// min ET in GeV of L1EG objects
 
+	float ZMAX;		// |z_track| < ZMAX in cm
+	float CHI2MAX;		
+	float DRmin;
+	float DRmax;
+	float PTMINTRA;
+	bool PrimaryVtxConstrain;	// use the primary vertex (default = false)
+	float DeltaZ;      	// | z_track - z_ref_track | < DeltaZ in cm. 
+				// Used only when PrimaryVtxConstrain = True.
+	float IsoCut;
+	bool RelativeIsolation;
+
+        float dPhiCutoff;
+        float dRCutoff;
+        float dEtaCutoff;
 } ;
 
 
@@ -78,10 +113,32 @@ class L1TkElectronTrackProducer : public edm::EDProducer {
 L1TkElectronTrackProducer::L1TkElectronTrackProducer(const edm::ParameterSet& iConfig)
 {
 
+   label = iConfig.getParameter<std::string>("label");  // label of the collection produced
+							// e.g. EG or IsoEG if all objects are kept
+							// EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
+							// objects that pass a cut RelIso < IsoCut are written
+							// in the new collection.
+
    L1EGammaInputTag = iConfig.getParameter<edm::InputTag>("L1EGammaInputTag") ;
    L1TrackInputTag = iConfig.getParameter<edm::InputTag>("L1TrackInputTag");
-   label = iConfig.getParameter<std::string>("label");
-   
+
+   ETmin = (float)iConfig.getParameter<double>("ETmin");
+
+   // parameters for the calculation of the isolation :
+   ZMAX = (float)iConfig.getParameter<double>("ZMAX");
+   CHI2MAX = (float)iConfig.getParameter<double>("CHI2MAX");
+   PTMINTRA = (float)iConfig.getParameter<double>("PTMINTRA");
+   DRmin = (float)iConfig.getParameter<double>("DRmin");
+   DRmax = (float)iConfig.getParameter<double>("DRmax");
+   DeltaZ = (float)iConfig.getParameter<double>("DeltaZ");
+
+   // cut applied on the isolation (if this number is <= 0, no cut is applied)
+   IsoCut = (float)iConfig.getParameter<double>("IsoCut");
+   RelativeIsolation = iConfig.getParameter<bool>("RelativeIsolation");
+
+   dPhiCutoff = iConfig.getParameter<double>("TrackEGammaDeltaPhi"); 
+   dRCutoff   = iConfig.getParameter<double>("TrackEGammaDeltaR"); 
+   dEtaCutoff = iConfig.getParameter<double>("TrackEGammaDeltaEta"); 
 
    produces<L1TkElectronParticleCollection>(label);
 }
@@ -105,62 +162,76 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
  L1TkTrackCollectionType::const_iterator trackIter;
 
- int ieg = 0;
- for (egIter = EGammaHandle->begin();  egIter != EGammaHandle->end(); ++egIter) {
-
+  int ieg = 0;
+  for (egIter = EGammaHandle->begin();  egIter != EGammaHandle->end(); ++egIter) {
+    
     edm::Ref< L1EmParticleCollection > EGammaRef( EGammaHandle, ieg );
     ieg ++;
 
     int ibx = egIter -> bx();
     if (ibx != 0) continue;
 
-    float eta = egIter -> eta();
-    float phi = egIter -> phi();
+    float e_ele   = egIter->energy();
+    float eta_ele = egIter->eta();
+    float et_ele = 0;
+    if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
+    else et_ele = -1.0;
+    if (fabs(eta_ele) > 2.5) continue;
+
+    if (ETmin > 0.0 && et_ele <= ETmin) continue;
+
+    // match the L1EG object with a L1Track
+    // here dummy : I simply take the closest track
+    // and require that DR < 0.5
     
-	// match the L1EG object with a L1Track
-	// here dummy : I simply take the closest track
-	// and require that DR < 0.5
+    float drmin = 999;
+    int itr = 0;
+    int itrack = -1;
+    
+    for (trackIter = L1TkTrackHandle->begin(); trackIter != L1TkTrackHandle->end(); ++trackIter) {
+      edm::Ptr< L1TkTrackType > L1TrackPtr( L1TkTrackHandle, itr) ;
+      if ( L1TrackPtr->getMomentum().perp() < 5.0 || L1TrackPtr->getChi2() >= 100) continue;
+      float dPhi = 99.;
+      float dR = 99.;
+      float dEta = 99.;   
+      L1TkElectronTrackMatchAlgo::doMatch(EGammaRef, L1TrackPtr, dPhi, dR, dEta); 
+      if (abs(dPhi) < dPhiCutoff && dR < dRCutoff && abs(dEta) < dEtaCutoff && dR < drmin) {
+	drmin = dR;
+	itrack = itr;
+      }
+      itr++;
+    }
+    
+    if (itrack != -1) {
+      edm::Ptr< L1TkTrackType > matchedL1TrackPtr(L1TkTrackHandle, itrack);      
+      float px = matchedL1TrackPtr->getMomentum().x();
+      float py = matchedL1TrackPtr->getMomentum().y();
+      float pz = matchedL1TrackPtr->getMomentum().z();
+      float e = sqrt( px*px + py*py + pz*pz );	// massless particle
 
-	float drmin = 999;
-	int itr = 0;
-	int itrack = -1;
-	for (trackIter = L1TkTrackHandle->begin(); trackIter != L1TkTrackHandle->end(); ++trackIter) {
-		float Eta = trackIter->getMomentum().eta();
-		float Phi = trackIter->getMomentum().phi();
-		float deta = eta - Eta;
-		float dphi = phi - Phi;
-		if (dphi < 0) dphi = dphi + 2.*TMath::Pi();
-		if (dphi > TMath::Pi()) dphi = 2.*TMath::Pi() - dphi;
-		float dR = sqrt( deta*deta + dphi*dphi );
-		if (dR < drmin) {
-		  drmin = dR;
-		  itrack = itr;
-		}
-		itr ++ ;
-	}
+      math::XYZTLorentzVector TrackP4(px,py,pz,e);
+      
+      float trkisol = isolation(L1TkTrackHandle, itrack);
+      
+      L1TkElectronParticle trkEm( TrackP4, 
+				     EGammaRef,
+				     matchedL1TrackPtr, 
+				     trkisol );
+      
+      if (IsoCut <= 0) {
+	// write the L1TkEm particle to the collection, 
+	// irrespective of its relative isolation
+	result -> push_back( trkEm );
+      }	else {
+	// the object is written to the collection only
+	// if it passes the isolation cut
+	if (trkisol <= IsoCut) result -> push_back( trkEm );
+      }
+      
+      result -> push_back( trkEm );
+    }
 
-	if (drmin < 0.5 ) {	// found a L1Track matched to the L1EG object
-
-	    edm::Ptr< L1TkTrackType > L1TrackPtr( L1TkTrackHandle, itrack) ;
-	    
- 	    float px = L1TrackPtr -> getMomentum().x();
-	    float py = L1TrackPtr -> getMomentum().y();
-	    float pz = L1TrackPtr -> getMomentum().z();
-	    float e = sqrt( px*px + py*py + pz*pz );	// massless particle
-            math::XYZTLorentzVector TrackP4(px,py,pz,e);
-
-	    float trkisol = -999; 	// dummy
-
- 	    L1TkElectronParticle trkEm( TrackP4, 
-				 EGammaRef,
-				 L1TrackPtr, 
-			         trkisol );
-
-	    result -> push_back( trkEm );
-
-	}  // endif drmin < 0.5
-
- }  // end loop over EGamma objects
+  }  // end loop over EGamma objects
 
  iEvent.put( result, label );
 
@@ -219,9 +290,35 @@ L1TkElectronTrackProducer::fillDescriptions(edm::ConfigurationDescriptions& desc
   desc.setUnknown();
   descriptions.addDefault(desc);
 }
+// method to calculate isolation
+float 
+L1TkElectronTrackProducer::isolation(const edm::Handle<L1TkTrackCollectionType> & trkHandle, int match_index) {
+  edm::Ptr< L1TkTrackType > matchedTrkPtr (trkHandle, match_index) ; 
+  L1TkTrackCollectionType::const_iterator trackIter;
+
+  float isol = 9999.9;
+  float sumPt = 0.0;
+  for (trackIter = trkHandle->begin(); trackIter != trkHandle->end(); ++trackIter) {
+    float dZ = fabs(trackIter->getVertex().z() - matchedTrkPtr->getVertex().z());
+    
+    float dPhi = fabs(reco::deltaPhi(trackIter->getMomentum().phi(), matchedTrkPtr->getMomentum().phi()));
+    float dEta = (trackIter->getMomentum().eta() - matchedTrkPtr->getMomentum().eta());
+    float dR =  sqrt(dPhi*dPhi + dEta*dEta);
+
+    if (dR >= DRmin && dR < DRmax && dZ < DeltaZ) sumPt += trackIter->getMomentum().perp();
+  }
+
+  if (RelativeIsolation && matchedTrkPtr->getMomentum().perp() > 0.0) {   // relative isolation
+    isol = sumPt / matchedTrkPtr->getMomentum().perp();	
+  } else {	// absolute isolation
+    isol = sumPt ;
+  }
+  return isol;
+}
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(L1TkElectronTrackProducer);
+
 
 
 

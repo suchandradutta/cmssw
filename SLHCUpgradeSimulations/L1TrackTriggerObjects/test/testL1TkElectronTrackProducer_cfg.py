@@ -105,7 +105,7 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
 					#   - for the new clustering algorithm of Jean-Baptiste et al,
 					#     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
 					#     ("SLHCL1ExtraParticlesNewClustering","EGamma").                                      
-        ETmin = cms.double( -1 ),       # Only the L1EG objects that have ET > ETmin in GeV
+        ETmin = cms.double( 20.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
         TrackEGammaDeltaPhi = cms.double(0.1),  # Delta Phi cutoff to match Track with L1EG objects
         TrackEGammaDeltaR = cms.double(0.06),   # Delta R cutoff to match Track with L1EG objects
         TrackEGammaDeltaEta = cms.double(0.05), # Delta Eta cutoff to match Track with L1EG objects
@@ -123,7 +123,7 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
         PTMINTRA = cms.double( 2. ),	# in GeV
 	DRmin = cms.double( 0.06),
 	DRmax = cms.double( 0.5 ),
-	DeltaZ = cms.double( 999. )    # in cm. Used for tracks to be used isolation calculation
+	DeltaZ = cms.double( 1.0 )    # in cm. Used for tracks to be used isolation calculation
 )
 process.pElectrons = cms.Path( process.L1TkElectrons )
 

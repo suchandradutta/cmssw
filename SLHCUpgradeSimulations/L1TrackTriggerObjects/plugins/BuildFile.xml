@@ -1,10 +1,4 @@
-<library   file="*.cc" name="L1TrackTriggerObjectsPlugin">
-  <use   name="SLHCUpgradeSimulations/L1TrackTrigger"/>
-  <use   name="SimDataFormats/SLHC"/>
-  <use   name="DataFormats/L1Trigger"/>
-  <use   name="DataFormats/L1TrackTrigger"/>
-  <use   name="CommonTools/UtilAlgos"/>
-  <use   name="hepmc"/>
-  <use   name="root"/>
-  <flags   EDM_PLUGIN="1"/>
+<use name="SLHCUpgradeSimulations/L1TrackTriggerObjects"/>
+<library file="*.cc" name="L1TrackTriggerObjectsPlugin">
+  <flags EDM_PLUGIN="1"/>
 </library>
