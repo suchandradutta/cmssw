@@ -1,0 +1,40 @@
+<lcgdict>
+
+ <class name="L1TrackPrimaryVertex" ClassVersion="12">
+  <version ClassVersion="12" checksum="1883304891"/>
+ </class>
+ <class name="std::vector<L1TrackPrimaryVertex>"/>
+ <class name="edm::Wrapper<std::vector<L1TrackPrimaryVertex> >"/>
+  <class name="edm::Ref<std::vector<L1TrackPrimaryVertex>,L1TrackPrimaryVertex,edm::refhelper::FindUsingAdvance<std::vector<L1TrackPrimaryVertex>,L1TrackPrimaryVertex> >"/>
+
+
+  <class name="l1extra::L1TkEtMissParticle" ClassVersion="15">
+   <version ClassVersion="15" checksum="2946574947"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkEtMissParticle>"/>
+ <class name="edm::Wrapper<l1extra::L1TkEtMissParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkEtMissParticle> >"/>
+
+  <class name="l1extra::L1TkEmParticle" ClassVersion="18">
+   <version ClassVersion="18" checksum="4061452071"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkEmParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkEmParticle> >"/>
+  <class name="edm::Ref<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle> >"/>
+<!--
+  <class name="edm::RefVector<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle> >"/>
+  <class name="std::vector<edm::Ref<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle> > >"/>
+  <class name="edm::reftobase::Holder<reco::Candidate, edm::Ref<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkEmParticle>,l1extra::L1TkEmParticle> > >" />
+-->
+
+  <class name="l1extra::L1TkElectronParticle" ClassVersion="12">
+   <version ClassVersion="12" checksum="120654014"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkElectronParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkElectronParticle> >"/>
+  <class name="edm::Ref<std::vector<l1extra::L1TkElectronParticle>,l1extra::L1TkElectronParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkElectronParticle>,l1extra::L1TkElectronParticle> >"/>
+
+
+
+
+</lcgdict>
