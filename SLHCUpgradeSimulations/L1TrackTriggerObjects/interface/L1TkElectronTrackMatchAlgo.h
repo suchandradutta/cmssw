@@ -7,12 +7,14 @@
 #include "SimDataFormats/SLHC/interface/StackedTrackerTypes.h"
 
 namespace L1TkElectronTrackMatchAlgo {
-    typedef L1TkTrack_PixelDigi_   L1TkTrackType;
-    void doMatch(const edm::Ref< l1extra::L1EmParticleCollection >& egRef, const edm::Ptr< L1TkTrackType >& trkPtr, float& dph, float& dr, float& deta);
-   
-   float deltaR(GlobalPoint epos, const edm::Ptr< L1TkTrackType >& trkPtr);
-   float deltaPhi(GlobalPoint epos, const edm::Ptr< L1TkTrackType >& trkPtr);
-   float deltaEta(GlobalPoint epos, const edm::Ptr< L1TkTrackType >& trkPtr);
-   GlobalPoint calorimeterPosition(float phi, float eta, float e);
+  typedef L1TkTrack_PixelDigi_   L1TkTrackType;
+  typedef std::vector< L1TkTrackType >       L1TkTrackCollectionType;
+  void doMatch(l1extra::L1EmParticleCollection::const_iterator egIter, L1TkTrackCollectionType::const_iterator trkIter, double& dph, float&  dr, float& deta);
+
+  float deltaR(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter);
+  double deltaPhi(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter);
+  float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter);
+  GlobalPoint calorimeterPosition(float phi, float eta, float e);
+
 }  
 #endif

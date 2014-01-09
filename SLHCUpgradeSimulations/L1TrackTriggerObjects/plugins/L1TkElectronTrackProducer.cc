@@ -47,6 +47,7 @@
 
 // Matching Algorithm
 #include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronTrackMatchAlgo.h"
+#include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronEtComparator.h"
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 
@@ -148,75 +149,72 @@ L1TkElectronTrackProducer::~L1TkElectronTrackProducer() {
 
 // ------------ method called to produce the data  ------------
 void
-L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
-{
-   using namespace edm;
-
- std::auto_ptr<L1TkElectronParticleCollection> result(new L1TkElectronParticleCollection);
-
- edm::Handle<L1EmParticleCollection> EGammaHandle;
- iEvent.getByLabel(L1EGammaInputTag,EGammaHandle);
- std::vector<L1EmParticle>::const_iterator egIter ;
-
- edm::Handle<L1TkTrackCollectionType> L1TkTrackHandle;
- iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
- L1TkTrackCollectionType::const_iterator trackIter;
-
+L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
+  std::auto_ptr<L1TkElectronParticleCollection> result(new L1TkElectronParticleCollection);
+  
+  edm::Handle<L1EmParticleCollection> EGammaHandle;
+  iEvent.getByLabel(L1EGammaInputTag,EGammaHandle);
+  l1extra::L1EmParticleCollection eGammaCollection = (*EGammaHandle.product());
+  //  sort(eGammaCollection.begin(), eGammaCollection.end(), L1TkElectron::EtComparator());
+  l1extra::L1EmParticleCollection::const_iterator egIter;
+  edm::Handle<L1TkTrackCollectionType> L1TkTrackHandle;
+  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
+  L1TkTrackCollectionType::const_iterator trackIter;
+  
+  std::cout << " # of EGamma " << EGammaHandle->size() << std::endl;
+  std::cout << " # of Tracks " << L1TkTrackHandle->size() << std::endl;
   int ieg = 0;
-  for (egIter = EGammaHandle->begin();  egIter != EGammaHandle->end(); ++egIter) {
-    
+  for (egIter = eGammaCollection.begin();  egIter != eGammaCollection.end(); ++egIter) {
     edm::Ref< L1EmParticleCollection > EGammaRef( EGammaHandle, ieg );
-    ieg ++;
+    ieg ++; 
 
     int ibx = egIter -> bx();
     if (ibx != 0) continue;
-
+    
     float e_ele   = egIter->energy();
     float eta_ele = egIter->eta();
     float et_ele = 0;
     if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
     else et_ele = -1.0;
     if (fabs(eta_ele) > 2.5) continue;
-
     if (ETmin > 0.0 && et_ele <= ETmin) continue;
-
     // match the L1EG object with a L1Track
     // here dummy : I simply take the closest track
     // and require that DR < 0.5
-    
     float drmin = 999;
     int itr = 0;
     int itrack = -1;
-    
     for (trackIter = L1TkTrackHandle->begin(); trackIter != L1TkTrackHandle->end(); ++trackIter) {
       edm::Ptr< L1TkTrackType > L1TrackPtr( L1TkTrackHandle, itr) ;
-      if ( L1TrackPtr->getMomentum().perp() < 5.0 || L1TrackPtr->getChi2() >= 100) continue;
-      float dPhi = 99.;
-      float dR = 99.;
-      float dEta = 99.;   
-      L1TkElectronTrackMatchAlgo::doMatch(EGammaRef, L1TrackPtr, dPhi, dR, dEta); 
-      if (abs(dPhi) < dPhiCutoff && dR < dRCutoff && abs(dEta) < dEtaCutoff && dR < drmin) {
-	drmin = dR;
-	itrack = itr;
+      if ( L1TrackPtr->getMomentum().perp() > PTMINTRA && L1TrackPtr->getChi2() < CHI2MAX) {
+   
+	double dPhi = 99.;
+	float dR = 99.;
+	float dEta = 99.;   
+	L1TkElectronTrackMatchAlgo::doMatch(egIter, trackIter, dPhi, dR, dEta); 
+          
+	if (abs(dPhi) < dPhiCutoff && dR < dRCutoff && abs(dEta) < dEtaCutoff && dR < drmin) {
+	  drmin = dR;
+	  itrack = itr;
+	}
       }
       itr++;
     }
-    
-    if (itrack != -1) {
+    if (itrack >= 0)  {
       edm::Ptr< L1TkTrackType > matchedL1TrackPtr(L1TkTrackHandle, itrack);      
       float px = matchedL1TrackPtr->getMomentum().x();
       float py = matchedL1TrackPtr->getMomentum().y();
       float pz = matchedL1TrackPtr->getMomentum().z();
       float e = sqrt( px*px + py*py + pz*pz );	// massless particle
-
+      
       math::XYZTLorentzVector TrackP4(px,py,pz,e);
       
       float trkisol = isolation(L1TkTrackHandle, itrack);
       
       L1TkElectronParticle trkEm( TrackP4, 
-				     EGammaRef,
-				     matchedL1TrackPtr, 
-				     trkisol );
+				  EGammaRef,
+				  matchedL1TrackPtr, 
+				  trkisol );
       
       if (IsoCut <= 0) {
 	// write the L1TkEm particle to the collection, 
@@ -228,12 +226,11 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 	if (trkisol <= IsoCut) result -> push_back( trkEm );
       }
       
-      result -> push_back( trkEm );
     }
 
-  }  // end loop over EGamma objects
-
- iEvent.put( result, label );
+  } // end loop over EGamma objects
+  
+  iEvent.put( result, label );
 
 }
 

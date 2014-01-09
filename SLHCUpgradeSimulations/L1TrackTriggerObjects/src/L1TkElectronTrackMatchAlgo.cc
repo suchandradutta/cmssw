@@ -26,41 +26,46 @@
 #include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronTrackMatchAlgo.h"
 namespace L1TkElectronTrackMatchAlgo {
   // ------------ match EGamma and Track
-  void doMatch(const edm::Ref< l1extra::L1EmParticleCollection >& egRef, const edm::Ptr< L1TkTrackType >& trkPtr, float& dph, float& dr, float& deta) {
-    GlobalPoint egPos = L1TkElectronTrackMatchAlgo::calorimeterPosition(egRef->phi(), egRef->eta(), egRef->energy());
-    dph  = L1TkElectronTrackMatchAlgo::deltaPhi(egPos, trkPtr);
-    dr   = L1TkElectronTrackMatchAlgo::deltaR(egPos, trkPtr);
-    deta = L1TkElectronTrackMatchAlgo::deltaEta(egPos, trkPtr);
+  void doMatch(l1extra::L1EmParticleCollection::const_iterator egIter, L1TkTrackCollectionType::const_iterator trkIter, double& dph, float&  dr, float& deta) {
+    GlobalPoint egPos = L1TkElectronTrackMatchAlgo::calorimeterPosition(egIter->phi(), egIter->eta(), egIter->energy());
+    dph  = L1TkElectronTrackMatchAlgo::deltaPhi(egPos, trkIter);
+    dr   = L1TkElectronTrackMatchAlgo::deltaR(egPos, trkIter);
+    deta = L1TkElectronTrackMatchAlgo::deltaEta(egPos, trkIter);
   }
   // --------------- calculate deltaR between Track and EGamma object
-  float deltaPhi(GlobalPoint epos, const edm::Ptr< L1TkTrackType >& trkPtr){
-  
-    float corr = (asin(epos.perp()*trkPtr->getRInv()/(2.0)));
-    float trk_phi = trkPtr->getMomentum().phi(); 
-    float phi_diff = fabs(reco::deltaPhi(epos.phi(),trk_phi));
-    
-    double dif1 = phi_diff - corr;
-    double dif2 = phi_diff + corr; 
+double deltaPhi(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter){
+    double er = epos.perp();
+
+    // Using track fit curvature
+    //  double curv = 0.003 * magnetStrength * trk->getCharge()/ trk->getMomentum().perp(); 
+    double curv = trkIter->getRInv();
+    double x1 = (asin(er*curv/(2.0)));
+    double phi1 = reco::deltaPhi(trkIter->getMomentum().phi(), epos.phi());
+
+    double dif1 = phi1 - x1;
+    double dif2 = phi1 + x1; 
+
     if (abs(dif1) < abs(dif2)) return dif1;
     else return dif2; 
+  
   }
 // --------------- calculate deltaPhi between Track and EGamma object                 
-  float deltaR(GlobalPoint epos, const edm::Ptr< L1TkTrackType >& trkPtr){
-    float dPhi = fabs(reco::deltaPhi(epos.phi(), trkPtr->getMomentum().phi()));
-    float dEta = (epos.eta() - trkPtr->getMomentum().eta());
+float deltaR(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter){
+    float dPhi = fabs(reco::deltaPhi(epos.phi(), trkIter->getMomentum().phi()));
+    float dEta = (epos.eta() - trkIter->getMomentum().eta());
     return sqrt(dPhi*dPhi + dEta*dEta);
   }
   // --------------- calculate deltaEta between Track and EGamma object                 
-  float deltaEta(GlobalPoint epos, const edm::Ptr< L1TkTrackType >& trkPtr){
+float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter){
     float corr_eta = 999.0;
     float er = epos.perp();
     float ez = epos.z();
-    float z0 = trkPtr->getMomentum().z();
+    float z0 = trkIter->getMomentum().z();
     float theta = 0.0;
     if (ez >= 0) theta = atan(er/fabs(ez-z0));
     else theta = M_PI - atan(er/fabs(ez-z0));
     corr_eta = -1.0 * log(tan(theta/2.0));
-    float deleta = (corr_eta - trkPtr->getMomentum().eta());
+    float deleta = (corr_eta - trkIter->getMomentum().eta());
     return deleta;
   }
   // -------------- get Calorimeter position
@@ -94,4 +99,5 @@ namespace L1TkElectronTrackMatchAlgo {
     GlobalPoint pos(x,y,z);
     return pos;
   }
+
 }

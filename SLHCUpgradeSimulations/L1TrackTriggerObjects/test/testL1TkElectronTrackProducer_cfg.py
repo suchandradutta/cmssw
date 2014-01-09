@@ -14,15 +14,17 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 ################################################################################
 # list of files
 file_names = cms.untracked.vstring(
- '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
- '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root')
-
+  'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/008E2E98-0A39-E311-833F-0025905938D4.root',
+  'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/027029F2-FE38-E311-ACD6-003048678B34.root'
+# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
+# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root'
+)
 # input Events 
 process.source = cms.Source("PoolSource",
    fileNames = file_names,
    skipEvents = cms.untracked.uint32(0) 
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 # ---- Global Tag and geometry :
 #      (needed e.g. when running raw2digi below)
@@ -105,14 +107,14 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
 					#   - for the new clustering algorithm of Jean-Baptiste et al,
 					#     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
 					#     ("SLHCL1ExtraParticlesNewClustering","EGamma").                                      
-        ETmin = cms.double( 20.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
+        ETmin = cms.double( 2.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
         TrackEGammaDeltaPhi = cms.double(0.1),  # Delta Phi cutoff to match Track with L1EG objects
         TrackEGammaDeltaR = cms.double(0.06),   # Delta R cutoff to match Track with L1EG objects
         TrackEGammaDeltaEta = cms.double(0.05), # Delta Eta cutoff to match Track with L1EG objects
                                                 # are considered. ETmin < 0 means that no cut is applied.
 	RelativeIsolation = cms.bool( True ),	# default = True. The isolation variable is relative if True,
 						# else absolute.
-        IsoCut = cms.double( 0.1 ), 		# Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
+        IsoCut = cms.double( -0.15 ), 		# Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
                                                 # the isolation is below RelIsoCut are written into
                                                 # the output collection. When RelIsoCut < 0, no cut is applied.
 						# When RelativeIsolation = False, IsoCut is in GeV.
@@ -120,7 +122,7 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
         L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
 	ZMAX = cms.double( 25. ),	# in cm
 	CHI2MAX = cms.double( 100. ),
-        PTMINTRA = cms.double( 2. ),	# in GeV
+        PTMINTRA = cms.double( 5. ),	# in GeV
 	DRmin = cms.double( 0.06),
 	DRmax = cms.double( 0.5 ),
 	DeltaZ = cms.double( 1.0 )    # in cm. Used for tracks to be used isolation calculation
@@ -134,7 +136,8 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 )
 
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
-process.Out.outputCommands.append( 'keep *_L1TrackElectrons_NonIsolated_*' )
+process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
+process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*'), 
 #process.Out.outputCommands.append('keep *_generator_*_*')
 #process.Out.outputCommands.append('keep *')
 
