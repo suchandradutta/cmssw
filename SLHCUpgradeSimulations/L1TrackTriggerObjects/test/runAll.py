@@ -4,14 +4,23 @@ process = cms.Process("ALL")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
+<<<<<<< HEAD
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20) )
+=======
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5) )
+>>>>>>> my-bugfixes
 
 from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import *
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
+<<<<<<< HEAD
 	'file:example_w_Tracks_and_vertex.root'
     #'/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/TTbar/BE5D/TTbar_BE5D_97.root'
+=======
+	#'file:example_w_Tracks_and_vertex.root'
+    '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/TTbar/BE5D/zmatchingOff/m1_TTbar_BE5D.root'
+>>>>>>> my-bugfixes
     )
 )
 
@@ -80,8 +89,15 @@ process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
                                                 # into the new collection.
         L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),      # input L1EG collection
                                                 # When the standard sequences are used :
+<<<<<<< HEAD
                                                 #   - for "old stage-2", use ("l1extraParticles","NonIsolated")
                                                 #     or ("l1extraParticles","Isolated")
+=======
+                                                #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
+                                                #     or ("l1extraParticles","Isolated")
+                                                #   - for the "old stage-2" algo (2x2 clustering), use 
+                                                #     ("SLHCL1ExtraParticles","EGamma") or ("SLHCL1ExtraParticles","IsoEGamma")
+>>>>>>> my-bugfixes
                                                 #   - for the new clustering algorithm of Jean-Baptiste et al,
                                                 #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
                                                 #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
@@ -89,7 +105,11 @@ process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
                                                 # are considered. ETmin < 0 means that no cut is applied.
         RelativeIsolation = cms.bool( True ),   # default = True. The isolation variable is relative if True,
                                                 # else absolute.
+<<<<<<< HEAD
         IsoCut = cms.double( 0.2 ),             # Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
+=======
+        IsoCut = cms.double( 0.1 ),             # Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
+>>>>>>> my-bugfixes
                                                 # the isolation is below RelIsoCut are written into
                                                 # the output collection. When RelIsoCut < 0, no cut is applied.
                                                 # When RelativeIsolation = False, IsoCut is in GeV.
@@ -114,6 +134,7 @@ process.pPhotons = cms.Path( process.L1TkPhotons )
 
 # "electrons" from L1Tracks :
 
+<<<<<<< HEAD
 process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
         L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
         L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
@@ -132,19 +153,82 @@ process.L1TkElectronsStubs = cms.EDProducer("L1TkElectronStubsProducer",
 process.pElectronsStubs = cms.Path( process.L1TkElectronsStubs )
 
 
+=======
+#process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
+#        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+#        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
+#        label = cms.string("NonIsolated")
+#)
+#process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
+#
+#
+## "electrons" from stubs :
+#
+#process.L1TkElectronsStubs = cms.EDProducer("L1TkElectronStubsProducer",
+#        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+#        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
+#        label = cms.string("NonIsolated")
+#)
+#process.pElectronsStubs = cms.Path( process.L1TkElectronsStubs )
+#
 
 #
 # ---------------------------------------------------------------------------
 
+# test the L1TkJetProducer
+# The collection of (Run 1) L1Jets have been created above, by unpacking the
+# gctDigis and running process.L1Reco.
+
+# --- Now run the L1TkJetProducer 
+
+process.L1TkJets = cms.EDProducer("L1TkJetProducer",
+        L1CentralJetInputTag = cms.InputTag("l1extraParticles","Central"),      # for Run-1 algos
+        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+        # cuts on the tracks used to determined the zvertex of the jet (examples) :
+        #ZMAX = cms.double( 25. ),      # in cm
+        #CHI2MAX = cms.double( 100. ),
+        #PTMINTRA = cms.double( 2. ),   # in GeV
+)
+process.pJets = cms.Path( process.L1TkJets )
+>>>>>>> my-bugfixes
+
+#
+# ---------------------------------------------------------------------------
+
+<<<<<<< HEAD
+=======
+# HT and MHT from L1TkHTMissProducer
+# The collection of (Run 1) L1Jets have been created above, by unpacking the
+# gctDigis and running process.L1Reco.
+
+process.L1TkHTMiss = cms.EDProducer("L1TkHTMissProducer",
+	L1TkJetInputTag = cms.InputTag("L1TkJets","Central"),
+	DeltaZ = cms.double( 999 ),   #  in mm. Here dummy cut, since I dont have the zvtx of the jets 
+	PrimaryVtxConstrain = cms.bool( True ),
+	L1VertexInputTag = cms.InputTag("L1TrackPrimaryVertex")
+)
+process.pHTM = cms.Path( process.L1TkHTMiss )
+
+
+>>>>>>> my-bugfixes
 # ---------------------------------------------------------------------------
 #
 # --- Run the analyzer
 
 process.ana = cms.EDAnalyzer( 'L1TrackTriggerObjectsAnalyzer' ,
+<<<<<<< HEAD
     L1VtxInputTag = cms.InputTag("L1TkPrimaryVertex"),
     L1TkEtMissInputTag = cms.InputTag("L1TkEtMiss","MET"),
     L1TkElectronsInputTag = cms.InputTag("L1TkElectronsTrack","NonIsolated"),
     L1TkPhotonsInputTag = cms.InputTag("L1TkPhotons","EGIsoTrk")
+=======
+    L1VtxInputTag = cms.InputTag("L1TrackPrimaryVertex"),
+    L1TkEtMissInputTag = cms.InputTag("L1TkEtMiss","MET"),
+    L1TkElectronsInputTag = cms.InputTag("L1TkElectronsTrack","NonIsolated"),
+    L1TkPhotonsInputTag = cms.InputTag("L1TkPhotons","EGIsoTrk"),
+    L1TkJetsInputTag = cms.InputTag("L1TkJets","Central"),
+    L1TkHTMInputTag = cms.InputTag("L1TkHTMiss")
+>>>>>>> my-bugfixes
 )
 
 

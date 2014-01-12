@@ -1,10 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-<<<<<<< HEAD
-=======
 # Example configuratiom file that runs over a file that has
 # already the L1Tracks.
-# (see runL1Tracks.py for how to produce them).
+# (see e.g. runL1Tracks_and_L1PrimaryVertexProducer_cfg.py for how to produce them).
 
 # Here we run the L1EG algorithms (old stage-2 and new clustering),
 # we unpack the L1EG objects that were created during the L1 step
@@ -13,24 +11,17 @@ import FWCore.ParameterSet.Config as cms
 # collections.
 
 
->>>>>>> my-bugfixes
 process = cms.Process("ALL")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import *
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-<<<<<<< HEAD
-       '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/MinBias/BE5D/zmatchingOff/m1_MinBias_BE5D.root',
-       '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/MinBias/BE5D/zmatchingOff/m2_MinBias_BE5D.root'
-=======
-   '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/Hgaga/BE5D/zmatchingOff/m1_Hgaga_BE5D.root',
-   '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/Hgaga/BE5D/zmatchingOff/m2_Hgaga_BE5D.root'
->>>>>>> my-bugfixes
+   'file:example_w_Tracks_and_vertex.root'
     )
 )
 
@@ -45,8 +36,6 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 
-<<<<<<< HEAD
-=======
 # ---------------------------------------------------------------------------
 #
 # --- to work only with the Run-1 L1EG algorithm, i.e. what was 
@@ -87,58 +76,13 @@ process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDi
         # to the current trigger
 process.load('Configuration.StandardSequences.L1Reco_cff')
 process.L1Reco = cms.Path( process.l1extraParticles )
->>>>>>> my-bugfixes
 
 
-# ---------------------------------------------------------------------------
-#
-# --- Run the L1TrackEtMiss producer :
-
-# needs the L1TkPrimaryVertex
-# TrkMET calculated from all tracks that have |z - z_vertex | < DeltaZ,
-# pt > PTMINTRA and at least ( >= ) nStubsmin stubs.
-# To check the latter condition, the file must contain the stubs.
-
-process.L1TkEtMiss = cms.EDProducer('L1TkEtMissProducer',
-     L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-     L1VertexInputTag = cms.InputTag("L1TrackPrimaryVertex2"),
-     ZMAX = cms.double ( 25. ) ,        # in cm
-     CHI2MAX = cms.double( 100. ),
-     PTMINTRA = cms.double( 2. ),	# in GeV
-     DeltaZ = cms.double( 0.2 ),       # in cm
-     nStubsmin = cms.int32( 4 )
-)
-
-process.pEtMiss = cms.Path( process.L1TkEtMiss )
-
-#
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 #
 # --- test L1TrackEmParticle
 
-<<<<<<< HEAD
-# --- First, create l1extra objects for L1EGamma 
-#     here I use the Run1 trigger. The produced objects dont really
-#     make sense, but OK to check the technicalities.
-
-        # raw2digi to get the gct digis
-process.load('Configuration.StandardSequences.RawToDigi_cff')
-process.p0 = cms.Path( process.RawToDigi )
-        # run L1Reco
-process.load('Configuration.StandardSequences.L1Reco_cff')
-process.L1Reco = cms.Path( process.l1extraParticles )
-
-
-
-# --- Now run the L1TkEmParticleProducer 
-
-# "photons" :
-
-process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
-        label = cms.string("EGIsoTrk"), # labels the collection of L1TkEmParticleProducer that is produced.
-=======
 
 # --- Run the L1TkEmParticleProducer 
 
@@ -148,22 +92,16 @@ process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
 
 process.L1TkPhotonsRun1EG = cms.EDProducer("L1TkEmParticleProducer",
         label = cms.string("IsoTrk"), # labels the collection of L1TkEmParticleProducer that is produced.
->>>>>>> my-bugfixes
                                                 # e.g. EG or IsoEG if all objects are kept, or
                                                 # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
                                                 # objects that pass a cut RelIso < RelIsoCut are written
                                                 # into the new collection.
         L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),      # input L1EG collection
                                                 # When the standard sequences are used :
-<<<<<<< HEAD
-                                                #   - for "old stage-2", use ("l1extraParticles","NonIsolated")
-                                                #     or ("l1extraParticles","Isolated")
-=======
                                                 #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
                                                 #     or ("l1extraParticles","Isolated")
 						#   - for the "old stage-2" algo (2x2 clustering), use 
 						#     ("SLHCL1ExtraParticles","EGamma") or ("SLHCL1ExtraParticles","IsoEGamma")
->>>>>>> my-bugfixes
                                                 #   - for the new clustering algorithm of Jean-Baptiste et al,
                                                 #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
                                                 #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
@@ -186,9 +124,6 @@ process.L1TkPhotonsRun1EG = cms.EDProducer("L1TkEmParticleProducer",
         DeltaZMax = cms.double( 999. ),    # in cm. Used only when PrimaryVtxConstrain = True
         L1VertexInputTag = cms.InputTag("NotUsed"),     # Used only when PrimaryVtxConstrain = True
 )
-<<<<<<< HEAD
-process.pPhotons = cms.Path( process.L1TkPhotons )
-=======
 process.pPhotonsRun1EG = cms.Path( process.L1TkPhotonsRun1EG )
 
 process.L1TkPhotonsRunIso1EG = process.L1TkPhotonsRun1EG.clone()
@@ -214,23 +149,17 @@ process.pPhotonsNewEG = cms.Path( process.L1TkPhotonsNewEG )
 process.L1TkPhotonsNewIsoEG = process.L1TkPhotonsRun1EG.clone()
 process.L1TkPhotonsNewIsoEG.L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticlesNewClustering","IsoEGamma")
 process.pPhotonsNewIsoEG = cms.Path( process.L1TkPhotonsNewIsoEG )
->>>>>>> my-bugfixes
 
 
 
 
 process.Out = cms.OutputModule( "PoolOutputModule",
-    fileName = cms.untracked.string( "example_all.root" ),
+    fileName = cms.untracked.string( "example_EGamma.root" ),
     fastCloning = cms.untracked.bool( False ),
     outputCommands = cms.untracked.vstring( 'drop *')
 )
 
 
-<<<<<<< HEAD
-process.Out.outputCommands.append('keep *_L1TkPhotons_*_*')
-process.Out.outputCommands.append('keep *_L1TkEtMiss_*_*')
-process.Out.outputCommands.append('keep *_l1extraParticles_*_*')
-=======
 process.Out.outputCommands.append('keep *_L1TkPhotons*_*_*')
 process.Out.outputCommands.append('keep *_L1TkEtMiss_*_*')
 process.Out.outputCommands.append('keep *_l1extraParticles_NonIsolated_*')
@@ -241,7 +170,6 @@ process.Out.outputCommands.append('keep *_SLHCL1ExtraParticlesNewClustering_EGam
 process.Out.outputCommands.append('keep *_SLHCL1ExtraParticlesNewClustering_IsoEGamma_*')
 process.Out.outputCommands.append('keep *_l1extraParticles_MET_*')
 process.Out.outputCommands.append('keep *_gen*_*_*')
->>>>>>> my-bugfixes
 
 
 process.FEVToutput_step = cms.EndPath(process.Out)

@@ -107,6 +107,18 @@ L1TkElectronStubsProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
  L1TkTrackCollectionType::const_iterator trackIter;
 
+<<<<<<< HEAD
+=======
+ if( !EGammaHandle.isValid() )
+        {
+          LogError("L1TkElectronStubsProducer")
+            << "\nWarning: L1EmParticleCollection with " << L1EGammaInputTag
+            << "\nrequested in configuration, but not found in the event. Exit"
+            << std::endl;
+           return;
+        }
+
+>>>>>>> my-bugfixes
  int ieg = 0;
  for (egIter = EGammaHandle->begin();  egIter != EGammaHandle->end(); ++egIter) {
 

@@ -48,9 +48,16 @@
 #include "DataFormats/L1TrackTrigger/interface/L1TkEmParticleFwd.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkElectronParticle.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkElectronParticleFwd.h"
+<<<<<<< HEAD
 
 
 
+=======
+#include "DataFormats/L1TrackTrigger/interface/L1TkJetParticle.h"
+#include "DataFormats/L1TrackTrigger/interface/L1TkJetParticleFwd.h"
+#include "DataFormats/L1TrackTrigger/interface/L1TkHTMissParticle.h"
+#include "DataFormats/L1TrackTrigger/interface/L1TkHTMissParticleFwd.h"
+>>>>>>> my-bugfixes
 
 #include "TFile.h"
 #include "TH1F.h"
@@ -100,6 +107,15 @@ class L1TrackTriggerObjectsAnalyzer : public edm::EDAnalyzer {
 	// for L1TkEmParticles
         edm::InputTag L1TkPhotonsInputTag;
 	edm::InputTag L1TkElectronsInputTag;
+<<<<<<< HEAD
+=======
+
+	// for L1TkJetParticles
+        edm::InputTag L1TkJetsInputTag;
+
+	// for L1TkHTMParticle
+	edm::InputTag L1TkHTMInputTag;
+>>>>>>> my-bugfixes
 };
 
 //
@@ -133,6 +149,11 @@ L1TrackTriggerObjectsAnalyzer::L1TrackTriggerObjectsAnalyzer(const edm::Paramete
   L1TkEtMissInputTag = iConfig.getParameter<edm::InputTag>("L1TkEtMissInputTag");
   L1TkElectronsInputTag = iConfig.getParameter<edm::InputTag>("L1TkElectronsInputTag");
   L1TkPhotonsInputTag = iConfig.getParameter<edm::InputTag>("L1TkPhotonsInputTag");
+<<<<<<< HEAD
+=======
+  L1TkJetsInputTag = iConfig.getParameter<edm::InputTag>("L1TkJetsInputTag");
+  L1TkHTMInputTag = iConfig.getParameter<edm::InputTag>("L1TkHTMInputTag");
+>>>>>>> my-bugfixes
 }
 
 
@@ -244,6 +265,66 @@ L1TrackTriggerObjectsAnalyzer::analyze(const edm::Event& iEvent, const edm::Even
     }
  }
 
+<<<<<<< HEAD
+=======
+
+        //
+        // ----------------------------------------------------------------------
+        // retrieve the L1TkJetParticle objects
+        //
+        
+ edm::Handle<L1TkJetParticleCollection> L1TkJetsHandle;
+ iEvent.getByLabel(L1TkJetsInputTag, L1TkJetsHandle);
+ std::vector<L1TkJetParticle>::const_iterator jetIter ;
+
+ if ( L1TkJetsHandle.isValid() ) {
+    std::cout << " -----   L1TkJetParticle  objects -----  " << std::endl;
+    for (jetIter = L1TkJetsHandle -> begin(); jetIter != L1TkJetsHandle->end(); ++jetIter) {
+        float et = jetIter -> pt();
+        float phi = jetIter -> phi();
+        float eta = jetIter -> eta();
+        int bx = jetIter -> bx() ;
+	float jetvtx = jetIter -> getJetVtx();
+        const edm::Ref< L1JetParticleCollection > Jetref = jetIter -> getJetRef();
+        float et_L1Jet = Jetref -> et();
+	L1JetParticle::JetType type = Jetref -> type();
+
+        std::cout << " a Jet candidate ET eta phi zvertex " << et << " " << eta << " " << phi << " " << jetvtx  << std::endl;
+        std::cout << "                Calo  ET, typ " << et_L1Jet << " " << type << std::endl;
+        std::cout << "                bx = " << bx << std::endl;
+    }
+ }
+
+        //
+        // ----------------------------------------------------------------------
+        // retrieve HT and HTM
+	//
+
+ edm::Handle<L1TkHTMissParticleCollection> L1TkHTMHandle;
+ iEvent.getByLabel(L1TkHTMInputTag, L1TkHTMHandle);
+
+ if ( L1TkHTMHandle.isValid() ) {
+	std::cout << " -----  L1TkHTMissParticle: size (should be 1) = " << L1TkHTMHandle -> size() << std::endl;
+	std::vector<L1TkHTMissParticle>::const_iterator HTMIter = L1TkHTMHandle -> begin();
+	float HTT = HTMIter -> EtTotal();
+	float HTM = HTMIter -> EtMiss();
+	//float HTM_the_same = HTMIter -> et();
+
+	// phi of the HTM vector :
+	float phi = HTMIter -> phi();
+	std::cout << " HTT = " << HTT << " HTM = " << HTM << " " << "phi(HTM) = " << phi << std::endl;
+	 
+	// access the L1TkJets used to build HT and HTM :
+	const edm::RefProd< L1TkJetParticleCollection > jetCollRef = HTMIter -> getjetCollectionRef();
+ 	std::vector<L1TkJetParticle>::const_iterator jet = jetCollRef -> begin();
+	std::cout << " ET of the first L1TkJet = " << jet -> et() << std::endl;
+ }
+ else {
+    std::cout << L1TkHTMInputTag << " is non valid." << std::endl;
+ }
+
+
+>>>>>>> my-bugfixes
         //
         // ----------------------------------------------------------------------
         // retrieve the L1TkEmParticle objects

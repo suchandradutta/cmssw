@@ -35,6 +35,25 @@
   <class name="edm::Ref<std::vector<l1extra::L1TkElectronParticle>,l1extra::L1TkElectronParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkElectronParticle>,l1extra::L1TkElectronParticle> >"/>
 
 
+<<<<<<< HEAD
+=======
+  <class name="l1extra::L1TkJetParticle" ClassVersion="11">
+   <version ClassVersion="11" checksum="2684897040"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkJetParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkJetParticle> >"/>
+  <class name="edm::Ref<std::vector<l1extra::L1TkJetParticle>,l1extra::L1TkJetParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkJetParticle>,l1extra::L1TkJetParticle> >"/>
+
+  <class name="edm::RefProd< std::vector<l1extra::L1TkJetParticle> >"/>
+
+  <class name="l1extra::L1TkHTMissParticle" ClassVersion="11">
+   <version ClassVersion="11" checksum="2071485641"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkHTMissParticle>"/>
+ <class name="edm::Wrapper<l1extra::L1TkHTMissParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkHTMissParticle> >"/>
+
+>>>>>>> my-bugfixes
 
 
 </lcgdict>

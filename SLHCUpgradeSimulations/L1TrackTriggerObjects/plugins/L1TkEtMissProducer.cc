@@ -152,6 +152,7 @@ void
 L1TkEtMissProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
+<<<<<<< HEAD
 /* This is an event example
    //Read 'ExampleData' from the Event
    Handle<ExampleData> pIn;
@@ -168,6 +169,8 @@ L1TkEtMissProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
    ESHandle<SetupData> pSetup;
    iSetup.get<SetupRecord>().get(pSetup);
 */
+=======
+>>>>>>> my-bugfixes
  
  std::auto_ptr<L1TkEtMissParticleCollection> result(new L1TkEtMissParticleCollection);
 
@@ -180,6 +183,29 @@ L1TkEtMissProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
  L1TkTrackCollectionType::const_iterator trackIter;
 
+<<<<<<< HEAD
+=======
+
+ if( !L1VertexHandle.isValid() )
+        {
+          LogError("L1TkEtMissProducer")
+            << "\nWarning: L1TrackPrimaryVertexCollection with " << L1VertexInputTag
+            << "\nrequested in configuration, but not found in the event. Exit"
+            << std::endl;
+	   return;
+        }
+
+ if( !L1TkTrackHandle.isValid() )
+        {
+          LogError("L1TkEtMissProducer")
+            << "\nWarning: L1TkTrackCollectionType with " << L1TrackInputTag
+            << "\nrequested in configuration, but not found in the event. Exit"
+            << std::endl;
+           return;
+        }
+
+
+>>>>>>> my-bugfixes
  int ivtx = 0;
 
  for (vtxIter = L1VertexHandle->begin(); vtxIter != L1VertexHandle->end(); ++vtxIter) {

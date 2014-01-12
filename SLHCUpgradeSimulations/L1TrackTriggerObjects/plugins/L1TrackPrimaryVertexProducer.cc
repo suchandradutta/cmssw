@@ -152,6 +152,7 @@ void
 L1TrackPrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
+<<<<<<< HEAD
 /* This is an event example
    //Read 'ExampleData' from the Event
    Handle<ExampleData> pIn;
@@ -168,6 +169,8 @@ L1TrackPrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup&
    ESHandle<SetupData> pSetup;
    iSetup.get<SetupRecord>().get(pSetup);
 */
+=======
+>>>>>>> my-bugfixes
  
  std::auto_ptr<L1TrackPrimaryVertexCollection> result(new L1TrackPrimaryVertexCollection);
 
@@ -177,6 +180,19 @@ L1TrackPrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup&
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);   
 
 
+<<<<<<< HEAD
+=======
+ if( !L1TkTrackHandle.isValid() )
+        {
+          LogError("L1TrackPrimaryVertexProducer")
+            << "\nWarning: L1TkTrackCollection with " << L1TrackInputTag
+            << "\nrequested in configuration, but not found in the event. Exit"
+            << std::endl;
+ 	    return;
+        }
+
+
+>>>>>>> my-bugfixes
 	// max(Sum PT2), tracks with at least 3 stubs in PS layers
    float sum1 = -999;
    int nStubsmin = 4;

@@ -15,6 +15,15 @@
 #include "DataFormats/L1TrackTrigger/interface/L1TkElectronParticle.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkElectronParticleFwd.h"
 
+<<<<<<< HEAD
+=======
+#include "DataFormats/L1TrackTrigger/interface/L1TkJetParticle.h"
+#include "DataFormats/L1TrackTrigger/interface/L1TkJetParticleFwd.h"
+
+#include "DataFormats/L1TrackTrigger/interface/L1TkHTMissParticle.h"
+#include "DataFormats/L1TrackTrigger/interface/L1TkHTMissParticleFwd.h"
+
+>>>>>>> my-bugfixes
 #include "DataFormats/Common/interface/Wrapper.h"
 #include "DataFormats/Common/interface/RefVector.h"
 #include "DataFormats/Common/interface/RefProd.h"
@@ -54,6 +63,21 @@ namespace {
      edm::Wrapper<l1extra::L1TkElectronParticleCollection> w_trkeleColl;
      l1extra::L1TkElectronParticleRef reftrkEle ;
 
+<<<<<<< HEAD
+=======
+	// L1TkJetParticle
+     l1extra::L1TkJetParticleCollection trkjetColl ;
+     edm::Wrapper<l1extra::L1TkJetParticleCollection> w_trkjetColl;
+     l1extra::L1TkJetParticleRef reftrkJet ;
+     l1extra::L1TkJetParticleRefProd refTkProdJet ;
+
+	// L1TkHTMissParticle
+     l1extra::L1TkHTMissParticle TkHTMiss ;
+     l1extra::L1TkHTMissParticleCollection TkHTMissColl ;
+     edm::Wrapper<l1extra::L1TkHTMissParticle> w_TkHTMiss;
+     edm::Wrapper<l1extra::L1TkHTMissParticleCollection> w_TkHTMissColl;
+
+>>>>>>> my-bugfixes
 
 
   };

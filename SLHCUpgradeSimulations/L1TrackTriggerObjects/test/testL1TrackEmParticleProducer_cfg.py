@@ -44,11 +44,21 @@ process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
                                                 # into the new collection.
         L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),      # input L1EG collection
 						# When the standard sequences are used :
+<<<<<<< HEAD
 						#   - for "old stage-2", use ("l1extraParticles","NonIsolated")
 						#     or ("l1extraParticles","Isolated")
 						#   - for the new clustering algorithm of Jean-Baptiste et al,
 						#     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
 						#     ("SLHCL1ExtraParticlesNewClustering","EGamma").
+=======
+                                                #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
+                                                #     or ("l1extraParticles","Isolated")
+                                                #   - for the "old stage-2" algo (2x2 clustering), use 
+                                                #     ("SLHCL1ExtraParticles","EGamma") or ("SLHCL1ExtraParticles","IsoEGamma")
+                                                #   - for the new clustering algorithm of Jean-Baptiste et al,
+                                                #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
+                                                #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
+>>>>>>> my-bugfixes
         ETmin = cms.double( -1 ),               # Only the L1EG objects that have ET > ETmin in GeV
                                                 # are considered. ETmin < 0 means that no cut is applied.
 	RelativeIsolation = cms.bool( True ),	# default = True. The isolation variable is relative if True,
