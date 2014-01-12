@@ -26,7 +26,7 @@ process.source = cms.Source("PoolSource",
    fileNames = file_names,
    skipEvents = cms.untracked.uint32(0) 
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 # ---- Global Tag and geometry :
 #      (needed e.g. when running raw2digi below)
@@ -135,7 +135,7 @@ process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
 process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
 process.Out.outputCommands.append( 'keep *_genParticles_*_*')
 #process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
-#process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*'), 
+process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
 process.Out.outputCommands.append('keep *_generator_*_*')
 #process.Out.outputCommands.append('keep *')
 

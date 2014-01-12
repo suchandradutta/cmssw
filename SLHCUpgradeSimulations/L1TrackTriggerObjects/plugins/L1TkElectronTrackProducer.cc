@@ -209,7 +209,7 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 	float dEta = 99.;   
 	L1TkElectronTrackMatchAlgo::doMatch(egIter, trackIter, dPhi, dR, dEta); 
           
-	if (abs(dPhi) < dPhiCutoff && dR < dRCutoff && abs(dEta) < dEtaCutoff && dR < drmin) {
+	if (fabs(dPhi) < dPhiCutoff && dR < dRCutoff && fabs(dEta) < dEtaCutoff && dR < drmin) {
 	  drmin = dR;
 	  itrack = itr;
 	}
