@@ -249,11 +249,7 @@ int L1TkElectronTrackObjectsAnalyzer::selectEGamma() {
     float et_ele = 0;
     if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
     else et_ele = -1.0;
-<<<<<<< HEAD
-    if (fabs(eta_ele) > 2.5) continue;
-=======
     if (fabs(eta_ele) > 2.3) continue;
->>>>>>> my-bugfix
     if ( et_ele <= 20) continue;
     float dPhi = reco::deltaPhi(simTracks_[0].momentum().phi(), phi_ele);
     float dEta = (simTracks_[0].momentum().eta() - eta_ele);
@@ -263,11 +259,7 @@ int L1TkElectronTrackObjectsAnalyzer::selectEGamma() {
       indx = igam; 
     } 
   } 
-<<<<<<< HEAD
-  if (dRmin < 0.1 &&  simTracks_[0].type() == 11) return indx;
-=======
   if (dRmin < 0.05 &&  simTracks_[0].type() == 11) return indx;
->>>>>>> my-bugfix
   else return -1;
 }
 

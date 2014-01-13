@@ -152,28 +152,6 @@ void
 L1TkEtMissProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
-<<<<<<< HEAD
-<<<<<<< HEAD
-/* This is an event example
-   //Read 'ExampleData' from the Event
-   Handle<ExampleData> pIn;
-   iEvent.getByLabel("example",pIn);
-
-   //Use the ExampleData to create an ExampleData2 which 
-   // is put into the Event
-   std::auto_ptr<ExampleData2> pOut(new ExampleData2(*pIn));
-   iEvent.put(pOut);
-*/
-
-/* this is an EventSetup example
-   //Read SetupData from the SetupRecord in the EventSetup
-   ESHandle<SetupData> pSetup;
-   iSetup.get<SetupRecord>().get(pSetup);
-*/
-=======
->>>>>>> my-bugfixes
-=======
->>>>>>> my-bugfix
  
  std::auto_ptr<L1TkEtMissParticleCollection> result(new L1TkEtMissParticleCollection);
 
@@ -186,11 +164,6 @@ L1TkEtMissProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
  L1TkTrackCollectionType::const_iterator trackIter;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> my-bugfix
 
  if( !L1VertexHandle.isValid() )
         {
@@ -211,10 +184,6 @@ L1TkEtMissProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         }
 
 
-<<<<<<< HEAD
->>>>>>> my-bugfixes
-=======
->>>>>>> my-bugfix
  int ivtx = 0;
 
  for (vtxIter = L1VertexHandle->begin(); vtxIter != L1VertexHandle->end(); ++vtxIter) {
