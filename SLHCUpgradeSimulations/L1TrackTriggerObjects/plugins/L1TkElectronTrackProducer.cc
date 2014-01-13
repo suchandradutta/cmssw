@@ -47,11 +47,7 @@
 
 // Matching Algorithm
 #include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronTrackMatchAlgo.h"
-<<<<<<< HEAD
-#include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronEtComparator.h"
-=======
 //#include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronEtComparator.h"
->>>>>>> my-bugfixes
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 
@@ -165,10 +161,6 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
   iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
   L1TkTrackCollectionType::const_iterator trackIter;
   
-<<<<<<< HEAD
-  std::cout << " # of EGamma " << EGammaHandle->size() << std::endl;
-  std::cout << " # of Tracks " << L1TkTrackHandle->size() << std::endl;
-=======
  if( !EGammaHandle.isValid() )
         {
           edm::LogError("L1TkElectronTrackProducer")
@@ -189,7 +181,6 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 
   //std::cout << " # of EGamma " << EGammaHandle->size() << std::endl;
   //std::cout << " # of Tracks " << L1TkTrackHandle->size() << std::endl;
->>>>>>> my-bugfixes
   int ieg = 0;
   for (egIter = eGammaCollection.begin();  egIter != eGammaCollection.end(); ++egIter) {
     edm::Ref< L1EmParticleCollection > EGammaRef( EGammaHandle, ieg );
@@ -206,11 +197,6 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
     if (fabs(eta_ele) > 2.5) continue;
     if (ETmin > 0.0 && et_ele <= ETmin) continue;
     // match the L1EG object with a L1Track
-<<<<<<< HEAD
-    // here dummy : I simply take the closest track
-    // and require that DR < 0.5
-=======
->>>>>>> my-bugfixes
     float drmin = 999;
     int itr = 0;
     int itrack = -1;
@@ -223,11 +209,7 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
 	float dEta = 99.;   
 	L1TkElectronTrackMatchAlgo::doMatch(egIter, trackIter, dPhi, dR, dEta); 
           
-<<<<<<< HEAD
-	if (abs(dPhi) < dPhiCutoff && dR < dRCutoff && abs(dEta) < dEtaCutoff && dR < drmin) {
-=======
 	if (fabs(dPhi) < dPhiCutoff && dR < dRCutoff && fabs(dEta) < dEtaCutoff && dR < drmin) {
->>>>>>> my-bugfixes
 	  drmin = dR;
 	  itrack = itr;
 	}
@@ -240,10 +222,7 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
       float py = matchedL1TrackPtr->getMomentum().y();
       float pz = matchedL1TrackPtr->getMomentum().z();
       float e = sqrt( px*px + py*py + pz*pz );	// massless particle
-<<<<<<< HEAD
-=======
 
->>>>>>> my-bugfixes
       
       math::XYZTLorentzVector TrackP4(px,py,pz,e);
       

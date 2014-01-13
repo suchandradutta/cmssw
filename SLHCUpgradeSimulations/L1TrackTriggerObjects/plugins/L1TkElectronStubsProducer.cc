@@ -106,9 +106,6 @@ L1TkElectronStubsProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
  edm::Handle<L1TkTrackCollectionType> L1TkTrackHandle;
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
  L1TkTrackCollectionType::const_iterator trackIter;
-
-<<<<<<< HEAD
-=======
  if( !EGammaHandle.isValid() )
         {
           LogError("L1TkElectronStubsProducer")
@@ -118,7 +115,6 @@ L1TkElectronStubsProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
            return;
         }
 
->>>>>>> my-bugfixes
  int ieg = 0;
  for (egIter = EGammaHandle->begin();  egIter != EGammaHandle->end(); ++egIter) {
 

@@ -150,6 +150,7 @@ L1TkEmParticleProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
  	edm::Handle<L1TrackPrimaryVertexCollection> L1VertexHandle;
 	iEvent.getByLabel(L1VertexInputTag,L1VertexHandle);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	std::vector<L1TrackPrimaryVertex>::const_iterator vtxIter = L1VertexHandle->begin();
 	   // by convention, the first vertex in the collection is the one that should
 	   // be used by default
@@ -159,6 +160,8 @@ L1TkEmParticleProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
 
 	// Now loop over the L1EGamma objects
 =======
+=======
+>>>>>>> my-bugfix
 	if (!L1VertexHandle.isValid() ) {
 	   LogWarning("L1TkEmParticleProducer")
             << "\nWarning: L1TrackPrimaryVertexCollection with " << L1VertexInputTag
@@ -193,7 +196,10 @@ L1TkEmParticleProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetu
 	   return;
         }
 
+<<<<<<< HEAD
 >>>>>>> my-bugfixes
+=======
+>>>>>>> my-bugfix
  int ieg = 0;
  for (egIter = EGammaHandle->begin();  egIter != EGammaHandle->end(); ++egIter) {
 

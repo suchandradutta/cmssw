@@ -48,16 +48,10 @@
 #include "DataFormats/L1TrackTrigger/interface/L1TkEmParticleFwd.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkElectronParticle.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkElectronParticleFwd.h"
-<<<<<<< HEAD
-
-
-
-=======
 #include "DataFormats/L1TrackTrigger/interface/L1TkJetParticle.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkJetParticleFwd.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkHTMissParticle.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkHTMissParticleFwd.h"
->>>>>>> my-bugfixes
 
 #include "TFile.h"
 #include "TH1F.h"
@@ -107,15 +101,12 @@ class L1TrackTriggerObjectsAnalyzer : public edm::EDAnalyzer {
 	// for L1TkEmParticles
         edm::InputTag L1TkPhotonsInputTag;
 	edm::InputTag L1TkElectronsInputTag;
-<<<<<<< HEAD
-=======
 
 	// for L1TkJetParticles
         edm::InputTag L1TkJetsInputTag;
 
 	// for L1TkHTMParticle
 	edm::InputTag L1TkHTMInputTag;
->>>>>>> my-bugfixes
 };
 
 //
@@ -149,11 +140,8 @@ L1TrackTriggerObjectsAnalyzer::L1TrackTriggerObjectsAnalyzer(const edm::Paramete
   L1TkEtMissInputTag = iConfig.getParameter<edm::InputTag>("L1TkEtMissInputTag");
   L1TkElectronsInputTag = iConfig.getParameter<edm::InputTag>("L1TkElectronsInputTag");
   L1TkPhotonsInputTag = iConfig.getParameter<edm::InputTag>("L1TkPhotonsInputTag");
-<<<<<<< HEAD
-=======
   L1TkJetsInputTag = iConfig.getParameter<edm::InputTag>("L1TkJetsInputTag");
   L1TkHTMInputTag = iConfig.getParameter<edm::InputTag>("L1TkHTMInputTag");
->>>>>>> my-bugfixes
 }
 
 
@@ -265,8 +253,6 @@ L1TrackTriggerObjectsAnalyzer::analyze(const edm::Event& iEvent, const edm::Even
     }
  }
 
-<<<<<<< HEAD
-=======
 
         //
         // ----------------------------------------------------------------------
@@ -324,7 +310,6 @@ L1TrackTriggerObjectsAnalyzer::analyze(const edm::Event& iEvent, const edm::Even
  }
 
 
->>>>>>> my-bugfixes
         //
         // ----------------------------------------------------------------------
         // retrieve the L1TkEmParticle objects

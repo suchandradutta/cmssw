@@ -45,11 +45,7 @@ double deltaPhi(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIte
     double dif1 = phi1 - x1;
     double dif2 = phi1 + x1; 
 
-<<<<<<< HEAD
-    if (abs(dif1) < abs(dif2)) return dif1;
-=======
     if (fabs(dif1) < fabs(dif2)) return dif1;
->>>>>>> my-bugfixes
     else return dif2; 
   
   }
@@ -64,7 +60,7 @@ float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter
     float corr_eta = 999.0;
     float er = epos.perp();
     float ez = epos.z();
-    float z0 = trkIter->getMomentum().z();
+    float z0 = trkIter->getVertex().z();
     float theta = 0.0;
     if (ez >= 0) theta = atan(er/fabs(ez-z0));
     else theta = M_PI - atan(er/fabs(ez-z0));
@@ -94,11 +90,7 @@ float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter
 	float rperp = 129.0;
 	float zface =  sqrt( cos( theta ) * cos( theta ) /
 			     ( 1 - cos( theta ) * cos( theta ) ) * 
-<<<<<<< HEAD
-			     rperp * rperp ) * abs( eta ) / eta;  
-=======
 			     rperp * rperp ) * fabs( eta ) / eta;  
->>>>>>> my-bugfixes
 	r = sqrt( rperp * rperp + zface * zface ) + depth;
 	x = r * cos( phi ) * sin( theta );
 	y = r * sin( phi ) * sin( theta );

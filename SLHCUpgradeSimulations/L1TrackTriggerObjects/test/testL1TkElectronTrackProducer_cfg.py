@@ -14,13 +14,6 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 ################################################################################
 # list of files
 file_names = cms.untracked.vstring(
-<<<<<<< HEAD
-  'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/008E2E98-0A39-E311-833F-0025905938D4.root',
-  'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/027029F2-FE38-E311-ACD6-003048678B34.root'
-# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
-# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root'
-)
-=======
  '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
  '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root')
   #'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/008E2E98-0A39-E311-833F-0025905938D4.root',
@@ -28,17 +21,12 @@ file_names = cms.untracked.vstring(
 # '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
 # '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root'
 #)
->>>>>>> my-bugfixes
 # input Events 
 process.source = cms.Source("PoolSource",
    fileNames = file_names,
    skipEvents = cms.untracked.uint32(0) 
 )
-<<<<<<< HEAD
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-=======
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
->>>>>>> my-bugfixes
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 
 # ---- Global Tag and geometry :
 #      (needed e.g. when running raw2digi below)
@@ -93,27 +81,6 @@ process.L1Reco = cms.Path( process.l1extraParticles )
 
 # ---------------------------------------------------------------------------
 #
-<<<<<<< HEAD
-# --- test L1TrackEmParticle
-
-
-# --- Run the L1TkEmParticleProducer
-
-# "photons" :
-# ---------------------------------------------------------------------------
-#
-# --- test L1TrackEmParticle
-
-
-# --- Run the L1TkEmParticleProducer
-
-# "electrons" :
-
-process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
-	label = cms.string("ElecTrk"),	# labels the collection of L1TkEmParticleProducer that is produced.
-                                        # e.g. Elec or IsoElec if all objects are kept, or
-                                        # ElecIsoTrk or IsoElecIsoTrk if only the EG or IsoEG
-=======
 # --- test L1TkElectronTrack
 
 
@@ -124,19 +91,10 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
 	label = cms.string("EG"),	# labels the collection of L1TkEmParticleProducer that is produced.
                                         # e.g. EG or IsoEG if all objects are kept, or
                                         # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
->>>>>>> my-bugfixes
                                         # objects that pass a cut RelIso < RelIsoCut are written
                                         # into the new collection.
         L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),      # input EGamma collection
 					# When the standard sequences are used :
-<<<<<<< HEAD
-					#   - for "old stage-2", use ("l1extraParticles","NonIsolated")
-					#     or ("l1extraParticles","Iolated")
-					#   - for the new clustering algorithm of Jean-Baptiste et al,
-					#     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
-					#     ("SLHCL1ExtraParticlesNewClustering","EGamma").                                      
-        ETmin = cms.double( 2.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
-=======
                                                 #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
                                                 #     or ("l1extraParticles","Isolated")
                                                 #   - for the "old stage-2" algo (2x2 clustering), use 
@@ -146,7 +104,6 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
                                                 #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
         ETmin = cms.double( -1.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
                                                 # are considered. ETmin < 0 means that no cut is applied.
->>>>>>> my-bugfixes
         TrackEGammaDeltaPhi = cms.double(0.1),  # Delta Phi cutoff to match Track with L1EG objects
         TrackEGammaDeltaR = cms.double(0.06),   # Delta R cutoff to match Track with L1EG objects
         TrackEGammaDeltaEta = cms.double(0.05), # Delta Eta cutoff to match Track with L1EG objects
@@ -175,17 +132,11 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 )
 
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
-<<<<<<< HEAD
-process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
-process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*'), 
-#process.Out.outputCommands.append('keep *_generator_*_*')
-=======
 process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
 process.Out.outputCommands.append( 'keep *_genParticles_*_*')
 #process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
-process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
+#process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*'), 
 process.Out.outputCommands.append('keep *_generator_*_*')
->>>>>>> my-bugfixes
 #process.Out.outputCommands.append('keep *')
 
 #process.schedule = cms.Schedule(process.p0,process.L1Reco,process.TT_step,process.pElectrons)
