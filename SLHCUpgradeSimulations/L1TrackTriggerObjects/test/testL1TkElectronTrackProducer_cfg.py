@@ -1,4 +1,3 @@
-
 import FWCore.ParameterSet.Config as cms
 process = cms.Process("Ele")
 
@@ -26,7 +25,7 @@ process.source = cms.Source("PoolSource",
    fileNames = file_names,
    skipEvents = cms.untracked.uint32(0) 
 )
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 # ---- Global Tag and geometry :
 #      (needed e.g. when running raw2digi below)
@@ -102,11 +101,11 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
                                                 #   - for the new clustering algorithm of Jean-Baptiste et al,
                                                 #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
                                                 #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
-        ETmin = cms.double( -1.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
+        ETmin = cms.double( 20.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
                                                 # are considered. ETmin < 0 means that no cut is applied.
-        TrackEGammaDeltaPhi = cms.double(0.1),  # Delta Phi cutoff to match Track with L1EG objects
-        TrackEGammaDeltaR = cms.double(0.06),   # Delta R cutoff to match Track with L1EG objects
-        TrackEGammaDeltaEta = cms.double(0.05), # Delta Eta cutoff to match Track with L1EG objects
+        TrackEGammaDeltaPhi = cms.double(0.08),  # Delta Phi cutoff to match Track with L1EG objects
+        TrackEGammaDeltaR = cms.double(0.08),   # Delta R cutoff to match Track with L1EG objects
+        TrackEGammaDeltaEta = cms.double(0.08), # Delta Eta cutoff to match Track with L1EG objects
                                                 # are considered. ETmin < 0 means that no cut is applied.
 	RelativeIsolation = cms.bool( True ),	# default = True. The isolation variable is relative if True,
 						# else absolute.
@@ -118,7 +117,7 @@ process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
         L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
 	ZMAX = cms.double( 25. ),	# in cm
 	CHI2MAX = cms.double( 100. ),
-        PTMINTRA = cms.double( 5. ),	# in GeV
+        PTMINTRA = cms.double( 12. ),	# in GeV
 	DRmin = cms.double( 0.06),
 	DRmax = cms.double( 0.5 ),
 	DeltaZ = cms.double( 1.0 )    # in cm. Used for tracks to be used isolation calculation
@@ -135,8 +134,7 @@ process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
 process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
 process.Out.outputCommands.append( 'keep *_genParticles_*_*')
 #process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
-#process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*'), 
-process.Out.outputCommands.append('keep *_generator_*_*')
+process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
 #process.Out.outputCommands.append('keep *')
 
 #process.schedule = cms.Schedule(process.p0,process.L1Reco,process.TT_step,process.pElectrons)

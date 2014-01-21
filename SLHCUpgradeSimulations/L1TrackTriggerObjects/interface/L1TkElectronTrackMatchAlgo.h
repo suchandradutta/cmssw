@@ -9,12 +9,13 @@
 namespace L1TkElectronTrackMatchAlgo {
   typedef L1TkTrack_PixelDigi_   L1TkTrackType;
   typedef std::vector< L1TkTrackType >       L1TkTrackCollectionType;
-  void doMatch(l1extra::L1EmParticleCollection::const_iterator egIter, L1TkTrackCollectionType::const_iterator trkIter, double& dph, float&  dr, float& deta);
+  void doMatch(l1extra::L1EmParticleCollection::const_iterator egIter, const edm::Ptr< L1TkTrackType >& pTrk, double&  dph, double&  dr, double& deta);
+  void doMatch(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType >& pTrk, double& dph, double&  dr, double& deta);
 
-  float deltaR(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter);
-  double deltaPhi(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter);
-  float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter);
-  GlobalPoint calorimeterPosition(float phi, float eta, float e);
+  double deltaR(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType >& pTrk);
+  double deltaPhi(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType >& pTrk);
+  double deltaEta(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType >& pTrk);
+  GlobalPoint calorimeterPosition(double phi, double eta, double e);
 
 }  
 #endif

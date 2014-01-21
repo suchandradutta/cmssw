@@ -26,21 +26,27 @@
 #include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronTrackMatchAlgo.h"
 namespace L1TkElectronTrackMatchAlgo {
   // ------------ match EGamma and Track
-  void doMatch(l1extra::L1EmParticleCollection::const_iterator egIter, L1TkTrackCollectionType::const_iterator trkIter, double& dph, float&  dr, float& deta) {
+  void doMatch(l1extra::L1EmParticleCollection::const_iterator egIter, const edm::Ptr< L1TkTrackType > & pTrk, double& dph, double&  dr, double& deta) {
     GlobalPoint egPos = L1TkElectronTrackMatchAlgo::calorimeterPosition(egIter->phi(), egIter->eta(), egIter->energy());
-    dph  = L1TkElectronTrackMatchAlgo::deltaPhi(egPos, trkIter);
-    dr   = L1TkElectronTrackMatchAlgo::deltaR(egPos, trkIter);
-    deta = L1TkElectronTrackMatchAlgo::deltaEta(egPos, trkIter);
+    dph  = L1TkElectronTrackMatchAlgo::deltaPhi(egPos, pTrk);
+    dr   = L1TkElectronTrackMatchAlgo::deltaR(egPos, pTrk);
+    deta = L1TkElectronTrackMatchAlgo::deltaEta(egPos, pTrk);
+  }
+  // ------------ match EGamma and Track
+  void doMatch(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType > & pTrk, double& dph, double&  dr, double& deta) {
+    dph  = L1TkElectronTrackMatchAlgo::deltaPhi(epos, pTrk);
+    dr   = L1TkElectronTrackMatchAlgo::deltaR(epos, pTrk);
+    deta = L1TkElectronTrackMatchAlgo::deltaEta(epos, pTrk);
   }
   // --------------- calculate deltaR between Track and EGamma object
-double deltaPhi(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter){
+  double deltaPhi(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType > & pTrk){
     double er = epos.perp();
 
     // Using track fit curvature
     //  double curv = 0.003 * magnetStrength * trk->getCharge()/ trk->getMomentum().perp(); 
-    double curv = trkIter->getRInv();
+    double curv = pTrk->getRInv();
     double x1 = (asin(er*curv/(2.0)));
-    double phi1 = reco::deltaPhi(trkIter->getMomentum().phi(), epos.phi());
+    double phi1 = reco::deltaPhi(pTrk->getMomentum().phi(), epos.phi());
 
     double dif1 = phi1 - x1;
     double dif2 = phi1 + x1; 
@@ -50,35 +56,35 @@ double deltaPhi(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIte
   
   }
 // --------------- calculate deltaPhi between Track and EGamma object                 
-float deltaR(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter){
-    float dPhi = fabs(reco::deltaPhi(epos.phi(), trkIter->getMomentum().phi()));
-    float dEta = (epos.eta() - trkIter->getMomentum().eta());
+  double deltaR(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType > & pTrk){
+    double dPhi = fabs(reco::deltaPhi(epos.phi(), pTrk->getMomentum().phi()));
+    double dEta = deltaEta(epos, pTrk);
     return sqrt(dPhi*dPhi + dEta*dEta);
   }
   // --------------- calculate deltaEta between Track and EGamma object                 
-float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter){
-    float corr_eta = 999.0;
-    float er = epos.perp();
-    float ez = epos.z();
-    float z0 = trkIter->getVertex().z();
-    float theta = 0.0;
+  double deltaEta(const GlobalPoint& epos, const edm::Ptr< L1TkTrackType > & pTrk){
+    double corr_eta = 999.0;
+    double er = epos.perp();
+    double ez = epos.z();
+    double z0 = pTrk->getVertex().z();
+    double theta = 0.0;
     if (ez >= 0) theta = atan(er/fabs(ez-z0));
     else theta = M_PI - atan(er/fabs(ez-z0));
     corr_eta = -1.0 * log(tan(theta/2.0));
-    float deleta = (corr_eta - trkIter->getMomentum().eta());
+    double deleta = (corr_eta - pTrk->getMomentum().eta());
     return deleta;
   }
   // -------------- get Calorimeter position
-  GlobalPoint calorimeterPosition(float phi, float eta, float e) {
-    float x = 0; 
-    float y = 0;
-    float z = 0;
-    float depth = 0.89*(7.7+ log(e) );
-    float theta = 2*atan(exp(-1*eta));
-    float r = 0;
+  GlobalPoint calorimeterPosition(double phi, double eta, double e) {
+    double x = 0.; 
+    double y = 0.;
+    double z = 0.;
+    double depth = 0.89*(7.7+ log(e) );
+    double theta = 2*atan(exp(-1*eta));
+    double r = 0;
     if( fabs(eta) > 1.479 ) 
       { 
-	float ecalZ = 315.4*fabs(eta)/eta;
+	double ecalZ = 315.4*fabs(eta)/eta;
 	
 	r = ecalZ / cos( 2*atan( exp( -1*eta ) ) ) + depth;
 	x = r * cos( phi ) * sin( theta );
@@ -87,8 +93,8 @@ float deltaEta(GlobalPoint epos, L1TkTrackCollectionType::const_iterator trkIter
       }
     else
       {
-	float rperp = 129.0;
-	float zface =  sqrt( cos( theta ) * cos( theta ) /
+	double rperp = 129.0;
+	double zface =  sqrt( cos( theta ) * cos( theta ) /
 			     ( 1 - cos( theta ) * cos( theta ) ) * 
 			     rperp * rperp ) * fabs( eta ) / eta;  
 	r = sqrt( rperp * rperp + zface * zface ) + depth;
