@@ -114,8 +114,13 @@ public:
 	    double pt1=stubs_[iSector][i].pt();
 	    double pt2=L->stubs_[jSector][j].pt();
 	    double pttracklet=0.3*3.8/(rinv*100);
+<<<<<<< HEAD
 	    bool pass1=fabs(1.0/pt1-1.0/pttracklet)<0.25;
 	    bool pass2=fabs(1.0/pt2-1.0/pttracklet)<0.25;
+=======
+	    bool pass1=fabs(1.0/pt1-1.0/pttracklet)<0.5;
+	    bool pass2=fabs(1.0/pt2-1.0/pttracklet)<0.5;
+>>>>>>> my_dev
 	    bool pass=pass1&&pass2;
 
 	    if (0) {
@@ -152,7 +157,11 @@ public:
     }
   }
 
+<<<<<<< HEAD
   void findTracklets(L1TDisk* D){
+=======
+  void findTracklets(L1TDisk* D, double rmax=120.0){
+>>>>>>> my_dev
 
     //return;
 
@@ -167,6 +176,7 @@ public:
 	    double r1=stubs_[iSector][i].r();
 	    double z1=stubs_[iSector][i].z();
 	    double phi1=stubs_[iSector][i].phi();
+<<<<<<< HEAD
 
 	    double r2=D->stubs_[jSector][j].r();
 	    double z2=D->stubs_[jSector][j].z();
@@ -187,6 +197,30 @@ public:
 	    
 	    double phi0=phi1+asin(0.5*r1*rinv);
 
+=======
+
+	    double r2=D->stubs_[jSector][j].r();
+	    double z2=D->stubs_[jSector][j].z();
+	    double phi2=D->stubs_[jSector][j].phi();
+
+	    if (r2>rmax) continue;
+
+	    if (r2>80.0) continue;
+
+	    double deltaphi=phi1-phi2;
+
+	    if (deltaphi>0.5*two_pi) deltaphi-=two_pi;
+	    if (deltaphi<-0.5*two_pi) deltaphi+=two_pi;
+	    assert(fabs(deltaphi)<0.5*two_pi);
+
+
+	    double dist=sqrt(r2*r2+r1*r1-2*r1*r2*cos(deltaphi));
+        
+	    double rinv=2*sin(deltaphi)/dist;
+	    
+	    double phi0=phi1+asin(0.5*r1*rinv);
+
+>>>>>>> my_dev
 	    if (phi0>0.5*two_pi) phi0-=two_pi;
 	    if (phi0<-0.5*two_pi) phi0+=two_pi;
 	    if (!(fabs(phi0)<0.5*two_pi)) {
@@ -359,6 +393,7 @@ public:
 	    
 
 	    double theta0=asin(Deltai/r);
+<<<<<<< HEAD
 
 	    double Delta=Deltai-r_track*sin(theta0-(phi_track-phi));
 
@@ -370,6 +405,19 @@ public:
 	    //double phiproj=phi0-phiturn;
 	    double rproj=2.0*sin(0.5*(z-z0)*rinv/t)/rinv;
 
+=======
+
+	    double Delta=Deltai-r_track*sin(theta0-(phi_track-phi));
+
+
+
+	    //double phiturn=0.5*(z-z0)*rinv/t;
+	    //if (fabs(phiturn)>0.25*two_pi) continue;
+
+	    //double phiproj=phi0-phiturn;
+	    double rproj=2.0*sin(0.5*(z-z0)*rinv/t)/rinv;
+
+>>>>>>> my_dev
 	    //double deltaphi=phi-phiproj;
 	    //cout << "deltaphi phi phiproj:"<<deltaphi<<" "<<phi<<" "<<phiproj<<" "<<phi0<<" "<<asin(0.5*r*rinv)<<endl;
 
@@ -386,6 +434,10 @@ public:
 	    double rdeltaphi=Delta;
             double deltar=r-rproj;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> my_dev
 	    if (fabs(rdeltaphi)>0.2) continue;
 	    if (fabs(deltar)>3.0) continue;
 	    

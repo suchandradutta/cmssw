@@ -91,7 +91,11 @@ class L1TkElectronTrackProducer : public edm::EDProducer {
          
 	float ETmin; 	// min ET in GeV of L1EG objects
 
+<<<<<<< HEAD
 	float ZMAX;		// |z_track| < ZMAX in cm
+=======
+  //	float ZMAX;		// |z_track| < ZMAX in cm
+>>>>>>> my_dev
 	float CHI2MAX;		
 	float DRmin;
 	float DRmax;
@@ -126,9 +130,16 @@ L1TkElectronTrackProducer::L1TkElectronTrackProducer(const edm::ParameterSet& iC
    ETmin = (float)iConfig.getParameter<double>("ETmin");
 
    // parameters for the calculation of the isolation :
+<<<<<<< HEAD
    ZMAX = (float)iConfig.getParameter<double>("ZMAX");
    CHI2MAX = (float)iConfig.getParameter<double>("CHI2MAX");
    PTMINTRA = (float)iConfig.getParameter<double>("PTMINTRA");
+=======
+   //   ZMAX = (float)iConfig.getParameter<double>("ZMAX");
+   CHI2MAX = (float)iConfig.getParameter<double>("CHI2MAX");
+   PTMINTRA = (float)iConfig.getParameter<double>("PTMINTRA");
+   // for the calculation of the isolation variable :
+>>>>>>> my_dev
    DRmin = (float)iConfig.getParameter<double>("DRmin");
    DRmax = (float)iConfig.getParameter<double>("DRmax");
    DeltaZ = (float)iConfig.getParameter<double>("DeltaZ");
@@ -215,6 +226,12 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
       
       const math::XYZTLorentzVector P4 = egIter -> p4() ;      
       float trkisol = isolation(L1TkTrackHandle, itrack);
+<<<<<<< HEAD
+=======
+      if (RelativeIsolation && et_ele > 0.0) {   // relative isolation
+	trkisol = trkisol  / et_ele;
+      }
+>>>>>>> my_dev
       
       L1TkElectronParticle trkEm( P4, 
 				  EGammaRef,
@@ -297,6 +314,7 @@ L1TkElectronTrackProducer::isolation(const edm::Handle<L1TkTrackCollectionType> 
   edm::Ptr< L1TkTrackType > matchedTrkPtr (trkHandle, match_index) ; 
   L1TkTrackCollectionType::const_iterator trackIter;
 
+<<<<<<< HEAD
   float isol = 9999.9;
   float sumPt = 0.0;
   for (trackIter = trkHandle->begin(); trackIter != trkHandle->end(); ++trackIter) {
@@ -315,6 +333,23 @@ L1TkElectronTrackProducer::isolation(const edm::Handle<L1TkTrackCollectionType> 
     isol = sumPt ;
   }
   return isol;
+=======
+  float sumPt = 0.0;
+  int itr = 0;
+  for (trackIter = trkHandle->begin(); trackIter != trkHandle->end(); ++trackIter) {
+    itr++;
+    if (itr == match_index) continue;
+    float dZ = fabs(trackIter->getVertex().z() - matchedTrkPtr->getVertex().z());
+    
+    float dPhi = reco::deltaPhi(trackIter->getMomentum().phi(), matchedTrkPtr->getMomentum().phi());
+    float dEta = (trackIter->getMomentum().eta() - matchedTrkPtr->getMomentum().eta());
+    float dR =  sqrt(dPhi*dPhi + dEta*dEta);
+
+    if (dR > DRmin && dR < DRmax && dZ < DeltaZ) sumPt += trackIter->getMomentum().perp();
+
+  }
+  return sumPt;
+>>>>>>> my_dev
 }
 
 //define this as a plug-in

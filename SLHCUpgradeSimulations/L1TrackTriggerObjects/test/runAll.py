@@ -8,6 +8,21 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5) )
 
 from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import *
 
+<<<<<<< HEAD
+=======
+#
+# This runs over a file that already contains the L1Tracks and the L1TkPrimaryVertex.
+#
+# This runs the L1EG algorithms (stage-2 and new clustering), and 
+# creates L1TkEmParticles, L1TkElectrons, L1TrkMET.
+#
+# It also unpacks the L1Jets (Run-1 algorithm) that have been created
+# during the centrakl production. They are used to create L1TkJets and
+# L1TkHTMiss - these are just technical templates so far.
+#
+
+
+>>>>>>> my_dev
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 	#'file:example_w_Tracks_and_vertex.root'
@@ -51,6 +66,7 @@ process.pEtMiss = cms.Path( process.L1TkEtMiss )
 #
 # ---------------------------------------------------------------------------
 
+<<<<<<< HEAD
 # ---------------------------------------------------------------------------
 #
 # --- test L1TrackEmParticle
@@ -63,12 +79,47 @@ process.pEtMiss = cms.Path( process.L1TkEtMiss )
 process.load('Configuration.StandardSequences.RawToDigi_cff')
 process.p0 = cms.Path( process.RawToDigi )
         # run L1Reco
+=======
+
+# ---------------------------------------------------------------------------
+#
+# --- Run the L1EG algorithm of Jean-Baptiste (new clustering algorithm).
+# --- Note thet the efficiency is poor at very high PU...
+#
+# --- This also runs the "old" stage-2 algorithm
+
+process.load('Configuration/StandardSequences/L1HwVal_cff')
+process.load('Configuration.StandardSequences.RawToDigi_cff')
+process.load("SLHCUpgradeSimulations.L1CaloTrigger.SLHCCaloTrigger_cff")
+
+process.p = cms.Path(
+    process.RawToDigi+
+    process.SLHCCaloTrigger
+    )
+
+# bug fix for missing HCAL TPs in MC RAW
+process.p.insert(1, process.valHcalTriggerPrimitiveDigis)
+from SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff import HcalTPGCoderULUT
+HcalTPGCoderULUT.LUTGenerationMode = cms.bool(True)
+process.valRctDigis.hcalDigis             = cms.VInputTag(cms.InputTag('valHcalTriggerPrimitiveDigis'))
+process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDigis")
+        
+        # run L1Reco to produce the L1EG objects corresponding
+        # to the current (Run-1) trigger 
+>>>>>>> my_dev
 process.load('Configuration.StandardSequences.L1Reco_cff')
 process.L1Reco = cms.Path( process.l1extraParticles )
 
 
+<<<<<<< HEAD
 
 # --- Now run the L1TkEmParticleProducer 
+=======
+# ---------------------------------------------------------------------------
+#
+# --- test L1TrackEmParticle
+
+>>>>>>> my_dev
 
 # "photons" :
 
@@ -78,7 +129,11 @@ process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
                                                 # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
                                                 # objects that pass a cut RelIso < RelIsoCut are written
                                                 # into the new collection.
+<<<<<<< HEAD
         L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),      # input L1EG collection
+=======
+        L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),      # input L1EG collection
+>>>>>>> my_dev
                                                 # When the standard sequences are used :
                                                 #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
                                                 #     or ("l1extraParticles","Isolated")
@@ -116,12 +171,57 @@ process.pPhotons = cms.Path( process.L1TkPhotons )
 
 # "electrons" from L1Tracks :
 
+<<<<<<< HEAD
 #process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
 #        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
 #        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
 #        label = cms.string("NonIsolated")
 #)
 #process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
+=======
+process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
+        #label = cms.string("ElecTrk"),
+        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+        label = cms.string("EG"),       # labels the collection of L1TkEmParticleProducer that is produced.
+                                        # e.g. EG or IsoEG if all objects are kept, or
+                                        # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
+                                        # objects that pass a cut RelIso < RelIsoCut are written
+                                        # into the new collection.
+        L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),      # input EGamma collection
+                                        # When the standard sequences are used :
+                                                #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
+                                                #     or ("l1extraParticles","Isolated")
+                                                #   - for the "old stage-2" algo (2x2 clustering), use 
+                                                #     ("SLHCL1ExtraParticles","EGamma") or ("SLHCL1ExtraParticles","IsoEGamma")
+                                                #   - for the new clustering algorithm of Jean-Baptiste et al,
+                                                #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
+                                                #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
+        ETmin = cms.double( -1. ),              # Only the L1EG objects that have ET > ETmin in GeV
+                                                # are considered. ETmin < 0 means that no cut is applied.
+        # Track selection :
+        CHI2MAX = cms.double( 100. ),
+        PTMINTRA = cms.double( 12. ),   # in GeV
+        TrackEGammaDeltaPhi = cms.double(0.08),  # Delta Phi cutoff to match Track with L1EG objects
+        TrackEGammaDeltaR = cms.double(0.08),   # Delta R cutoff to match Track with L1EG objects
+        TrackEGammaDeltaEta = cms.double(0.08), # Delta Eta cutoff to match Track with L1EG objects
+                                                # are considered. 
+        RelativeIsolation = cms.bool( True ),   # default = True. The isolation variable is relative if True,
+                                                # else absolute.
+        IsoCut = cms.double( -0.15 ),           # Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
+                                                # the isolation is below RelIsoCut are written into
+                                                # the output collection. When RelIsoCut < 0, no cut is applied.
+                                                # When RelativeIsolation = False, IsoCut is in GeV.
+                                                # NOTE: TRKBASED-ISOLATION IS NOT READY TO USE YET.
+        # Determination of the isolation w.r.t. L1Tracks :
+        DRmin = cms.double( 0.06),
+        DRmax = cms.double( 0.5 ),
+        DeltaZ = cms.double( 1.0 )    # in cm. Used for tracks to be used isolation calculation
+)
+
+process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
+
+
+>>>>>>> my_dev
 #
 #
 ## "electrons" from stubs :
@@ -176,7 +276,11 @@ process.pHTM = cms.Path( process.L1TkHTMiss )
 process.ana = cms.EDAnalyzer( 'L1TrackTriggerObjectsAnalyzer' ,
     L1VtxInputTag = cms.InputTag("L1TrackPrimaryVertex"),
     L1TkEtMissInputTag = cms.InputTag("L1TkEtMiss","MET"),
+<<<<<<< HEAD
     L1TkElectronsInputTag = cms.InputTag("L1TkElectronsTrack","NonIsolated"),
+=======
+    L1TkElectronsInputTag = cms.InputTag("L1TkElectronsTrack","EG"),
+>>>>>>> my_dev
     L1TkPhotonsInputTag = cms.InputTag("L1TkPhotons","EGIsoTrk"),
     L1TkJetsInputTag = cms.InputTag("L1TkJets","Central"),
     L1TkHTMInputTag = cms.InputTag("L1TkHTMiss")

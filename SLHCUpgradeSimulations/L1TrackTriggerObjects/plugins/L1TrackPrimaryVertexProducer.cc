@@ -66,10 +66,17 @@ class L1TrackPrimaryVertexProducer : public edm::EDProducer {
 
       float MaxPtVertex(const edm::Handle<L1TkTrackCollectionType> & L1TkTrackHandle,
                 float& sum,
+<<<<<<< HEAD
                 int nStubsmin, int nPSmin, float ptmin, int imode) ;
 
       float SumPtVertex(const edm::Handle<L1TkTrackCollectionType> & L1TkTrackHandle,
                 float z, int nStubsmin, int nPSmin, float ptmin, int imode) ;
+=======
+                int nmin, int nPSmin, float ptmin, int imode) ;
+
+      float SumPtVertex(const edm::Handle<L1TkTrackCollectionType> & L1TkTrackHandle,
+                float z, int nmin, int nPSmin, float ptmin, int imode) ;
+>>>>>>> my_dev
 
 
    private:
@@ -91,6 +98,12 @@ class L1TrackPrimaryVertexProducer : public edm::EDProducer {
 	float CHI2MAX;
 	float PTMINTRA ; 	// in GeV
 
+<<<<<<< HEAD
+=======
+	int nStubsmin ;		// minimum number of stubs 
+	int nStubsPSmin ;	// minimum number of stubs in PS modules 
+
+>>>>>>> my_dev
         const StackedTrackerGeometry*                   theStackedGeometry;
 
 };
@@ -128,6 +141,11 @@ L1TrackPrimaryVertexProducer::L1TrackPrimaryVertexProducer(const edm::ParameterS
   CHI2MAX = (float)iConfig.getParameter<double>("CHI2MAX");
   PTMINTRA = (float)iConfig.getParameter<double>("PTMINTRA");
 
+<<<<<<< HEAD
+=======
+  nStubsmin = iConfig.getParameter<int>("nStubsmin");
+  nStubsPSmin = iConfig.getParameter<int>("nStubsPSmin");
+>>>>>>> my_dev
 
   produces<L1TrackPrimaryVertexCollection>();
 
@@ -173,24 +191,40 @@ L1TrackPrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup&
 
 	// max(Sum PT2), tracks with at least 3 stubs in PS layers
    float sum1 = -999;
+<<<<<<< HEAD
    int nStubsmin = 4;
    int nPSmin = 3;
    float ptmin = PTMINTRA ;
    int imode = 2;
    float z1 = MaxPtVertex( L1TkTrackHandle, sum1, nStubsmin, nPSmin, ptmin, imode );
+=======
+   int nmin = nStubsmin;
+   int nPSmin = nStubsPSmin ;
+   float ptmin = PTMINTRA ;
+   int imode = 2;
+   float z1 = MaxPtVertex( L1TkTrackHandle, sum1, nmin, nPSmin, ptmin, imode );
+>>>>>>> my_dev
    L1TrackPrimaryVertex vtx1( z1, sum1 );
 
 	// max(Sum PT2), no constraint on the number of stubs in PS
    float sum2 = -999;
    nPSmin = 0;
+<<<<<<< HEAD
    float z2 = MaxPtVertex( L1TkTrackHandle, sum2, nStubsmin, nPSmin, ptmin, imode );
+=======
+   float z2 = MaxPtVertex( L1TkTrackHandle, sum2, nmin, nPSmin, ptmin, imode );
+>>>>>>> my_dev
    L1TrackPrimaryVertex vtx2( z2, sum2 );
 
 	// max(Sum PT), tracks with at least 3 stubs in PS layers
    float sum3 = -999;
    nPSmin = 3;
    imode = 1;
+<<<<<<< HEAD
    float z3 = MaxPtVertex( L1TkTrackHandle, sum3, nStubsmin, nPSmin, ptmin, imode );
+=======
+   float z3 = MaxPtVertex( L1TkTrackHandle, sum3, nmin, nPSmin, ptmin, imode );
+>>>>>>> my_dev
    L1TrackPrimaryVertex vtx3( z3, sum3 );
 
  result -> push_back( vtx1 );
@@ -203,7 +237,11 @@ L1TrackPrimaryVertexProducer::produce(edm::Event& iEvent, const edm::EventSetup&
 
 float L1TrackPrimaryVertexProducer::MaxPtVertex(const edm::Handle<L1TkTrackCollectionType> & L1TkTrackHandle,
  		float& Sum,
+<<<<<<< HEAD
 		int nStubsmin, int nPSmin, float ptmin, int imode) {
+=======
+		int nmin, int nPSmin, float ptmin, int imode) {
+>>>>>>> my_dev
         // return the zvtx corresponding to the max(SumPT)
         // of tracks with at least nPSmin stubs in PS modules
    
@@ -215,7 +253,11 @@ float L1TrackPrimaryVertexProducer::MaxPtVertex(const edm::Handle<L1TkTrackColle
         //float z = -100 + itest;         // z in mm
 	float z = -ZMAX * 10 + itest ;  	// z in mm
         z = z/10.  ;   // z in cm
+<<<<<<< HEAD
         float sum = SumPtVertex(L1TkTrackHandle, z, nStubsmin, nPSmin, ptmin, imode);
+=======
+        float sum = SumPtVertex(L1TkTrackHandle, z, nmin, nPSmin, ptmin, imode);
+>>>>>>> my_dev
         if (sumMax >0 && sum == sumMax) {
           //cout << " Note: Several vertices have the same sum " << zvtxmax << " " << z << " " << sumMax << endl;
         }
@@ -232,7 +274,11 @@ float L1TrackPrimaryVertexProducer::MaxPtVertex(const edm::Handle<L1TkTrackColle
 
 
 float L1TrackPrimaryVertexProducer::SumPtVertex(const edm::Handle<L1TkTrackCollectionType> & L1TkTrackHandle,
+<<<<<<< HEAD
 		float z, int nStubsmin, int nPSmin, float ptmin, int imode) {
+=======
+		float z, int nmin, int nPSmin, float ptmin, int imode) {
+>>>>>>> my_dev
 
         // sumPT of tracks with >= nPSmin stubs in PS modules
         // z in cm
@@ -280,7 +326,11 @@ float L1TrackPrimaryVertexProducer::SumPtVertex(const edm::Handle<L1TkTrackColle
         if (imode == 1 || imode == 2 ) {
             if (nPS < nPSmin) continue;
         }
+<<<<<<< HEAD
 	if ( nstubs < nStubsmin) continue;
+=======
+	if ( nstubs < nmin) continue;
+>>>>>>> my_dev
 
         if (imode == 2) sumpt += pt*pt;
         if (imode == 1) sumpt += pt;

@@ -6,6 +6,19 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
+<<<<<<< HEAD
+=======
+#
+# This runs over a file that already contains the L1Tracks.
+#
+# It creates L1TkEmParticles, starting from the Run-1 like L1EG objects that
+# are obtained from the process.L1Reco below.
+# If you want to run the stage-2 algorithms instead, see e.g.
+# EGamma_FullExample.py.
+#
+
+
+>>>>>>> my_dev
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(

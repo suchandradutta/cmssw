@@ -215,5 +215,9 @@
   <class name="l1slhc::L1EGCrystalClusterCollection" />
   <class name="edm::Wrapper<l1slhc::L1EGCrystalClusterCollection>" />
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> my_dev
 </lcgdict>
 
