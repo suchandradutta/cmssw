@@ -15,24 +15,15 @@ process = cms.Process("ALL")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
-<<<<<<< HEAD
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
-=======
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
->>>>>>> my_dev
 
 from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import *
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-<<<<<<< HEAD
-   '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/Hgaga/BE5D/zmatchingOff/m1_Hgaga_BE5D.root',
-   '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/Hgaga/BE5D/zmatchingOff/m2_Hgaga_BE5D.root'
-=======
    #'/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/Hgaga/BE5D/zmatchingOff/m1_Hgaga_BE5D.root',
    #'/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/Hgaga/BE5D/zmatchingOff/m2_Hgaga_BE5D.root'
     '/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/MinBias/BE5D/zmatchingOff/m1_MinBias_BE5D.root'
->>>>>>> my_dev
     )
 )
 
@@ -186,8 +177,6 @@ process.pPhotonsNewIsoEG = cms.Path( process.L1TkPhotonsNewIsoEG )
 
 
 
-<<<<<<< HEAD
-=======
 # ----------------------------------------------------------------------
 
 # -- Suchandra's electrons, old stage-2
@@ -245,7 +234,6 @@ process.pElectronsStage2IsoEGIsoTrk = cms.Path( process.L1TkElectronsStage2IsoEG
 
 
 
->>>>>>> my_dev
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "example_all.root" ),
@@ -255,10 +243,7 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 
 
 process.Out.outputCommands.append('keep *_L1TkPhotons*_*_*')
-<<<<<<< HEAD
-=======
 process.Out.outputCommands.append('keep *_L1TkElectrons*_*_*')
->>>>>>> my_dev
 process.Out.outputCommands.append('keep *_L1TkEtMiss_*_*')
 process.Out.outputCommands.append('keep *_l1extraParticles_NonIsolated_*')
 process.Out.outputCommands.append('keep *_l1extraParticles_Isolated_*')

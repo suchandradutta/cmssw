@@ -8,8 +8,6 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(5) )
 
 from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import *
 
-<<<<<<< HEAD
-=======
 #
 # This runs over a file that already contains the L1Tracks and the L1TkPrimaryVertex.
 #
@@ -22,7 +20,6 @@ from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import
 #
 
 
->>>>>>> my_dev
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
 	#'file:example_w_Tracks_and_vertex.root'
@@ -66,20 +63,6 @@ process.pEtMiss = cms.Path( process.L1TkEtMiss )
 #
 # ---------------------------------------------------------------------------
 
-<<<<<<< HEAD
-# ---------------------------------------------------------------------------
-#
-# --- test L1TrackEmParticle
-
-# --- First, create l1extra objects for L1EGamma 
-#     here I use the Run1 trigger. The produced objects dont really
-#     make sense, but OK to check the technicalities.
-
-        # raw2digi to get the gct digis
-process.load('Configuration.StandardSequences.RawToDigi_cff')
-process.p0 = cms.Path( process.RawToDigi )
-        # run L1Reco
-=======
 
 # ---------------------------------------------------------------------------
 #
@@ -106,20 +89,14 @@ process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDi
         
         # run L1Reco to produce the L1EG objects corresponding
         # to the current (Run-1) trigger 
->>>>>>> my_dev
 process.load('Configuration.StandardSequences.L1Reco_cff')
 process.L1Reco = cms.Path( process.l1extraParticles )
 
 
-<<<<<<< HEAD
-
-# --- Now run the L1TkEmParticleProducer 
-=======
 # ---------------------------------------------------------------------------
 #
 # --- test L1TrackEmParticle
 
->>>>>>> my_dev
 
 # "photons" :
 
@@ -129,11 +106,7 @@ process.L1TkPhotons = cms.EDProducer("L1TkEmParticleProducer",
                                                 # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
                                                 # objects that pass a cut RelIso < RelIsoCut are written
                                                 # into the new collection.
-<<<<<<< HEAD
-        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),      # input L1EG collection
-=======
         L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),      # input L1EG collection
->>>>>>> my_dev
                                                 # When the standard sequences are used :
                                                 #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
                                                 #     or ("l1extraParticles","Isolated")
@@ -171,14 +144,6 @@ process.pPhotons = cms.Path( process.L1TkPhotons )
 
 # "electrons" from L1Tracks :
 
-<<<<<<< HEAD
-#process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
-#        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-#        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
-#        label = cms.string("NonIsolated")
-#)
-#process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
-=======
 process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
         #label = cms.string("ElecTrk"),
         L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
@@ -221,7 +186,6 @@ process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
 process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
 
 
->>>>>>> my_dev
 #
 #
 ## "electrons" from stubs :
@@ -276,11 +240,7 @@ process.pHTM = cms.Path( process.L1TkHTMiss )
 process.ana = cms.EDAnalyzer( 'L1TrackTriggerObjectsAnalyzer' ,
     L1VtxInputTag = cms.InputTag("L1TrackPrimaryVertex"),
     L1TkEtMissInputTag = cms.InputTag("L1TkEtMiss","MET"),
-<<<<<<< HEAD
-    L1TkElectronsInputTag = cms.InputTag("L1TkElectronsTrack","NonIsolated"),
-=======
     L1TkElectronsInputTag = cms.InputTag("L1TkElectronsTrack","EG"),
->>>>>>> my_dev
     L1TkPhotonsInputTag = cms.InputTag("L1TkPhotons","EGIsoTrk"),
     L1TkJetsInputTag = cms.InputTag("L1TkJets","Central"),
     L1TkHTMInputTag = cms.InputTag("L1TkHTMiss")

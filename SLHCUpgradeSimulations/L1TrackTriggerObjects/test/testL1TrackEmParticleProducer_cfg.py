@@ -6,8 +6,6 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
-<<<<<<< HEAD
-=======
 #
 # This runs over a file that already contains the L1Tracks.
 #
@@ -18,7 +16,6 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 #
 
 
->>>>>>> my_dev
 process.source = cms.Source("PoolSource",
     # replace 'myfile.root' with the source file you want to use
     fileNames = cms.untracked.vstring(

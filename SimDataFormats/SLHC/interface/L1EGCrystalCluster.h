@@ -16,12 +16,9 @@ namespace l1slhc
     float y ;
     float z ;
     float hovere ;
-<<<<<<< HEAD
-=======
 
     float ECALiso ;
     float ECALetPUcorr;
->>>>>>> my_dev
     
   };
   

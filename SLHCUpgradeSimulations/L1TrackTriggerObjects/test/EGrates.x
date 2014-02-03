@@ -23,20 +23,10 @@ TH1F* h2int = new TH1F("hEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* h3int = new TH1F("hIsoEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* h4int = new TH1F("hIsoEGIsoTtkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 
-<<<<<<< HEAD
-Events->Draw("TMath::Max(TMath::Max(l1extraL1EmParticles_l1extraParticles_NonIsolated_ALL.obj.pt_[1],l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[1]),  TMath::Max(l1extraL1EmParticles_l1extraParticles_NonIsolated_ALL.obj.pt_[0],l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[0]) )>>hEG") ;
-
-Events->Draw("TMath::Max(TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsRun1EG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkEmParticles_L1TkPhotonsRunIso1EG_IsoTrk_ALL.obj.pt_[1]), TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsRun1EG_IsoTrk_ALL.obj.pt_[0],l1extraL1TkEmParticles_L1TkPhotonsRunIso1EG_IsoTrk_ALL.obj.pt_[0]))>>hIsoTtk") ;
-
-Events->Draw("TMath::Max(l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[1],l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[0])>>hIsoEG") ;
-
-Events->Draw("TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsRunIso1EG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkEmParticles_L1TkPhotonsRunIso1EG_IsoTrk_ALL.obj.pt_[0])>>hIsoEGIsoTtk") ;
-=======
 Events -> Draw("TMath::Max(Max$(l1extraL1EmParticles_l1extraParticles_NonIsolated_ALL.obj.pt_) , Max$(l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_))>>hEG");
 Events->Draw("TMath::Max(Max$(l1extraL1TkEmParticles_L1TkPhotonsRun1EG_IsoTrk_ALL.obj.pt_),Max$(l1extraL1TkEmParticles_L1TkPhotonsRunIso1EG_IsoTrk_ALL.obj.pt_))>>hIsoTtk");
 Events -> Draw("Max$(l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_)>>hIsoEG");
 Events -> Draw("Max$(l1extraL1TkEmParticles_L1TkPhotonsRunIso1EG_IsoTrk_ALL.obj.pt_)>>hIsoEGIsoTtk");
->>>>>>> my_dev
 
 	// old Stage-2 algos :
 
@@ -50,17 +40,10 @@ TH1F* g2int = new TH1F("gEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* g3int = new TH1F("gIsoEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* g4int = new TH1F("gIsoEGIsoTtkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 
-<<<<<<< HEAD
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_ALL.obj.pt_[0])>>gEG") ;
-Events->Draw("TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsStage2EG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkEmParticles_L1TkPhotonsStage2EG_IsoTrk_ALL.obj.pt_[0])>>gIsoTtk") ;
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_ALL.obj.pt_[0])>>gIsoEG") ;
-Events->Draw("TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsStage2IsoEG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkEmParticles_L1TkPhotonsStage2IsoEG_IsoTrk_ALL.obj.pt_[0])>>gIsoEGIsoTtk") ;
-=======
 Events -> Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_ALL.obj.pt_)>>gEG");
 Events -> Draw("Max$(l1extraL1TkEmParticles_L1TkPhotonsStage2EG_IsoTrk_ALL.obj.pt_)>>gIsoTtk");
 Events -> Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_ALL.obj.pt_)>>gIsoEG");
 Events -> Draw("Max$(l1extraL1TkEmParticles_L1TkPhotonsStage2IsoEG_IsoTrk_ALL.obj.pt_)>>gIsoEGIsoTtk");
->>>>>>> my_dev
 
 	// new clustering :
 
@@ -74,18 +57,10 @@ TH1F* j2int = new TH1F("jEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* j3int = new TH1F("jIsoEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* j4int = new TH1F("jIsoEGIsoTtkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 
-<<<<<<< HEAD
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_EGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_EGamma_ALL.obj.pt_[0])>>jEG") ;
-Events->Draw("TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsNewEG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkEmParticles_L1TkPhotonsNewEG_IsoTrk_ALL.obj.pt_[0])>>jIsoTtk") ;
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_IsoEGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_IsoEGamma_ALL.obj.pt_[0])>>jIsoEG") ;
-Events->Draw("TMath::Max(l1extraL1TkEmParticles_L1TkPhotonsNewIsoEG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkEmParticles_L1TkPhotonsNewIsoEG_IsoTrk_ALL.obj.pt_[0])>>jIsoEGIsoTtk") ;
-
-=======
 Events -> Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_EGamma_ALL.obj.pt_)>>jEG");
 Events -> Draw("Max$(l1extraL1TkEmParticles_L1TkPhotonsNewEG_IsoTrk_ALL.obj.pt_)>>jIsoTtk");
 Events -> Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_IsoEGamma_ALL.obj.pt_)>>jIsoEG");
 Events -> Draw("Max$(l1extraL1TkEmParticles_L1TkPhotonsNewIsoEG_IsoTrk_ALL.obj.pt_)>>jIsoEGIsoTtk");
->>>>>>> my_dev
 
 
 for (int i=0; i <= nbins+1; i++) {

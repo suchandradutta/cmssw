@@ -579,11 +579,7 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         
   }
 
-<<<<<<< HEAD
-  cout << "L1TrackProducer: "<<stubcounter<<endl;
-=======
   //cout << "L1TrackProducer: "<<stubcounter<<endl;
->>>>>>> my_dev
 
   //std::cout << "Will actually do L1 tracking:"<<std::endl;
 

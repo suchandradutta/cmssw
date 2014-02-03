@@ -26,8 +26,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 #
 # ---- Run the L1Tracking :
 
-<<<<<<< HEAD
-=======
 # ---- redo the stubs. Stubs were produced during the central production
 #      and are present on the DIGI files, but the "z-matching" condition
 #      was enforced. Here we redo the stubs without the z-matching.
@@ -38,7 +36,6 @@ process.pStubs = cms.Path( process.L1TkStubsFromPixelDigis )
 
 # --- now we runn the L1Track producer :
 
->>>>>>> my_dev
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedGauss_cfi')
 

@@ -21,8 +21,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 
 
 # ---- Run the L1Tracking :
-<<<<<<< HEAD
-=======
 
 # ---- redo the stubs. Stubs were produced during the central production
 #      and are present on the DIGI files, but the "z-matching" condition
@@ -34,7 +32,6 @@ process.pStubs = cms.Path( process.L1TkStubsFromPixelDigis )
 
 # --- now we runn the L1Track producer :
 
->>>>>>> my_dev
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedGauss_cfi')
 
@@ -69,13 +66,9 @@ process.L1TrackPrimaryVertex = cms.EDProducer('L1TrackPrimaryVertexProducer',
      ZMAX = cms.double ( 25. ) ,	# in cm
      CHI2MAX = cms.double( 100. ),
      DeltaZ = cms.double( 0.1 ),    	# in cm.   
-<<<<<<< HEAD
-     PTMINTRA = cms.double( 2.) 	# PTMIN of L1Tracks, in GeV
-=======
      PTMINTRA = cms.double( 2.), 	# PTMIN of L1Tracks, in GeV
      nStubsmin = cms.int32( 4 ) ,	# minimum number of stubs
      nStubsPSmin = cms.int32( 3 )       # minimum number of stubs in PS modules 
->>>>>>> my_dev
 )
 
 process.p = cms.Path( process.L1TrackPrimaryVertex )

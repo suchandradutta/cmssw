@@ -29,16 +29,10 @@
 
 
 // Gen-level stuff:
-<<<<<<< HEAD
-#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
-#include "DataFormats/Candidate/interface/Candidate.h"
-=======
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "SimDataFormats/GeneratorProducts/interface/HepMCProduct.h"
->>>>>>> my_dev
 
 #include "DataFormats/L1TrackTrigger/interface/L1TkEmParticle.h"
 #include "DataFormats/L1TrackTrigger/interface/L1TkEmParticleFwd.h"
@@ -51,12 +45,6 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "DataFormats/GeometryVector/interface/GlobalPoint.h"
 
-<<<<<<< HEAD
-#include "DataFormats/Candidate/interface/Candidate.h"
-#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
-=======
->>>>>>> my_dev
 
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "SLHCUpgradeSimulations/L1TrackTriggerObjects/interface/L1TkElectronEtComparator.h"
@@ -96,26 +84,20 @@ private:
   int selectedEGTot_;
   int selectedEGTrkTot_;
 
-<<<<<<< HEAD
-=======
   TH1F* etGenRef_;
   TH1F* etGenEGamma_;
   TH1F* etGenEGammaTurnOn_;
   TH1F* etGenEGammaTrk_;
   TH1F* etGenEGammaTrkTurnOn_;
 
->>>>>>> my_dev
   TH1F* etaEGamma_;
   TH1F* etEGamma_;
   TH1F* etaEGammaTrk_;
   TH1F* etEGammaTrk_;
 
   std::string analysisOption_;
-<<<<<<< HEAD
-=======
   float etaCutoff_;
   float trkPtCutoff_;
->>>>>>> my_dev
 
   edm::SimTrackContainer simTracks_;
   l1extra::L1EmParticleCollection eGammaCollection;
@@ -132,12 +114,9 @@ L1TkElectronTrackObjectsAnalyzer::L1TkElectronTrackObjectsAnalyzer(const edm::Pa
   L1TkElectronsInputTag = iConfig.getParameter<edm::InputTag>("L1TkElectronsInputTag");
 
   analysisOption_ = iConfig.getParameter<std::string>("AnalysisOption");
-<<<<<<< HEAD
-=======
   etaCutoff_ = iConfig.getParameter<double>("EtaCutOff");
   trkPtCutoff_ = iConfig.getParameter<double>("TrackPtCutOff");
 
->>>>>>> my_dev
   
 }
 void L1TkElectronTrackObjectsAnalyzer::beginJob() {
@@ -147,13 +126,6 @@ void L1TkElectronTrackObjectsAnalyzer::beginJob() {
   etaEGammaTrk_ = fs->make<TH1F>("EGammaEta_Track","Eta of TrkEGamma", 25, -2.5, 2.5);
     
   if (analysisOption_ == "Efficiency") {
-<<<<<<< HEAD
-    etEGamma_ = fs->make<TH1F>("EGammaEt_Ref","Et of EGamma", 24, 2.0, 50.0);
-    etEGammaTrk_ = fs->make<TH1F>("EGammaEt_Track","Et of TrkEGamma", 24, 2.0, 50.0);
-  } else {
-    etEGamma_ = fs->make<TH1F>("EGammaEtThresholdEvt_Ref","Et of EGamma (EventEt threshold)", 24, 2.0, 50.0);
-    etEGammaTrk_ = fs->make<TH1F>("EGammaEtThresholdEvt_Track","Et of TrkEGamma( Event Et threshold)", 24, 2.0, 50.0);
-=======
     etGenRef_ = fs->make<TH1F>("GenEt","Et of GenParticle", 20, 9.5, 59.5);
     etGenEGamma_    = fs->make<TH1F>("GenEt_EGamma","Et of GenParticle (EG > 0)", 20, 9.5, 59.5);
     etGenEGammaTurnOn_ = fs->make<TH1F>("GenEt_EGammaEt","Et of GenParticle (EG > 20)", 20, 9.5, 59.5);
@@ -162,7 +134,6 @@ void L1TkElectronTrackObjectsAnalyzer::beginJob() {
   } else {
     etEGamma_ = fs->make<TH1F>("EGammaEtThresholdEvt_Ref","Et of EGamma (EventEt threshold)", 90, 4.5, 94.5);
     etEGammaTrk_ = fs->make<TH1F>("EGammaEtThresholdEvt_Track","Et of TrkEGamma( Event Et threshold)", 90, 4.5, 94.5);
->>>>>>> my_dev
   }
 
   selectedEGTot_ = 0;
@@ -191,18 +162,9 @@ L1TkElectronTrackObjectsAnalyzer::analyze(const edm::Event& iEvent, const edm::E
   ievent++;  
   
   iEvent.getByLabel(L1TkElectronsInputTag, L1TrackElectronsHandle);
-<<<<<<< HEAD
-  
 
   iEvent.getByLabel(L1EGammaInputTag,EGammaHandle);
   eGammaCollection = (*EGammaHandle.product());
-  sort(eGammaCollection.begin(), eGammaCollection.end(), L1TkElectron::EtComparator());
-=======
-
-  iEvent.getByLabel(L1EGammaInputTag,EGammaHandle);
-  eGammaCollection = (*EGammaHandle.product());
-  //  sort(eGammaCollection.begin(), eGammaCollection.end(), L1TkElectron::EtComparator());
->>>>>>> my_dev
   
   
   Handle<edm::SimTrackContainer> simTrackHandle;
@@ -210,48 +172,12 @@ L1TkElectronTrackObjectsAnalyzer::analyze(const edm::Event& iEvent, const edm::E
   simTracks_ = (*simTrackHandle.product());
    
   iEvent.getByLabel("genParticles", genParticleHandle);
-<<<<<<< HEAD
-
-=======
->>>>>>> my_dev
   if (analysisOption_ == "Efficiency") checkEfficiency();
   else checkRate();
 }
 void L1TkElectronTrackObjectsAnalyzer::endJob() {
   std::cout << " Selected EGammas " << selectedEGTot_ << std::endl;
   std::cout << " Selected Track EGammas " << selectedEGTrkTot_ << std::endl;
-<<<<<<< HEAD
-}
-void L1TkElectronTrackObjectsAnalyzer::checkEfficiency() {
-
-  int nSelectedEG = 0;
-  int nSelectedEGTrk =0;
-  int igIndx = matchEGWithGenParticle();
-  if (igIndx == -1 ) return;
-  
-  std::cout<< " Event " << ievent << " Selected EGamma # " << igIndx << " Et " << eGammaCollection[igIndx].et() << " Eta " << eGammaCollection[igIndx].eta()<<std::endl;
-  nSelectedEG++;
-  etaEGamma_->Fill(eGammaCollection[igIndx].eta());
-  std::vector<L1TkElectronParticle>::const_iterator egTrkIter ;
-  float dRmin = 999.9;
-  nSelectedEGTrk = 0;
-  float eta_min;
-  for (egTrkIter = L1TrackElectronsHandle -> begin(); egTrkIter != L1TrackElectronsHandle->end(); ++egTrkIter) {
-    float dPhi = reco::deltaPhi(eGammaCollection[igIndx].phi(), egTrkIter->phi());
-    float dEta = (eGammaCollection[igIndx].eta() - egTrkIter->eta());
-    float dR =  sqrt(dPhi*dPhi + dEta*dEta);
-    if (dR < dRmin) {
-      dRmin = dR;
-      eta_min = egTrkIter->eta();
-    }
-  }
-  if (dRmin < 999.9) {
-    nSelectedEGTrk++;
-    if (nSelectedEGTrk == 1) {
-      etaEGammaTrk_->Fill(eta_min);
-      std::cout<< "Event # " << ievent << " Selected  EGamma matched " << std::endl;
-    }
-=======
   if (analysisOption_ == "Rate") {
     float scale_fac = 30000.0/ievent;
     etEGamma_->Scale(scale_fac);
@@ -277,7 +203,6 @@ void L1TkElectronTrackObjectsAnalyzer::checkEfficiency() {
     std::cout<< "Event # " << ievent << " Selected  EGamma "<< nSelectedEG << " matched EGamma Trk " << nSelectedEGTrk << std::endl;     
     etGenEGammaTrk_->Fill(genPt);
     if (nSelectedEGTrkEt > 0) etGenEGammaTrkTurnOn_->Fill(genPt);
->>>>>>> my_dev
   }
 
   selectedEGTot_ += nSelectedEG;
@@ -299,11 +224,7 @@ void L1TkElectronTrackObjectsAnalyzer::checkRate() {
     float et_ele = 0;
     if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
     else et_ele = -1.0;
-<<<<<<< HEAD
-    if (fabs(eta_ele) > 2.3) continue;
-=======
     if (fabs(eta_ele) >= etaCutoff_) continue;
->>>>>>> my_dev
     nSelectedEG++;
     if (nSelectedEG == 1) {
       fillIntegralHistos(etEGamma_, et_ele);
@@ -313,17 +234,6 @@ void L1TkElectronTrackObjectsAnalyzer::checkRate() {
     float dRmin = 999.9;
     std::vector<L1TkElectronParticle>::const_iterator egTrkIter ;
     for (egTrkIter = L1TrackElectronsHandle -> begin(); egTrkIter != L1TrackElectronsHandle->end(); ++egTrkIter) {
-<<<<<<< HEAD
-      float dPhi = reco::deltaPhi(phi_ele, egTrkIter->getEGRef()->phi());
-      float dEta = (eta_ele - egTrkIter->getEGRef()->eta());
-      float dR =  sqrt(dPhi*dPhi + dEta*dEta);
-      if (dR < dRmin) {
-	dRmin = dR;
-	et_min = egTrkIter->pt();
-      }
-    }
-    if (dRmin < 999.9) {
-=======
       if (fabs(egTrkIter->eta()) < etaCutoff_ && egTrkIter->getTrkPtr()->getMomentum().perp() > trkPtCutoff_) {
 	//      if (fabs(egTrkIter->getEGRef()->eta()) >= etaCutoff_) continue;
 	float dPhi = reco::deltaPhi(phi_ele, egTrkIter->getEGRef()->phi());
@@ -336,7 +246,6 @@ void L1TkElectronTrackObjectsAnalyzer::checkRate() {
       }
     }
     if (dRmin < 0.1) {
->>>>>>> my_dev
       nSelectedEGTrk++;
       if (nSelectedEGTrk == 1) {
 	std::cout << "Selected EGammaTrk objet in the event " << et_ele << " with pt "<< egTrkIter->pt() << std::endl;           
@@ -352,17 +261,10 @@ void L1TkElectronTrackObjectsAnalyzer::fillIntegralHistos(TH1F* th, float var){
   for (int ibin = 1; ibin < nbin+1; ibin++) th->Fill(th->GetBinCenter(ibin));
 }
 int L1TkElectronTrackObjectsAnalyzer::matchEGWithSimTrack() {
-<<<<<<< HEAD
-  int indx;
-  float dRmin = 999.9;
-
-  if ( fabs(simTracks_[0].momentum().eta())> 2.3 || simTracks_[0].momentum().pt() <= 20.0) return -1;
-=======
   if ( fabs(simTracks_[0].momentum().eta())> etaCutoff_ || simTracks_[0].momentum().pt() <= 0.0) return -1;
   etGenRef_->Fill(simTracks_[0].momentum().pt()); 
   int nEG = 0;
   int nEGEt = 0;
->>>>>>> my_dev
 
   for (unsigned int igam = 0; igam != eGammaCollection.size(); igam++) {
     int ibx = eGammaCollection[igam].bx();
@@ -370,36 +272,6 @@ int L1TkElectronTrackObjectsAnalyzer::matchEGWithSimTrack() {
     
     float e_ele   = eGammaCollection[igam].energy();
     float eta_ele = eGammaCollection[igam].eta(); 
-<<<<<<< HEAD
-    float phi_ele = eGammaCollection[igam].phi(); 
-    float et_ele = 0;
-    if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
-    else et_ele = -1.0;
-    if (fabs(eta_ele) > 2.3) continue;
-    if ( et_ele <= 20) continue;
-    float dPhi = reco::deltaPhi(simTracks_[0].momentum().phi(), phi_ele);
-    float dEta = (simTracks_[0].momentum().eta() - eta_ele);
-    float dR =  sqrt(dPhi*dPhi + dEta*dEta);
-    if (dR < dRmin) {
-      dRmin = dR;
-      indx = igam; 
-    } 
-  } 
-  if (dRmin < 0.1) return indx;
-  else return -1;
-}
-int L1TkElectronTrackObjectsAnalyzer::matchEGWithGenParticle() {
-  int indx;
-  float dRmin = 999.9;
-  const reco::Candidate & p = (*genParticleHandle)[0];
-  if ( fabs(p.eta()) > 2.3 || p.pt() <= 20.0) return -1;
-  for (unsigned int igam = 0; igam != eGammaCollection.size(); igam++) {
-    int ibx = eGammaCollection[igam].bx();
-    if (ibx != 0) continue;
-
-    float eta_ele = eGammaCollection[igam].eta(); 
-    float phi_ele = eGammaCollection[igam].phi(); 
-=======
     //    float phi_ele = eGammaCollection[igam].phi(); 
     float et_ele = 0;
     if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
@@ -437,26 +309,10 @@ int L1TkElectronTrackObjectsAnalyzer::matchEGWithGenParticle() {
     
     float eta_ele = eGammaCollection[igam].eta(); 
     //    float phi_ele = eGammaCollection[igam].phi(); 
->>>>>>> my_dev
     float e_ele   = eGammaCollection[igam].energy();
     float et_ele = 0;
     if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
     else et_ele = -1.0;
-<<<<<<< HEAD
-    if ( fabs(eta_ele) > 2.3 || et_ele <= 20.0) continue;
-    float dPhi = reco::deltaPhi(p.phi(), phi_ele);
-    float dEta = (p.eta() - eta_ele);
-    float dR =  sqrt(dPhi*dPhi + dEta*dEta);
-    if (dR < dRmin) {
-      dRmin = dR;
-      indx = igam; 
-    } 
-  } 
-  if (dRmin < 0.1) {
-    return indx;
-  } 
-  else return -1;
-=======
     if ( fabs(eta_ele) > etaCutoff_ || et_ele <= 0.0) continue;
     nEG++;
     if (et_ele > 20.0) nEGEt++;
@@ -475,7 +331,6 @@ int L1TkElectronTrackObjectsAnalyzer::matchEGWithGenParticle() {
   if (nEG > 0) etGenEGamma_->Fill(p.pt());
   if (nEGEt > 0) etGenEGammaTurnOn_->Fill(p.pt());
   return nEG;
->>>>>>> my_dev
 }
 //define this as a plug-in
 DEFINE_FWK_MODULE(L1TkElectronTrackObjectsAnalyzer);

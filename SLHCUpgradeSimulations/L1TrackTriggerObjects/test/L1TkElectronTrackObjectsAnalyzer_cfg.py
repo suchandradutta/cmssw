@@ -8,11 +8,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-<<<<<<< HEAD
-     'file:L1TrackElectron_old.root'
-=======
      'file:L1TrackElectron.root'
->>>>>>> my_dev
     )
 )
 
@@ -22,18 +18,11 @@ process.source = cms.Source("PoolSource",
 process.ana = cms.EDAnalyzer( 'L1TkElectronTrackObjectsAnalyzer' ,
     L1TkElectronsInputTag = cms.InputTag("L1TkElectrons","EG"),
     L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),
-<<<<<<< HEAD
-    AnalysisOption   = cms.string("Efficiency")                              
-)
-
-
-=======
     AnalysisOption   = cms.string("Efficiency"),
     EtaCutOff   = cms.double(1.1),
     TrackPtCutOff   = cms.double(12.0)
 )
 
->>>>>>> my_dev
 # root file with histograms produced by the analyzer
 filename = "ana.root"
 process.TFileService = cms.Service("TFileService", fileName = cms.string(filename), closeFileFast = cms.untracked.bool(True)

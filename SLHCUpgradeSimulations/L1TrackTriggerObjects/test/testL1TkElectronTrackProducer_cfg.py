@@ -5,22 +5,6 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 
 ################################################################################
 # Example configuratiom file : 
-<<<<<<< HEAD
-# Here we run the L1EG algorithms (old stage-2 and new clustering),
-# we unpack the L1EG objects that were created during the L1 step
-# of the central production (i.e. the Run-1 algorithms), and we
-# create L1TkEm objects corresponding to the various input
-# collections.                                                                            
-################################################################################
-# list of files
-file_names = cms.untracked.vstring(
- '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
- '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root')
-  #'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/008E2E98-0A39-E311-833F-0025905938D4.root',
-  #'root://eoscms//store/mc/UpgFall13d/Neutrino_Pt2to20_gun/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/027029F2-FE38-E311-ACD6-003048678B34.root'
-# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
-# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root'
-=======
 #
 # Here we run the L1EG algorithms (old stage-2 and new clustering),
 # and we create L1TkElectron objects starting from the "old stage-2" L1EGs.
@@ -34,18 +18,13 @@ file_names = cms.untracked.vstring(
  #'/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/MinBias/BE5D/m1_MinBias_BE5D.root')
  '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
  '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root')
->>>>>>> my_dev
 #)
 # input Events 
 process.source = cms.Source("PoolSource",
    fileNames = file_names,
    skipEvents = cms.untracked.uint32(0) 
 )
-<<<<<<< HEAD
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
-=======
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
->>>>>>> my_dev
 
 # ---- Global Tag and geometry :
 #      (needed e.g. when running raw2digi below)
@@ -61,8 +40,6 @@ process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 
-<<<<<<< HEAD
-=======
 # ---------------------------------------------------------------------------
 #
 # ---- Run the L1Tracking :
@@ -75,7 +52,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 process.load('Configuration.StandardSequences.L1TrackTrigger_cff')
 process.pStubs = cms.Path( process.L1TkStubsFromPixelDigis )
 
->>>>>>> my_dev
 # L1Tracking 
 process.load('Configuration.StandardSequences.L1TrackTrigger_cff')
 process.load('Geometry.TrackerGeometryBuilder.StackedTrackerGeometry_cfi')
@@ -110,13 +86,8 @@ process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDi
 
 # run L1Reco to produce the L1EG objects corresponding
 # to the current trigger
-<<<<<<< HEAD
-process.load('Configuration.StandardSequences.L1Reco_cff')
-process.L1Reco = cms.Path( process.l1extraParticles )
-=======
 #process.load('Configuration.StandardSequences.L1Reco_cff')
 #process.L1Reco = cms.Path( process.l1extraParticles )
->>>>>>> my_dev
 
 # ---------------------------------------------------------------------------
 #
@@ -124,47 +95,6 @@ process.L1Reco = cms.Path( process.l1extraParticles )
 
 
 # "electrons" :
-<<<<<<< HEAD
-
-process.L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
-        #label = cms.string("ElecTrk"),
-	label = cms.string("EG"),	# labels the collection of L1TkEmParticleProducer that is produced.
-                                        # e.g. EG or IsoEG if all objects are kept, or
-                                        # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
-                                        # objects that pass a cut RelIso < RelIsoCut are written
-                                        # into the new collection.
-        L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),      # input EGamma collection
-					# When the standard sequences are used :
-                                                #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
-                                                #     or ("l1extraParticles","Isolated")
-                                                #   - for the "old stage-2" algo (2x2 clustering), use 
-                                                #     ("SLHCL1ExtraParticles","EGamma") or ("SLHCL1ExtraParticles","IsoEGamma")
-                                                #   - for the new clustering algorithm of Jean-Baptiste et al,
-                                                #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
-                                                #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
-        ETmin = cms.double( 20.0 ),       # Only the L1EG objects that have ET > ETmin in GeV
-                                                # are considered. ETmin < 0 means that no cut is applied.
-        TrackEGammaDeltaPhi = cms.double(0.08),  # Delta Phi cutoff to match Track with L1EG objects
-        TrackEGammaDeltaR = cms.double(0.08),   # Delta R cutoff to match Track with L1EG objects
-        TrackEGammaDeltaEta = cms.double(0.08), # Delta Eta cutoff to match Track with L1EG objects
-                                                # are considered. ETmin < 0 means that no cut is applied.
-	RelativeIsolation = cms.bool( True ),	# default = True. The isolation variable is relative if True,
-						# else absolute.
-        IsoCut = cms.double( -0.15 ), 		# Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
-                                                # the isolation is below RelIsoCut are written into
-                                                # the output collection. When RelIsoCut < 0, no cut is applied.
-						# When RelativeIsolation = False, IsoCut is in GeV.
-        # Determination of the isolation w.r.t. L1Tracks :
-        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-	ZMAX = cms.double( 25. ),	# in cm
-	CHI2MAX = cms.double( 100. ),
-        PTMINTRA = cms.double( 12. ),	# in GeV
-	DRmin = cms.double( 0.06),
-	DRmax = cms.double( 0.5 ),
-	DeltaZ = cms.double( 1.0 )    # in cm. Used for tracks to be used isolation calculation
-)
-process.pElectrons = cms.Path( process.L1TkElectrons )
-=======
 import SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi
 process.L1TkElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
 process.L1TkElectrons.PTMINTRA = cms.double(3.0)
@@ -172,7 +102,6 @@ process.L1TkElectrons.PTMINTRA = cms.double(3.0)
 process.L1TkIsoElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
 process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
 process.L1TkIsoElectrons.PTMINTRA = cms.double(3.0)
->>>>>>> my_dev
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "L1TrackElectron.root" ),
@@ -182,17 +111,6 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
 process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
-<<<<<<< HEAD
-process.Out.outputCommands.append( 'keep *_genParticles_*_*')
-#process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
-process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
-#process.Out.outputCommands.append('keep *')
-
-#process.schedule = cms.Schedule(process.p0,process.L1Reco,process.TT_step,process.pElectrons)
-process.FEVToutput_step = cms.EndPath(process.Out)
-
-process.schedule = cms.Schedule(process.pSLHCCalo,process.L1Reco,process.TT_step,process.pElectrons,process.FEVToutput_step)
-=======
 # un-comment for L1TkIsoElectrons
 #process.Out.outputCommands.append( 'keep *_L1TkIsoElectrons_*_*' )
 
@@ -205,7 +123,6 @@ process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*')
 process.FEVToutput_step = cms.EndPath(process.Out)
 
 process.schedule = cms.Schedule(process.pSLHCCalo,process.TT_step,process.pElectrons,process.FEVToutput_step)
->>>>>>> my_dev
 
 
 

@@ -1040,11 +1040,7 @@ public:
       if (fabs(stubs_[i].x()-stub.x())<0.2&&
 	  fabs(stubs_[i].y()-stub.y())<0.2&&
 	  fabs(stubs_[i].z()-stub.z())<2.0) {
-<<<<<<< HEAD
-	//foundclose=true;
-=======
 	foundclose=true;
->>>>>>> my_dev
       }
     }
 
@@ -1055,7 +1051,6 @@ public:
 
     return false;
     
-   
   }
 
 
