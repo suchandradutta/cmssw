@@ -103,6 +103,9 @@ process.L1TkIsoElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElec
 process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
 process.L1TkIsoElectrons.PTMINTRA = cms.double(3.0)
 
+process.pElectrons = cms.Path( process.L1TkElectrons )
+process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
+
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "L1TrackElectron.root" ),
     fastCloning = cms.untracked.bool( False ),
