@@ -272,7 +272,7 @@ void DigiValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   using namespace edm;
 
   //int run       = iEvent.id().run();
-  int event     = iEvent.id().event();
+  //  int event     = iEvent.id().event();
   //int lumiBlock = iEvent.luminosityBlock();
   //int bx        = iEvent.bunchCrossing();
   //int orbit     = iEvent.orbitNumber();
@@ -345,7 +345,6 @@ void DigiValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   for(DSViter = pixelDigis->begin(); DSViter != pixelDigis->end(); DSViter++) {
     unsigned int rawid = DSViter->id; 
     DetId detId(rawid);
-
     unsigned int layer = getLayerNumber(rawid);
     std::map<unsigned int, DigiHistos>::iterator iPos = layerHistoMap.find(layer);
     if (iPos == layerHistoMap.end()) {
@@ -353,7 +352,7 @@ void DigiValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       iPos = layerHistoMap.find(layer);
     }
     const GeomDetUnit* geomDetUnit = tkGeom->idToDetUnit(detId);
-    const PixelGeomDetUnit* pixdet = (PixelGeomDetUnit*) geomDetUnit;
+    //    const PixelGeomDetUnit* pixdet = (PixelGeomDetUnit*) geomDetUnit;
     edm::DetSet<PixelDigi>::const_iterator di;
     int col_last  = -1;
     int row_last  = -1;
@@ -367,10 +366,6 @@ void DigiValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     cluster.trkPt   = -999.0;
     cluster.trkEta  = -999.0;
     cluster.strip_charges.clear();
-    if (layer > 4 && pixdet) {
-      std::cout << " DetId " << rawid << " Layer " << layer  << " column "
-                <<  pixdet->specificTopology().ncolumns() << " Row " <<  pixdet->specificTopology().nrows()<< " data size " << DSViter->data.size() << std::endl;
-    }
     for(di = DSViter->data.begin(); di != DSViter->data.end(); di++) {
       int adc = di->adc();    // charge, modifued to unsiged short 
       int col = di->column(); // column 
@@ -495,11 +490,6 @@ void DigiValidation::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     local_histos.TotalNumberOfClusters->Fill(local_histos.totNClusters);
     local_histos.TotalNumberOfDigis->Fill(local_histos.totNDigis);
     local_histos.NumberOfSimHits->Fill(local_histos.totSimHits);
-    if (PRINT) std::cout << ">>> Event #" << event 
-                         << " Layer #"<< iPos->first 
-                         << " " << local_histos.totSimHits 
-                         << " " << local_histos.totMatchedSimHits 
-                         << std::endl;
     local_histos.NumberOfMatchedSimHits->Fill(local_histos.totMatchedSimHits);
     local_histos.NumberOfMatchedSimHitsP->Fill(local_histos.totMatchedSimHitsP);
     local_histos.NumberOfMatchedSimHitsS->Fill(local_histos.totMatchedSimHitsS);
@@ -820,7 +810,6 @@ unsigned int DigiValidation::getLayerNumber(const TrackerGeometry* tkgeom,unsign
       PXBDetId pb_detId = PXBDetId(detid);
       layer = pb_detId.layer();
     } else if (it->type().isEndcap()) {
-      std::cout << " IAM HERE >>>>>>>>>>>>>>>>>>>>>>>>>>> " << std::endl; 
       PXFDetId pf_detId = PXFDetId(detid);
       layer = 100*pf_detId.side() + pf_detId.disk();
     }

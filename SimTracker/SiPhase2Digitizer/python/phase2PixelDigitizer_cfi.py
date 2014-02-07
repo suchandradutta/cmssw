@@ -20,7 +20,8 @@ phase2PixelDigitizer = cms.PSet(
     ThresholdSmearing_FPix = cms.double(204.0),#D.B.: changed (~5mV peakToPeak --> 1.76mV rms) (was 210.0)
     ThresholdSmearing_BPix = cms.double(204.0),#D.B.: changed (~5mV peakToPeak --> 1.76mV rms) (was 245.0)
     ThresholdSmearing_BPix_L1 = cms.double(204.0),#D.B.: changed (~5mV peakToPeak --> 1.76mV rms) (was 245.0)
-    NoiseInElectrons = cms.double(0.0),	#D.B.:this was set as the pixel cell noise, relevant for generating noisy pixels (was 175.0). But is should be the same as the total readout noise, ReadoutNoiseInElec
+#    NoiseInElectrons = cms.double(1000.0),	#D.B.:this was set as the pixel cell noise, relevant for generating noisy pixels (was 175.0). But is should be the same as the total readout noise, ReadoutNoiseInElec
+    NoiseInElectrons = cms.double(0.1),	#D.B.:this was set as the pixel cell noise, relevant for generating noisy pixels (was 175.0). But is should be the same as the total readout noise, ReadoutNoiseInElec NB: does not work if ==0!
     MissCalibrate = cms.bool(False),
     FPix_SignalResponse_p0 = cms.double(0.0043),	#D.B.:for pixel calibration only (not for PS or 2S)
     FPix_SignalResponse_p1 = cms.double(1.31),		#D.B.:for pixel calibration only (not for PS or 2S)
@@ -49,7 +50,7 @@ phase2PixelDigitizer = cms.PSet(
     AddXTalk = cms.bool(True),			#D.B.
     InterstripCoupling = cms.double(0.08),	#D.B.
     SigmaZero = cms.double(0.00037),  		#D.B.: 3.7um spread for 300um-thick sensor, renormalized in digitizerAlgo
-    SigmaCoeff = cms.double(1.65),  		#D.B.: to be confirmed with simulations in CMSSW_6.X
+    SigmaCoeff = cms.double(1.80),  		#D.B.: to be confirmed with simulations in CMSSW_6.X
     ClusterWidth = cms.double(3),		#D.B.: this is used as number of sigmas for charge collection (3=+-3sigmas)
 ##    Dist300 = cms.double(0.03),  		#D.B.: use moduleThickness instead
     ChargeVCALSmearing = cms.bool(False),	#D.B.:changed from true, this smearing uses a calibration for the pixels, use gaussDistribution_ instead
