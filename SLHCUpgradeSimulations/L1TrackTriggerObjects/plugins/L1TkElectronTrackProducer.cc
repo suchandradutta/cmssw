@@ -91,8 +91,6 @@ class L1TkElectronTrackProducer : public edm::EDProducer {
          
 	float ETmin; 	// min ET in GeV of L1EG objects
 
-  //	float ZMAX;		// |z_track| < ZMAX in cm
-	float CHI2MAX;		
 	float DRmin;
 	float DRmax;
 	float PTMINTRA;
@@ -102,6 +100,8 @@ class L1TkElectronTrackProducer : public edm::EDProducer {
 	float IsoCut;
 	bool RelativeIsolation;
 
+        float trkQualityChi2;
+        float trkQualityPtMin; 
         float dPhiCutoff;
         float dRCutoff;
         float dEtaCutoff;
@@ -126,10 +126,7 @@ L1TkElectronTrackProducer::L1TkElectronTrackProducer(const edm::ParameterSet& iC
    ETmin = (float)iConfig.getParameter<double>("ETmin");
 
    // parameters for the calculation of the isolation :
-   //   ZMAX = (float)iConfig.getParameter<double>("ZMAX");
-   CHI2MAX = (float)iConfig.getParameter<double>("CHI2MAX");
    PTMINTRA = (float)iConfig.getParameter<double>("PTMINTRA");
-   // for the calculation of the isolation variable :
    DRmin = (float)iConfig.getParameter<double>("DRmin");
    DRmax = (float)iConfig.getParameter<double>("DRmax");
    DeltaZ = (float)iConfig.getParameter<double>("DeltaZ");
@@ -138,9 +135,12 @@ L1TkElectronTrackProducer::L1TkElectronTrackProducer(const edm::ParameterSet& iC
    IsoCut = (float)iConfig.getParameter<double>("IsoCut");
    RelativeIsolation = iConfig.getParameter<bool>("RelativeIsolation");
 
-   dPhiCutoff = iConfig.getParameter<double>("TrackEGammaDeltaPhi"); 
-   dRCutoff   = iConfig.getParameter<double>("TrackEGammaDeltaR"); 
-   dEtaCutoff = iConfig.getParameter<double>("TrackEGammaDeltaEta"); 
+   // parameters to select tracks to match with L1EG
+   trkQualityChi2  = (float)iConfig.getParameter<double>("TrackChi2");
+   trkQualityPtMin = (float)iConfig.getParameter<double>("TrackMinPt");
+   dPhiCutoff      = (float)iConfig.getParameter<double>("TrackEGammaDeltaPhi"); 
+   dRCutoff        = (float)iConfig.getParameter<double>("TrackEGammaDeltaR"); 
+   dEtaCutoff      = (float)iConfig.getParameter<double>("TrackEGammaDeltaEta"); 
 
    produces<L1TkElectronParticleCollection>(label);
 }
@@ -198,7 +198,7 @@ L1TkElectronTrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iS
     int itrack = -1;
     for (trackIter = L1TkTrackHandle->begin(); trackIter != L1TkTrackHandle->end(); ++trackIter) {
       edm::Ptr< L1TkTrackType > L1TrackPtr( L1TkTrackHandle, itr) ;
-      if ( trackIter->getMomentum().perp() > PTMINTRA && trackIter->getChi2() < CHI2MAX) {
+      if ( trackIter->getMomentum().perp() > trkQualityPtMin && trackIter->getChi2() < trkQualityChi2) {
 	double dPhi = 99.;
 	double dR = 99.;
 	double dEta = 99.;   
@@ -312,7 +312,7 @@ L1TkElectronTrackProducer::isolation(const edm::Handle<L1TkTrackCollectionType> 
     float dEta = (trackIter->getMomentum().eta() - matchedTrkPtr->getMomentum().eta());
     float dR =  sqrt(dPhi*dPhi + dEta*dEta);
 
-    if (dR > DRmin && dR < DRmax && dZ < DeltaZ) sumPt += trackIter->getMomentum().perp();
+    if (dR > DRmin && dR < DRmax && dZ < DeltaZ && trackIter->getMomentum().perp() > PTMINTRA) sumPt += trackIter->getMomentum().perp();
 
   }
   return sumPt;

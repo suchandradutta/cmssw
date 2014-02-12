@@ -18,7 +18,11 @@ L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
                                                 #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
         ETmin = cms.double( -1.0 ),             # Only the L1EG objects that have ET > ETmin in GeV
                                                 # are considered. ETmin < 0 means that no cut is applied.
-        TrackEGammaDeltaPhi = cms.double(0.05),  # Delta Phi cutoff to match Track with L1EG objects
+        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+        # Quality cuts on Track and Track L1EG matching criteria                                
+        TrackChi2           = cms.double(100.0), # minimum Chi2 to select tracks
+        TrackMinPt          = cms.double(12.0), # minimum Pt to select tracks                                     
+        TrackEGammaDeltaPhi = cms.double(0.05), # Delta Phi cutoff to match Track with L1EG objects
         TrackEGammaDeltaR = cms.double(0.08),   # Delta R cutoff to match Track with L1EG objects
         TrackEGammaDeltaEta = cms.double(0.08), # Delta Eta cutoff to match Track with L1EG objects
                                                 # are considered. ETmin < 0 means that no cut is applied.
@@ -29,10 +33,7 @@ L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
                                                 # the output collection. When RelIsoCut < 0, no cut is applied.
 						# When RelativeIsolation = False, IsoCut is in GeV.
         # Determination of the isolation w.r.t. L1Tracks :
-        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-	ZMAX = cms.double( 25. ),	# in cm
-	CHI2MAX = cms.double( 100. ),
-        PTMINTRA = cms.double( 12. ),	# in GeV
+        PTMINTRA = cms.double( 2. ),	# in GeV
 	DRmin = cms.double( 0.08),
 	DRmax = cms.double( 0.5 ),
 	DeltaZ = cms.double( 0.4 )    # in cm. Used for tracks to be used isolation calculation

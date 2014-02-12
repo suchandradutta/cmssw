@@ -5,20 +5,17 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 
 ################################################################################
 # Example configuratiom file : 
-#
 # Here we run the L1EG algorithms (old stage-2 and new clustering),
-# and we create L1TkElectron objects starting from the "old stage-2" L1EGs.
-#
-# The L1Tracking is also run here.
-#
+# we unpack the L1EG objects that were created during the L1 step
+# of the central production (i.e. the Run-1 algorithms), and we
+# create L1TkEm objects corresponding to the various input
+# collections.                                                                            
 ################################################################################
-
 # list of files
 file_names = cms.untracked.vstring(
- #'/store/cmst3/user/eperez/L1TrackTrigger/612_SLHC6/muDST/MinBias/BE5D/m1_MinBias_BE5D.root')
- '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
+# '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
  '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/FEDB1C0F-FF38-E311-A659-0025905938D4.root')
-#)
+
 # input Events 
 process.source = cms.Source("PoolSource",
    fileNames = file_names,
@@ -52,7 +49,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 process.load('Configuration.StandardSequences.L1TrackTrigger_cff')
 process.pStubs = cms.Path( process.L1TkStubsFromPixelDigis )
 
-# L1Tracking 
+# L1Tracking
 process.load('Configuration.StandardSequences.L1TrackTrigger_cff')
 process.load('Geometry.TrackerGeometryBuilder.StackedTrackerGeometry_cfi')
 process.load("SLHCUpgradeSimulations.L1TrackTrigger.L1TTrack_cfi")
@@ -96,15 +93,14 @@ process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDi
 
 # "electrons" :
 import SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi
+# no Isolation applied
 process.L1TkElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
-process.L1TkElectrons.PTMINTRA = cms.double(3.0)
-
-process.L1TkIsoElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
-process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
-process.L1TkIsoElectrons.PTMINTRA = cms.double(3.0)
-
 process.pElectrons = cms.Path( process.L1TkElectrons )
-process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
+
+# un-comment for L1TkIsoElectrons and include in the sequence
+#process.L1TkIsoElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
+#process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
+#process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "L1TrackElectron.root" ),
@@ -114,13 +110,13 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
 process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
-# un-comment for L1TkIsoElectrons
-#process.Out.outputCommands.append( 'keep *_L1TkIsoElectrons_*_*' )
 
+#process.Out.outputCommands.append( 'keep *_L1TkIsoElectrons_*_*' )
 process.Out.outputCommands.append( 'keep *_genParticles_*_*')
-process.Out.outputCommands.append('keep *_generator_*_*')
-process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
+# un-comment for L1TkIsoElectrons
+#process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
 process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
+process.Out.outputCommands.append('keep *_L1Tracks_*_*')
 #process.Out.outputCommands.append('keep *')
 
 process.FEVToutput_step = cms.EndPath(process.Out)
