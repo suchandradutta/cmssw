@@ -131,10 +131,12 @@ void BeamSpotFromSimProducer::produce(edm::Event& iEvent, const edm::EventSetup&
     //std::cout << "Process History size = "<<iProcess<<std::endl;
     //for (unsigned int i=0;i<iProcess;i++){
     //  std::cout << "Process "<<i<<" name: "
-    //		<<iEvent.processHistory()[i].processName()<<std::endl;
+   // 		<<iEvent.processHistory()[i].processName()<<std::endl;
     //}
 
     if (iProcess>0) iProcess=0;
+	// EP :
+	if ( iEvent.processHistory()[iProcess].processName() == "LHE") iProcess = 1;
 
     std::string nameProcess = iEvent.processHistory()[iProcess].processName();
     
@@ -164,6 +166,8 @@ void BeamSpotFromSimProducer::produce(edm::Event& iEvent, const edm::EventSetup&
       meanY_ = ps.getParameterSet("VtxSmeared").getParameter<double>("MeanY");
       meanZ_ = ps.getParameterSet("VtxSmeared").getParameter<double>("MeanZ");
       
+    cout << " x y z sigmas " << meanX_ << " " << meanY_ << " " << meanZ_ << " " << " sigmas " << SigmaX << " " << SigmaY << " " << SigmaZ << endl;
+
       double HalfCrossingAngle = ps.getParameterSet("VtxSmeared").getParameter<double>("HalfCrossingAngle");
       double CrabAngle = ps.getParameterSet("VtxSmeared").getParameter<double>("CrabAngle");
       
