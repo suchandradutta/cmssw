@@ -90,22 +90,22 @@ process.pPhotons = cms.Path( process.L1TkPhotons )
 
 # "electrons" from L1Tracks :
 
-process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
-        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
-        label = cms.string("NonIsolated")
-)
-process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
-
-
-# "electrons" from stubs :
-
-process.L1TkElectronsStubs = cms.EDProducer("L1TkElectronStubsProducer",
-        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
-        label = cms.string("NonIsolated")
-)
-process.pElectronsStubs = cms.Path( process.L1TkElectronsStubs )
+#process.L1TkElectronsTrack = cms.EDProducer("L1TkElectronTrackProducer",
+#        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+#        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
+#        label = cms.string("NonIsolated")
+#)
+#process.pElectronsTrack = cms.Path( process.L1TkElectronsTrack )
+#
+#
+## "electrons" from stubs :
+#
+#process.L1TkElectronsStubs = cms.EDProducer("L1TkElectronStubsProducer",
+#        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
+#        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),
+#        label = cms.string("NonIsolated")
+#)
+#process.pElectronsStubs = cms.Path( process.L1TkElectronsStubs )
 
 
 

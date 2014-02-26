@@ -5,6 +5,7 @@
 <use name="DataFormats/L1TrackTrigger"/>
 <use name="SLHCUpgradeSimulations/L1TrackTrigger"/>
 <use name="SLHCUpgradeSimulations/L1CaloTrigger"/>
+<use name="DataFormats/JetReco"/>
 <use name="hepmc"/>
 <use name="root"/>
 <export>

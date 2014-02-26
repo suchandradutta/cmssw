@@ -25,7 +25,7 @@ L1TkElectrons = cms.EDProducer("L1TkElectronTrackProducer",
         TrackEGammaDeltaPhi = cms.double(0.05), # Delta Phi cutoff to match Track with L1EG objects
         TrackEGammaDeltaR = cms.double(0.08),   # Delta R cutoff to match Track with L1EG objects
         TrackEGammaDeltaEta = cms.double(0.08), # Delta Eta cutoff to match Track with L1EG objects
-                                                # are considered. ETmin < 0 means that no cut is applied.
+                                                # are considered. 
 	RelativeIsolation = cms.bool( True ),	# default = True. The isolation variable is relative if True,
 						# else absolute.
         IsoCut = cms.double( -0.15 ), 		# Cut on the (Trk-based) isolation: only the L1TkEmParticle for which

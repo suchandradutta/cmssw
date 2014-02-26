@@ -3,10 +3,10 @@
 //TFile f("MinBias_Em_from_Run1_L1EG.root");
 
 TChain* Events = new TChain("Events");
-//Events -> Add("PROD/MinBias_Em_Ele_TrkMET_L1EGPT_1.root");
-//Events -> Add("PROD/MinBias_Em_Ele_TrkMET_L1EGPT_2.root");
-Events -> Add("PROD/MinBias_Em_Ele_TrkMET_TrackPT_1.root");
-Events -> Add("PROD/MinBias_Em_Ele_TrkMET_TrackPT_2.root");
+
+//Events -> Add("PROD/MinBias_L1TrackElectron.root");
+//Events -> Add("PROD/MinBias_L1TrackElectron_FerdosSettings.root");
+Events -> Add("PROD/MinBias_L1TrackElectron_FerdosSettingsLoose.root");
 
 
 gStyle->SetOptStat(0);
@@ -26,13 +26,13 @@ TH1F* h2int = new TH1F("hEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* h3int = new TH1F("hIsoEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* h4int = new TH1F("hIsoEGIsoTtkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 
-Events->Draw("TMath::Max(TMath::Max(l1extraL1EmParticles_l1extraParticles_NonIsolated_ALL.obj.pt_[1],l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[1]),  TMath::Max(l1extraL1EmParticles_l1extraParticles_NonIsolated_ALL.obj.pt_[0],l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[0]) )>>hEG") ;
+Events->Draw("TMath::Max(TMath::Max(l1extraL1EmParticles_l1extraParticles_NonIsolated_Ele.obj.pt_[1],l1extraL1EmParticles_l1extraParticles_Isolated_Ele.obj.pt_[1]),  TMath::Max(l1extraL1EmParticles_l1extraParticles_NonIsolated_Ele.obj.pt_[0],l1extraL1EmParticles_l1extraParticles_Isolated_Ele.obj.pt_[0]) )>>hEG") ;
 
-Events->Draw("TMath::Max(TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsRun1EG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_ALL.obj.pt_[1]), TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsRun1EG_IsoTrk_ALL.obj.pt_[0],l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_ALL.obj.pt_[0]))>>hIsoTtk") ;
+Events->Draw("TMath::Max(TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsRun1EG_IsoTrk_Ele.obj.pt_[1],l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_Ele.obj.pt_[1]), TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsRun1EG_IsoTrk_Ele.obj.pt_[0],l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_Ele.obj.pt_[0]))>>hIsoTtk") ;
 
-Events->Draw("TMath::Max(l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[1],l1extraL1EmParticles_l1extraParticles_Isolated_ALL.obj.pt_[0])>>hIsoEG") ;
+Events->Draw("TMath::Max(l1extraL1EmParticles_l1extraParticles_Isolated_Ele.obj.pt_[1],l1extraL1EmParticles_l1extraParticles_Isolated_Ele.obj.pt_[0])>>hIsoEG") ;
 
-Events->Draw("TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_ALL.obj.pt_[0])>>hIsoEGIsoTtk") ;
+Events->Draw("TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_Ele.obj.pt_[1],l1extraL1TkElectronParticle_L1TkElectronsRunIso1EG_IsoTrk_Ele.obj.pt_[0])>>hIsoEGIsoTtk") ;
 */
 
 	// old Stage-2 algos :
@@ -54,41 +54,46 @@ TH1F* g5int = new TH1F("gEleTkIsoTkint",";ET threshold (GeV); Rate (kHz)",nbins,
 TH1F* g6int = new TH1F("gIsoEGEleTkIsoTkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 
 /*
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_ALL.obj.pt_[0])>>gEG") ;
-Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2EG__ALL.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2EG__ALL.obj.pt_[0])>>gEleTk") ;
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_ALL.obj.pt_[0])>>gIsoEG") ;
-Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEG__ALL.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEG__ALL.obj.pt_[0])>>gIsoEGEleTk") ;
+Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_Ele.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_Ele.obj.pt_[0])>>gEG") ;
+Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2EG__Ele.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2EG__Ele.obj.pt_[0])>>gEleTk") ;
+Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_Ele.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_Ele.obj.pt_[0])>>gIsoEG") ;
+Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEG__Ele.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEG__Ele.obj.pt_[0])>>gIsoEGEleTk") ;
 
-Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2EGIsoTrk__ALL.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2EGIsoTrk__ALL.obj.pt_[0])>>gEleTkIsoTk");
-Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEGIsoTrk__ALL.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEGIsoTrk__ALL.obj.pt_[0])>>gIsoEGEleTkIsoTk");
+Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2EGIsoTrk__Ele.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2EGIsoTrk__Ele.obj.pt_[0])>>gEleTkIsoTk");
+Events->Draw("TMath::Max(l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEGIsoTrk__Ele.obj.pt_[1],l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEGIsoTrk__Ele.obj.pt_[0])>>gIsoEGEleTkIsoTk");
 */
 
-Events->Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_ALL.obj.pt_)>>gEG");
-Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsStage2EG__ALL.obj.pt_)>>gEleTk");
-Events->Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_ALL.obj.pt_)>>gIsoEG");
-Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEG__ALL.obj.pt_)>>gIsoEGEleTk");
-Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsStage2EGIsoTrk__ALL.obj.pt_)>>gEleTkIsoTk");
-Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsStage2IsoEGIsoTrk__ALL.obj.pt_)>>gIsoEGEleTkIsoTk");
+Events->Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticles_EGamma_Ele.obj.pt_)>>gEG");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectrons_EG_Ele.obj.pt_)>>gEleTk");
+Events->Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticles_IsoEGamma_Ele.obj.pt_)>>gIsoEG");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsIsoEG_EG_Ele.obj.pt_)>>gIsoEGEleTk");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkIsoElectrons_EG_Ele.obj.pt_)>>gEleTkIsoTk");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkIsoElectronsIsoEG_EG_Ele.obj.pt_)>>gIsoEGEleTkIsoTk");
 
 
 	// new clustering :
-/*
-TH1F* j1 = new TH1F("jIsoTtk",";ET (GeV); Events",nbins,x1,x2);
+
+TH1F* j1 = new TH1F("jEleTk",";ET (GeV); Events",nbins,x1,x2);
 TH1F* j2 = new TH1F("jEG",";ET (GeV); Events",nbins,x1,x2);
 TH1F* j3 = new TH1F("jIsoEG",";ET (GeV); Events",nbins,x1,x2);
-TH1F* j4 = new TH1F("jIsoEGIsoTtk",";ET (GeV); Events",nbins,x1,x2);
+TH1F* j4 = new TH1F("jIsoEGEleTk",";ET (GeV); Events",nbins,x1,x2);
+TH1F* j5 = new TH1F("jEleTkIsoTk",";ET (GeV); Events",nbins,x1,x2);
+TH1F* j6 = new TH1F("jIsoEGEleTkIsoTk",";ET (GeV); Events",nbins,x1,x2);
 
-TH1F* j1int = new TH1F("jIsoTtkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
+TH1F* j1int = new TH1F("jEleTkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* j2int = new TH1F("jEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 TH1F* j3int = new TH1F("jIsoEGint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
-TH1F* j4int = new TH1F("jIsoEGIsoTtkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
+TH1F* j4int = new TH1F("jIsoEGEleTkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
+TH1F* j5int = new TH1F("jEleTkIsoTkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
+TH1F* j6int = new TH1F("jIsoEGEleTkIsoTkint",";ET threshold (GeV); Rate (kHz)",nbins,x1,x2);
 
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_EGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_EGamma_ALL.obj.pt_[0])>>jEG") ;
-Events->Draw("TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsNewEG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkElectronParticle_L1TkElectronsNewEG_IsoTrk_ALL.obj.pt_[0])>>jIsoTtk") ;
-Events->Draw("TMath::Max(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_IsoEGamma_ALL.obj.pt_[1],l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_IsoEGamma_ALL.obj.pt_[0])>>jIsoEG") ;
-Events->Draw("TMath::Max(l1extraL1TkElectronParticle_L1TkElectronsNewIsoEG_IsoTrk_ALL.obj.pt_[1],l1extraL1TkElectronParticle_L1TkElectronsNewIsoEG_IsoTrk_ALL.obj.pt_[0])>>jIsoEGIsoTtk") ;
 
-*/
+Events->Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_EGamma_Ele.obj.pt_)>>jEG");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsNewclus_EG_Ele.obj.pt_)>>jEleTk");
+Events->Draw("Max$(l1extraL1EmParticles_SLHCL1ExtraParticlesNewClustering_IsoEGamma_Ele.obj.pt_)>>jIsoEG");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkElectronsNewclusIsoEG_EG_Ele.obj.pt_)>>jIsoEGEleTk");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkIsoElectronsNewclus_EG_Ele.obj.pt_)>>jEleTkIsoTk");
+Events->Draw("Max$(l1extraL1TkElectronParticles_L1TkIsoElectronsNewclusIsoEG_EG_Ele.obj.pt_)>>jIsoEGEleTkIsoTk");
 
 
 float nevts = 149500. ;
@@ -157,24 +162,28 @@ g5int -> Scale( 30000./nevts);
 g6int -> Scale( 30000./nevts);
 
 
-/*
 for (int i=0; i <= nbins+1; i++) {
   float v1 = j1->Integral(i,nbins+1);
   float v2 = j2 -> Integral(i,nbins+1);
   float v3 = j3 -> Integral(i,nbins+1);
   float v4 = j4 -> Integral(i,nbins+1);
+  float v5 = j5 -> Integral(i,nbins+1);
+  float v6 = j6 -> Integral(i,nbins+1);
 
   j1int -> SetBinContent(i, v1);
   j2int -> SetBinContent(i, v2);
   j3int -> SetBinContent(i, v3);
   j4int -> SetBinContent(i, v4);
+  j5int -> SetBinContent(i, v5);
+  j6int -> SetBinContent(i, v6);
 }
 
 j1int -> Scale( 30000./nevts);
 j2int -> Scale( 30000./nevts);
 j3int -> Scale( 30000./nevts);
 j4int -> Scale( 30000./nevts);
-*/
+j5int -> Scale( 30000./nevts); 
+j6int -> Scale( 30000./nevts); 
 
 
 float rmin = 10.;
@@ -251,13 +260,23 @@ gPad -> SetGridy(1);
 
  leg -> Draw("same");
 
+        TPaveText *pt = new TPaveText(0.1577181,0.9562937,0.9580537,0.9947552,"brNDC");
+        pt->SetBorderSize(0);
+        pt->SetTextAlign(12);
+        pt->SetFillStyle(0);
+        pt->SetTextFont(42);
+        pt->SetTextSize(0.03);
+        //TText* text = pt->AddText(0.05,0.5,"Atanu's isolation settings");
+        TText* text = pt->AddText(0.05,0.5,"Ferdos's isolation settings");
+        pt->Draw();
+
+
 
 TCanvas* c2bis = new TCanvas("c2bis","c2bis");
 ratio -> Draw("pe");
 
 
 
-/*
 TCanvas* c3 = new TCanvas("c3","c3");
 
 j1int -> SetMinimum(rmin);
@@ -269,6 +288,10 @@ j3int -> SetLineColor(4);
 j3int -> Draw("same");
 j4int -> SetLineColor(7);
 j4int -> Draw("same");
+j5int -> SetLineColor(6);
+j5int -> Draw("same");
+j6int -> SetLineColor(3);
+j6int -> Draw("same");
 
 gPad -> SetLogy(1);
 gPad -> SetGridx(1);
@@ -277,7 +300,8 @@ gPad -> SetGridy(1);
 TLegend* leg3 = (TLegend*)leg->Clone();
 leg3->SetHeader("new clustering algorithms");
 leg3->Draw("same");
-*/
+        pt->Draw();
+
 
 }
 

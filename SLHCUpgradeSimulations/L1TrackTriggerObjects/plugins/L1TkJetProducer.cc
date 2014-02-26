@@ -101,7 +101,7 @@ L1TkJetProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
  iEvent.getByLabel(L1TrackInputTag, L1TkTrackHandle);
  L1TkTrackCollectionType::const_iterator trackIter;
 
-	// central jets
+	// central jets (i.e. |eta| < 3)
 
  if( !CentralJetHandle.isValid() )
 	{

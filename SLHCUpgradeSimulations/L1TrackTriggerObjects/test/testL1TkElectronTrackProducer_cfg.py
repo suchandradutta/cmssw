@@ -8,9 +8,12 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 # Here we run the L1EG algorithms (old stage-2 and new clustering),
 # we unpack the L1EG objects that were created during the L1 step
 # of the central production (i.e. the Run-1 algorithms), and we
-# create L1TkEm objects corresponding to the various input
-# collections.                                                                            
+# create L1TkElectron particles (matching with L1Tracks).
+# Two output collections are created :
+#    - L1TkElectrons
+#    - L1TkElectrons that are isolated with respect to the L1Tracks
 ################################################################################
+
 # list of files
 file_names = cms.untracked.vstring(
 # '/store/mc/UpgFall13d/SingleElectronFlatPt0p2To50/GEN-SIM-DIGI-RAW/PU140bx25_POSTLS261_V3-v1/20000/00D6C34E-0339-E311-836A-002618943880.root',
@@ -97,10 +100,11 @@ import SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cf
 process.L1TkElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
 process.pElectrons = cms.Path( process.L1TkElectrons )
 
-# un-comment for L1TkIsoElectrons and include in the sequence
-#process.L1TkIsoElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
-#process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
-#process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
+# Isolated (w.r.t. L1Tracks) electrons :
+process.L1TkIsoElectrons = process.L1TkElectrons.clone()
+process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
+process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
+
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "L1TrackElectron.root" ),
@@ -109,19 +113,17 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 )
 
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
+process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_IsoEGamma_*' )
 process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
-
-#process.Out.outputCommands.append( 'keep *_L1TkIsoElectrons_*_*' )
+process.Out.outputCommands.append( 'keep *_L1TkIsoElectrons_*_*' )
 process.Out.outputCommands.append( 'keep *_genParticles_*_*')
-# un-comment for L1TkIsoElectrons
-#process.Out.outputCommands.append( 'keep *_L1TkElectrons_ElecTrk_*' )
+
 process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
 process.Out.outputCommands.append('keep *_L1Tracks_*_*')
-#process.Out.outputCommands.append('keep *')
 
 process.FEVToutput_step = cms.EndPath(process.Out)
 
-process.schedule = cms.Schedule(process.pSLHCCalo,process.TT_step,process.pElectrons,process.FEVToutput_step)
+process.schedule = cms.Schedule(process.pSLHCCalo,process.TT_step,process.pElectrons,process.pElectronsIso, process.FEVToutput_step)
 
 
 
