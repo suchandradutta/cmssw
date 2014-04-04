@@ -225,7 +225,6 @@ L1TkHTMissProducer::beginRun(edm::Run& iRun, edm::EventSetup const& iSetup)
 
 
 }
- 
 // ------------ method called when ending the processing of a run  ------------
 /*
 void

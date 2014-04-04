@@ -57,7 +57,6 @@ namespace L1TkElectronStubMatchAlgo {
     std::vector<L1TkStubIter> selectedStubs;
     for (L1TkStubIter stubIter = stubHandle->begin(); stubIter != stubHandle->end(); ++stubIter) {
       float stub_pt = stackedGeometryHandle->findRoughPt(magnetStrength,&(*stubIter));
-      if (ptMinCutoff > 0.0 && stub_pt <= ptMinCutoff) continue;
       unsigned int ilayer = getLayerId(stubIter);
       if ((ilayer%10) > 3) continue;
       
@@ -70,14 +69,19 @@ namespace L1TkElectronStubMatchAlgo {
       double zIntercept = getZIntercept(egPos, r, z);
       double scaledZInterceptCut;
       double scaledDPhiCut;
+      double scaledPtMinCut;
       if (fabs(egIter->eta()) < 1.1) {
 	//      if (ilayer < 10) {
 	scaledZInterceptCut = getScaledZInterceptCut(ilayer,dZCutoff, 0.75, egPos.eta());
         scaledDPhiCut = dPhiCutoff;
+        scaledPtMinCut = ptMinCutoff;
       }	else {
         scaledDPhiCut = 1.6* dPhiCutoff;
         scaledZInterceptCut = dZCutoff;
+        scaledPtMinCut = ptMinCutoff*1.0;
       }    
+      if (scaledPtMinCut > 0.0 && stub_pt <= scaledPtMinCut) continue;
+
       if ( (fabs(dPhi) < scaledDPhiCut) && 
 	   (fabs(zIntercept)< scaledZInterceptCut) ) selectedStubs.push_back(stubIter);
     }

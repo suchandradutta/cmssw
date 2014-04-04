@@ -4,7 +4,7 @@ process = cms.Process("Muo")
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 
 # initialize MessageLogger and output report
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
@@ -48,19 +48,8 @@ process.L1Reco = cms.Path( process.l1extraParticles )
 
 # --- Now run the L1TkMuonParticleProducer 
 
-
-process.L1TkMuons = cms.EDProducer("L1TkMuonParticleProducer",
-	L1MuonsInputTag = cms.InputTag("l1extraParticles"),
-        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-	ETAMIN = cms.double(0),
-	ETAMAX = cms.double(5.),	# no cut
-	ZMAX = cms.double( 25. ),	# in cm
-	CHI2MAX = cms.double( 100. ),
-        PTMINTRA = cms.double( 2. ),	# in GeV
-	DRmax = cms.double( 0.5 ),
-     	nStubsmin = cms.int32( 5 ),        # minimum number of stubs
-	closest = cms.bool( True )
-)
+process.load("SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkMuonProducer_cfi")
+process.pMuons = cms.Path( process.L1TkMuons )
 process.pMuons = cms.Path( process.L1TkMuons )
 
 

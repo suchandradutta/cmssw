@@ -254,7 +254,8 @@ void L1TkElectronTrackObjectsAnalyzer::checkRate() {
     float iso_min = 999.0; 
     std::vector<L1TkElectronParticle>::const_iterator egTrkIter ;
     for (egTrkIter = L1TrackElectronsHandle -> begin(); egTrkIter != L1TrackElectronsHandle->end(); ++egTrkIter) {
-      if (fabs(egTrkIter->eta()) < etaCutoff_ && egTrkIter->getTrkPtr()->getMomentum().perp() > trkPtCutoff_) {
+    if (fabs(egTrkIter->eta()) < etaCutoff_ && egTrkIter->pt() > 0) {
+      if ( egTrkIter->getTrkPtr().isNonnull() && egTrkIter->getTrkPtr()->getMomentum().perp() <= trkPtCutoff_) continue;
 	//      if (fabs(egTrkIter->getEGRef()->eta()) >= etaCutoff_) continue;
 	float dPhi = reco::deltaPhi(phi_ele, egTrkIter->getEGRef()->phi());
 	float dEta = (eta_ele - egTrkIter->getEGRef()->eta());
@@ -321,7 +322,7 @@ int L1TkElectronTrackObjectsAnalyzer::matchEGWithGenParticle() {
     if (ibx != 0) continue;
     
     float eta_ele = eGammaCollection[igam].eta(); 
-    //    float phi_ele = eGammaCollection[igam].phi(); 
+    float phi_ele = eGammaCollection[igam].phi(); 
     float e_ele   = eGammaCollection[igam].energy();
     float et_ele = 0;
     if (cosh(eta_ele) > 0.0) et_ele = e_ele/cosh(eta_ele);
@@ -329,13 +330,13 @@ int L1TkElectronTrackObjectsAnalyzer::matchEGWithGenParticle() {
     if ( fabs(eta_ele) > etaCutoff_ || et_ele <= 0.0) continue;
     nEG++;
     if (et_ele > 20.0) {
-      nEGEt++;
-      //      float dPhi = reco::deltaPhi(p.phi(), phi_ele);
-      //      float dEta = (p.eta() - eta_ele);
-      //      float dR =  sqrt(dPhi*dPhi + dEta*dEta);
+      float dPhi = reco::deltaPhi(p.phi(), phi_ele);
+      float dEta = (p.eta() - eta_ele);
+      float dR =  sqrt(dPhi*dPhi + dEta*dEta);
       //      if (dR < dRmin) {
-      //	dRmin = dR;
-	//	eta_min = eta_ele; 
+      //        dRmin = dR;
+      //        eta_min = eta_ele; 
+      if (dR < 0.5) nEGEt++;
     }
   }
   if (nEG > 0) etGenEGamma_->Fill(p.pt());

@@ -36,7 +36,7 @@ process.pStubs = cms.Path( process.L1TkStubsFromPixelDigis )
 
 # --- now we runn the L1Track producer :
 
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedGauss_cfi')
 
 process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5DReco_cff')

@@ -30,9 +30,9 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'POSTLS261_V3::All', '')
 process.load('Configuration.StandardSequences.L1TrackTrigger_cff')
 process.pStubs = cms.Path( process.L1TkStubsFromPixelDigis )
 
-# --- now we runn the L1Track producer :
+# --- now we run the L1Track producer :
 
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedGauss_cfi')
 
 process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5DReco_cff')
@@ -49,29 +49,15 @@ process.pL1Tracks = cms.Path( process.BeamSpotFromSim*process.L1Tracks )
 
 # --- Run the L1PrimaryVertex producer :
 
-# the vtx is calculated from tracks that have | z | < ZMAX and chi2 < CHI2MAX.
-# The vtx maximises e.g. Sum (PT^2)  where the sum runs over tracks that
-# are within | z - z_track | < DeltaZ  of the tested vertex.
-
 # The primary vertex producer has to be run together with the L1Tracking,
 # or on a file on which the tracker digis have been kept.
 # This is because one needs to access the number of stubs in the PS
 # modules for the L1Tracks, when one reconstructs the vertex.
 # To get this information, one must have access to the tracker digis.
 
-# the configuration parameters below are not yet optimized !
+process.load("SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkPrimaryVertexProducer_cfi")
+process.p2 = cms.Path( process.L1TrackPrimaryVertex)
 
-process.L1TrackPrimaryVertex = cms.EDProducer('L1TrackPrimaryVertexProducer',
-     L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-     ZMAX = cms.double ( 25. ) ,	# in cm
-     CHI2MAX = cms.double( 100. ),
-     DeltaZ = cms.double( 0.1 ),    	# in cm.   
-     PTMINTRA = cms.double( 2.), 	# PTMIN of L1Tracks, in GeV
-     nStubsmin = cms.int32( 4 ) ,	# minimum number of stubs
-     nStubsPSmin = cms.int32( 3 )       # minimum number of stubs in PS modules 
-)
-
-process.p = cms.Path( process.L1TrackPrimaryVertex )
 
 process.Out = cms.OutputModule( "PoolOutputModule",
     fileName = cms.untracked.string( "example_w_Tracks_and_vertex.root" ),

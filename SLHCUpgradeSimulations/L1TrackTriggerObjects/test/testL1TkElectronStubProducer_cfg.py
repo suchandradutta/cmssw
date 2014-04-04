@@ -4,14 +4,14 @@ process = cms.Process("Ele")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 
 ################################################################################
-# Example configuratiom file : 
+# Example configuratiom file :
 # Here we run the L1EG algorithms (old stage-2 and new clustering),
 # we unpack the L1EG objects that were created during the L1 step
 # of the central production (i.e. the Run-1 algorithms), and we
-# create L1TkElectron particles (matching with L1Tracks).
+# create L1TkElectron particles (matching with L1TkStub).
 # Two output collections are created :
-#    - L1TkElectrons
-#    - L1TkElectrons that are isolated with respect to the L1Tracks
+#    - L1TkStubElectrons
+#    - L1TkStubElectrons that are isolated with respect to the L1Tracks
 ################################################################################
 
 # list of files
@@ -33,7 +33,7 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5DReco_cff')
 process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5D_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 
@@ -95,15 +95,15 @@ process.L1CaloTowerProducer.HCALDigis =  cms.InputTag("valHcalTriggerPrimitiveDi
 
 
 # "electrons" :
-import SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi
+import SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronStubProducer_cfi
 # no Isolation applied
-process.L1TkElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronTrackProducer_cfi.L1TkElectrons.clone()
-process.pElectrons = cms.Path( process.L1TkElectrons )
+process.L1TkStubElectrons = SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkElectronStubProducer_cfi.L1TkStubElectrons.clone()
+process.pElectrons = cms.Path( process.L1TkStubElectrons )
 
 # Isolated (w.r.t. L1Tracks) electrons :
-process.L1TkIsoElectrons = process.L1TkElectrons.clone()
-process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
-process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
+#process.L1TkIsoElectrons = process.L1TkElectrons.clone()
+#process.L1TkIsoElectrons.IsoCut = cms.double(0.1)
+#process.pElectronsIso = cms.Path( process.L1TkIsoElectrons)
 
 
 process.Out = cms.OutputModule( "PoolOutputModule",
@@ -114,8 +114,8 @@ process.Out = cms.OutputModule( "PoolOutputModule",
 
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_EGamma_*' )
 process.Out.outputCommands.append( 'keep *_SLHCL1ExtraParticles_IsoEGamma_*' )
-process.Out.outputCommands.append( 'keep *_L1TkElectrons_*_*' )
-process.Out.outputCommands.append( 'keep *_L1TkIsoElectrons_*_*' )
+process.Out.outputCommands.append( 'keep *_L1TkStubElectrons_*_*' )
+process.Out.outputCommands.append( 'keep *_L1TkIsoStubElectrons_*_*' )
 process.Out.outputCommands.append( 'keep *_genParticles_*_*')
 
 process.Out.outputCommands.append( 'keep SimTracks_g4SimHits_*_*') 
@@ -123,7 +123,7 @@ process.Out.outputCommands.append('keep *_L1Tracks_*_*')
 
 process.FEVToutput_step = cms.EndPath(process.Out)
 
-process.schedule = cms.Schedule(process.pSLHCCalo,process.TT_step,process.pElectrons,process.pElectronsIso, process.FEVToutput_step)
+process.schedule = cms.Schedule(process.pSLHCCalo,process.TT_step,process.pElectrons, process.FEVToutput_step)
 
 
 

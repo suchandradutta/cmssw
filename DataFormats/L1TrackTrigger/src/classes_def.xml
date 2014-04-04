@@ -51,6 +51,23 @@
  <class name="edm::Wrapper<l1extra::L1TkHTMissParticle>"/>
   <class name="edm::Wrapper<std::vector<l1extra::L1TkHTMissParticle> >"/>
 
+  <class name="l1extra::L1TkMuonParticle" ClassVersion="13">
+   <version ClassVersion="13" checksum="434850848"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkMuonParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkMuonParticle> >"/>
+  <class name="edm::Ref<std::vector<l1extra::L1TkMuonParticle>,l1extra::L1TkMuonParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkMuonParticle>,l1extra::L1TkMuonParticle> >"/>
+
+  <class name="l1extra::L1TkTauParticle" ClassVersion="11">
+   <version ClassVersion="11" checksum="3831895525"/>
+  </class>
+  <class name="std::vector<l1extra::L1TkTauParticle>"/>
+  <class name="edm::Wrapper<std::vector<l1extra::L1TkTauParticle> >"/>
+  <class name="edm::Ref<std::vector<l1extra::L1TkTauParticle>,l1extra::L1TkTauParticle,edm::refhelper::FindUsingAdvance<std::vector<l1extra::L1TkTauParticle>,l1extra::L1TkTauParticle> >"/>
+
+
+
+
 
 
 </lcgdict>

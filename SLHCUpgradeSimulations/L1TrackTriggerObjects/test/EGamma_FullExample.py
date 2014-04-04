@@ -21,7 +21,7 @@ from SLHCUpgradeSimulations.L1TrackTriggerObjects.singleElectronFiles_cfi import
 
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(
-   'file:example_w_Tracks_and_vertex.root'
+   'file:example_w_Tracks_and_vertex.root'	# created by runL1Tracks_and_L1PrimaryVertexProducer_cfg.py
     )
 )
 
@@ -30,7 +30,9 @@ process.source = cms.Source("PoolSource",
 # ---- Global Tag and geometry :
 #      (needed e.g. when running raw2digi below)
 
-process.load("Configuration.Geometry.GeometryIdeal_cff")
+process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5DReco_cff')
+process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5D_cff')
+process.load('Geometry.TrackerGeometryBuilder.StackedTrackerGeometry_cfi')
 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
@@ -90,47 +92,16 @@ process.L1Reco = cms.Path( process.l1extraParticles )
 
 	# --- from the Run-1 EG algorithms...
 
-process.L1TkPhotonsRun1EG = cms.EDProducer("L1TkEmParticleProducer",
-        label = cms.string("IsoTrk"), # labels the collection of L1TkEmParticleProducer that is produced.
-                                                # e.g. EG or IsoEG if all objects are kept, or
-                                                # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
-                                                # objects that pass a cut RelIso < RelIsoCut are written
-                                                # into the new collection.
-        L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated"),      # input L1EG collection
-                                                # When the standard sequences are used :
-                                                #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
-                                                #     or ("l1extraParticles","Isolated")
-						#   - for the "old stage-2" algo (2x2 clustering), use 
-						#     ("SLHCL1ExtraParticles","EGamma") or ("SLHCL1ExtraParticles","IsoEGamma")
-                                                #   - for the new clustering algorithm of Jean-Baptiste et al,
-                                                #     use ("SLHCL1ExtraParticlesNewClustering","IsoEGamma") or
-                                                #     ("SLHCL1ExtraParticlesNewClustering","EGamma").
-        ETmin = cms.double( -1 ),               # Only the L1EG objects that have ET > ETmin in GeV
-                                                # are considered. ETmin < 0 means that no cut is applied.
-        RelativeIsolation = cms.bool( True ),   # default = True. The isolation variable is relative if True,
-                                                # else absolute.
-        IsoCut = cms.double( 0.1 ),             # Cut on the (Trk-based) isolation: only the L1TkEmParticle for which
-                                                # the isolation is below RelIsoCut are written into
-                                                # the output collection. When RelIsoCut < 0, no cut is applied.
-                                                # When RelativeIsolation = False, IsoCut is in GeV.
-           # Determination of the isolation w.r.t. L1Tracks :
-        L1TrackInputTag = cms.InputTag("L1Tracks","Level1TkTracks"),
-        ZMAX = cms.double( 25. ),       # in cm
-        CHI2MAX = cms.double( 100. ),
-        PTMINTRA = cms.double( 2. ),    # in GeV
-        DRmin = cms.double( 0.07),
-        DRmax = cms.double( 0.30 ),
-        PrimaryVtxConstrain = cms.bool( False ),  # default = False
-        DeltaZMax = cms.double( 999. ),    # in cm. Used only when PrimaryVtxConstrain = True
-        L1VertexInputTag = cms.InputTag("NotUsed"),     # Used only when PrimaryVtxConstrain = True
-)
+process.load("SLHCUpgradeSimulations.L1TrackTriggerObjects.L1TkEmParticleProducer_cfi")
+process.L1TkPhotonsRun1EG = process.L1TkPhotons.clone()
+process.L1TkPhotonsRun1EG.L1EGammaInputTag = cms.InputTag("l1extraParticles","NonIsolated")
 process.pPhotonsRun1EG = cms.Path( process.L1TkPhotonsRun1EG )
 
 process.L1TkPhotonsRunIso1EG = process.L1TkPhotonsRun1EG.clone()
 process.L1TkPhotonsRunIso1EG.L1EGammaInputTag = cms.InputTag("l1extraParticles","Isolated")
 process.pPhotonsRun1IsoEG = cms.Path( process.L1TkPhotonsRunIso1EG )
 
-	# --- old stage -2 :
+	# --- from the old stage -2 L1EG objects :
 
 process.L1TkPhotonsStage2EG = process.L1TkPhotonsRun1EG.clone()
 process.L1TkPhotonsStage2EG.L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma")
@@ -140,7 +111,7 @@ process.L1TkPhotonsStage2IsoEG = process.L1TkPhotonsRun1EG.clone()
 process.L1TkPhotonsStage2IsoEG.L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","IsoEGamma")
 process.pPhotonsStage2IsoEG = cms.Path( process.L1TkPhotonsStage2IsoEG )
 
-	# --- new clustering (Jean Baptiste)
+	# --- from the new clustering L1EG objects (Jean Baptiste)
 
 process.L1TkPhotonsNewEG = process.L1TkPhotonsRun1EG.clone()
 process.L1TkPhotonsNewEG.L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticlesNewClustering","EGamma")

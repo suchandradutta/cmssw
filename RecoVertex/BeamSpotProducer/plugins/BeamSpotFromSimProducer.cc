@@ -166,6 +166,8 @@ void BeamSpotFromSimProducer::produce(edm::Event& iEvent, const edm::EventSetup&
       meanY_ = ps.getParameterSet("VtxSmeared").getParameter<double>("MeanY");
       meanZ_ = ps.getParameterSet("VtxSmeared").getParameter<double>("MeanZ");
       
+    cout << " x y z sigmas " << meanX_ << " " << meanY_ << " " << meanZ_ << " " << " sigmas " << SigmaX << " " << SigmaY << " " << SigmaZ << endl;
+
       double HalfCrossingAngle = ps.getParameterSet("VtxSmeared").getParameter<double>("HalfCrossingAngle");
       double CrabAngle = ps.getParameterSet("VtxSmeared").getParameter<double>("CrabAngle");
       
@@ -246,6 +248,42 @@ void BeamSpotFromSimProducer::produce(edm::Event& iEvent, const edm::EventSetup&
       error_(5,5)=error_(4,4);
 
     }
+
+    else if (type=="FlatEvtVtxGenerator") {
+        meanX_ = 0.5 * (ps.getParameterSet("VtxSmeared").getParameter<double>("MaxX") + ps.getParameterSet("VtxSmeared").getParameter<double>("MinX") );
+	meanY_ = 0.5 * (ps.getParameterSet("VtxSmeared").getParameter<double>("MaxY") + ps.getParameterSet("VtxSmeared").getParameter<double>("MinY") );
+  	meanZ_ = 0.5 * (ps.getParameterSet("VtxSmeared").getParameter<double>("MaxZ") + ps.getParameterSet("VtxSmeared").getParameter<double>("MinZ") );
+   	sigmaX_ = ( ps.getParameterSet("VtxSmeared").getParameter<double>("MaxX") - ps.getParameterSet("VtxSmeared").getParameter<double>("MinX") ) / sqrt(12.);
+        sigmaY_ = ( ps.getParameterSet("VtxSmeared").getParameter<double>("MaxY") - ps.getParameterSet("VtxSmeared").getParameter<double>("MinY") ) / sqrt(12.);
+        sigmaZ_ = ( ps.getParameterSet("VtxSmeared").getParameter<double>("MaxZ") - ps.getParameterSet("VtxSmeared").getParameter<double>("MinZ") ) / sqrt(12.);
+
+      	dxdz_=0.0;
+      	dydz_=0.0;
+      
+      	point_=Point(meanX_,meanY_,meanZ_);
+     	 
+      	for (unsigned int j=0; j<7; j++) { 
+        	for (unsigned int k=j; k<7; k++) {
+          	error_(j,k) = 0.0;
+        	}
+      	}
+
+      	//arbitrarily set position errors to 1/10 of width.
+      	error_(0,0)=0.1*sigmaX_;
+      	error_(1,1)=0.1*sigmaY_;
+      	error_(2,2)=0.1*sigmaZ_;
+
+      	//arbitrarily set width errors to 1/10 of width.
+      	error_(3,3)=0.1*sigmaZ_;
+      	error_(6,6)=0.1*sigmaX_;
+
+      	//arbitrarily set error on beam axis direction to 1/100 of
+      	//beam aspect ratio    
+      	error_(4,4)=0.01*sigmaX_/sigmaZ_;
+      	error_(5,5)=error_(4,4);
+    }
+
+
     else {
       LogError("BeamSpotFromSimProducer") <<"In BeamSpotFromSimProducer type="<<type
 					  <<" don't know what to do!"<<std::endl; 
