@@ -1,0 +1,21 @@
+<lcgdict>
+  <class name="TTIStudy::Event" ClassVersion="2">
+    <version ClassVersion="2" checksum="4262547674" />
+  </class>
+  <class name="TTIStudy::SimTrack" ClassVersion="1">
+    <version ClassVersion="1" checksum="2133083106" />
+  </class>
+  <class name="TTIStudy::Track" ClassVersion="1">
+    <version ClassVersion="1" checksum="311496534" />
+  </class>
+  <class name="TTIStudy::Electron" ClassVersion="2">
+    <version ClassVersion="2" checksum="3113346496"/>
+  </class>
+  <class name="TTIStudy::Tracklet" ClassVersion="1">
+    <version ClassVersion="1" checksum="3635576153" />
+  </class>
+  <class name="std::vector<TTIStudy::SimTrack>"  persistent="true" />
+  <class name="std::vector<TTIStudy::Track>"  persistent="true" />
+  <class name="std::vector<TTIStudy::Electron>"  persistent="true" />
+  <class name="std::vector<TTIStudy::Tracklet>"  persistent="true" />
+</lcgdict>
