@@ -7,7 +7,7 @@ L1TkStubElectrons = cms.EDProducer("L1TkElectronStubsProducer",
                                         # EGIsoTrk or IsoEGIsoTrk if only the EG or IsoEG
                                         # objects that pass a cut RelIso < RelIsoCut are written
                                         # into the new collection.
-        L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),      # input EGamma collection
+        L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticlesNewClustering","EGamma"),      # input EGamma collection
 					# When the standard sequences are used :
                                                 #   - for the Run-1 algo, use ("l1extraParticles","NonIsolated")
                                                 #     or ("l1extraParticles","Isolated")
