@@ -20,7 +20,9 @@ process.ana = cms.EDAnalyzer( 'L1TkElectronTrackObjectsAnalyzer' ,
     L1EGammaInputTag = cms.InputTag("SLHCL1ExtraParticles","EGamma"),
     AnalysisOption   = cms.string("Efficiency"),
     EtaCutOff   = cms.double(2.5),
-    TrackPtCutOff   = cms.double(12.0)                                                                                          
+    TrackPtCutOff   = cms.double(12.0),
+    GenPtThreshold   = cms.double(30.0),
+    EGammaEtThreshold = cms.double(20.0)                              
 )
 
 
