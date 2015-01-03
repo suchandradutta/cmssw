@@ -4,16 +4,16 @@ process = cms.Process("digiTest")
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
-process.MessageLogger = cms.Service("MessageLogger",
-    debugModules = cms.untracked.vstring('siPixelRawData'),
-    destinations = cms.untracked.vstring("cout"),
-    cout = cms.untracked.PSet(
-        threshold = cms.untracked.string('ERROR')
-    )
-)
+#process.MessageLogger = cms.Service("MessageLogger",
+#    debugModules = cms.untracked.vstring('siPixelRawData'),
+#    destinations = cms.untracked.vstring("cout"),
+#    cout = cms.untracked.PSet(
+#        threshold = cms.untracked.string('ERROR')
+#    )
+#)
 process.source = cms.Source("PoolSource",
     fileNames =  cms.untracked.vstring(
-       'file:step2.root'
+         'file:step2.root'
        )
 )
 process.load('Configuration.StandardSequences.Services_cff')
@@ -35,26 +35,26 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 # Other statements
-process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 
-#-------------
-# Output ROOT file
-#-------------
-process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('./DigiTest_pix.root')
-)
-process.analysis = cms.EDAnalyzer("DigiValidation",
-    Verbosity = cms.untracked.bool(False),
-#    src = cms.InputTag("SiPixelDigis"),
-    src = cms.InputTag("simSiPixelDigis", "Pixel"),
-    simG4 = cms.InputTag("g4SimHits"),
-    PhiMin = cms.double(10.0),
-    PhiMax = cms.double(12.0)                                  
-)
+process.load("DQMServices.Components.DQMFileSaver_cfi")
+process.load("DQMServices.Components.DQMEventInfo_cfi")
+process.dqmEnv.subSystemFolder    = "Phase2Tracker"
+process.dqmSaver.convention = cms.untracked.string('Online')
+process.dqmSaver.producer = cms.untracked.string('DQM')
+process.dqmSaver.saveAtJobEnd = cms.bool(True)
+
+
+process.load('SimTracker.SiPhase2Digitizer.Phase2TrackerMonitorDigi_cfi')
+process.load('SimTracker.SiPhase2Digitizer.Phase2TrackerValidateDigi_cfi')
+process.digiValid.DigiSource = cms.InputTag("simSiPixelDigis", "Tracker")
+process.digiMon.DigiSource = cms.InputTag("simSiPixelDigis", "Tracker")
+
+process.digiana_seq = cms.Sequence(process.digiMon* process.digiValid*process.dqmEnv*process.dqmSaver)
+
 #process.digi_step = cms.Sequence(process.siPixelRawData*process.siPixelDigis)
-process.p = cms.Path(process.analysis)
+process.p = cms.Path(process.digiana_seq)
 
 # customisation of the process.                                                                                                                              
 

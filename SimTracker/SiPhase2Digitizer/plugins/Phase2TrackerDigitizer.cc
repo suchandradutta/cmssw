@@ -86,9 +86,13 @@ namespace cms
 
     // one type of Digi and DigiSimLink suffices 
     // changes in future: InnerPixel -> Tracker
-    const std::string alias("simSiPixelDigis"); 
-    mixMod.produces<edm::DetSetVector<Phase2TrackerDigi> >().setBranchAlias(alias);
-    mixMod.produces<edm::DetSetVector<Phase2TrackerDigiSimLink> >().setBranchAlias(alias + "siPixelDigiSimLink");
+    const std::string alias1("simSiPixelDigis"); 
+    mixMod.produces<edm::DetSetVector<Phase2TrackerDigi> >("Pixel").setBranchAlias(alias1);
+    mixMod.produces<edm::DetSetVector<Phase2TrackerDigiSimLink> >("Pixel").setBranchAlias(alias1);
+
+    const std::string alias2("simSiTrackerDigis"); 
+    mixMod.produces<edm::DetSetVector<Phase2TrackerDigi> >("Tracker").setBranchAlias(alias2);
+    mixMod.produces<edm::DetSetVector<Phase2TrackerDigiSimLink> >("Tracker").setBranchAlias(alias2);
 
     // creating algorithm objects and pushing them into the map
     algomap_[InnerPixel] = std::unique_ptr<Phase2TrackerDigitizerAlgorithm>(new PixelDigitizerAlgorithm(iConfig, (*rndEngine_)));
@@ -187,46 +191,10 @@ namespace cms
       if (simHits.isValid()) crossingSimHitIndexOffset_[tag.encode()] += simHits->size();
      }
   }
-  void
-  Phase2TrackerDigitizer::finalizeEvent(edm::Event& iEvent, const edm::EventSetup& iSetup) {
-    edm::ESHandle<TrackerTopology> tTopoHand;
-    iSetup.get<IdealGeometryRecord>().get(tTopoHand);
-    const TrackerTopology* tTopo = tTopoHand.product();
-
-    std::vector<edm::DetSet<Phase2TrackerDigi> > theDigiVector;
-    std::vector<edm::DetSet<Phase2TrackerDigiSimLink> > theDigiLinkVector;
-
-    for (auto iu = pDD_->detUnits().begin(); iu != pDD_->detUnits().end(); ++iu) {
-      DetId detId_raw = DetId((*iu)->geographicalId().rawId());
-      const std::string algotype = getAlgoType(detId_raw);
-      if (algomap_.find(algotype) != algomap_.end()) {  
-        edm::DetSet<Phase2TrackerDigi> collector((*iu)->geographicalId().rawId());
-        edm::DetSet<Phase2TrackerDigiSimLink> linkcollector((*iu)->geographicalId().rawId());
-        algomap_[algotype]->digitize(dynamic_cast<Phase2TrackerGeomDetUnit*>((*iu)),
-                                     collector.data,
-                                     linkcollector.data,
-                                     tTopo);
-        if (collector.data.size() > 0)
-          theDigiVector.push_back(std::move(collector));
-
-        if (linkcollector.data.size() > 0)
-          theDigiLinkVector.push_back(std::move(linkcollector));
-      }
-      else
-	edm::LogInfo("Phase2TrackerDigitizer") << "Unsupported algorithm: " << algotype;
-    }
-    
-    // Step C: create collection with the cache vector of DetSet 
-    std::auto_ptr<edm::DetSetVector<Phase2TrackerDigi> > 
-      output(new edm::DetSetVector<Phase2TrackerDigi>(theDigiVector));
-    std::auto_ptr<edm::DetSetVector<Phase2TrackerDigiSimLink> > 
-      outputlink(new edm::DetSetVector<Phase2TrackerDigiSimLink>(theDigiLinkVector));
-
-    // Step D: write output to file 
-    iEvent.put(output);
-    iEvent.put(outputlink);
+  void Phase2TrackerDigitizer::finalizeEvent(edm::Event& iEvent, const edm::EventSetup& iSetup) {
+    addCollection(iEvent, iSetup, true, "Pixel");
+    addCollection(iEvent, iSetup, false, "Tracker");
   }
-
   // Fill the StackedTrackerDetId to DetId mapping here
   void Phase2TrackerDigitizer::beginRun(edm::Run const& run, edm::EventSetup const& iSetup) {
     // Get Stack Geometry information     
@@ -259,6 +227,49 @@ namespace cms
       }
     } 
     return algotype;
+  }
+  void
+  Phase2TrackerDigitizer::addCollection(edm::Event& iEvent, const edm::EventSetup& iSetup, bool pixel_algo, std::string const& tag) {
+    edm::ESHandle<TrackerTopology> tTopoHand;
+    iSetup.get<IdealGeometryRecord>().get(tTopoHand);
+    const TrackerTopology* tTopo = tTopoHand.product();
+
+    std::vector<edm::DetSet<Phase2TrackerDigi> > theDigiVector;
+    std::vector<edm::DetSet<Phase2TrackerDigiSimLink> > theDigiLinkVector;
+
+    for (auto iu = pDD_->detUnits().begin(); iu != pDD_->detUnits().end(); ++iu) {
+      DetId detId_raw = DetId((*iu)->geographicalId().rawId());
+      const std::string algotype = getAlgoType(detId_raw);
+      if (algomap_.find(algotype) != algomap_.end() && 
+	  ( (pixel_algo && algotype == Phase2TrackerDigitizer::InnerPixel) ||
+	    (!pixel_algo && algotype != Phase2TrackerDigitizer::InnerPixel) )) 
+      {  
+        edm::DetSet<Phase2TrackerDigi> collector((*iu)->geographicalId().rawId());
+        edm::DetSet<Phase2TrackerDigiSimLink> linkcollector((*iu)->geographicalId().rawId());
+        algomap_[algotype]->digitize(dynamic_cast<Phase2TrackerGeomDetUnit*>((*iu)),
+                                     collector.data,
+                                     linkcollector.data,
+                                     tTopo);
+        if (collector.data.size() > 0) {
+          theDigiVector.push_back(std::move(collector));
+	}
+
+        if (linkcollector.data.size() > 0)
+          theDigiLinkVector.push_back(std::move(linkcollector));
+      }
+      else
+	edm::LogInfo("Phase2TrackerDigitizer") << "Unsupported algorithm: " << algotype;
+    }
+    
+    // Step C: create collection with the cache vector of DetSet 
+    std::auto_ptr<edm::DetSetVector<Phase2TrackerDigi> > 
+      output(new edm::DetSetVector<Phase2TrackerDigi>(theDigiVector));
+    std::auto_ptr<edm::DetSetVector<Phase2TrackerDigiSimLink> > 
+      outputlink(new edm::DetSetVector<Phase2TrackerDigiSimLink>(theDigiLinkVector));
+
+    // Step D: write output to file 
+    iEvent.put(output, tag);
+    iEvent.put(outputlink, tag);
   }
 }
 

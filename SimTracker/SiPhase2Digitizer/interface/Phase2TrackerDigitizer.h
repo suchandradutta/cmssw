@@ -72,6 +72,7 @@ namespace cms
     void accumulatePixelHits(edm::Handle<std::vector<PSimHit> >, 
 			     size_t globalSimHitIndex,
 			     const unsigned int tofBin);   
+    void addCollection(edm::Event& iEvent, const edm::EventSetup& iSetup, bool pixel_algo, std::string const& tag);
    
     bool first_;
     /** @brief Offset to add to the index of each sim hit to account for which crossing it's in.

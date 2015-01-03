@@ -9,10 +9,13 @@ namespace phase2trackerdigi {
     const DetId theDetId(detid);
     
     if (theDetId.det() == DetId::Tracker) {
-      if (theDetId.subdetId() == PixelSubdetector::PixelBarrel )
-	layer = topo->pxbLayer(theDetId);
-      else if (theDetId.subdetId() == PixelSubdetector::PixelEndcap) layer = 100 * topo->pxfSide(theDetId)  + topo->pxfDisk(theDetId);
-      else edm::LogInfo("Phase2TrackerDigiCommon") << ">>> Invalid subdetId()  " ;
+      if (theDetId.subdetId() == PixelSubdetector::PixelBarrel) {
+	layer = topo->pxbLayer(detid);
+      } else if (theDetId.subdetId() == PixelSubdetector::PixelEndcap) {
+	layer = 100 * topo->pxfSide(detid)  + topo->pxfDisk(detid);
+      } else {
+	edm::LogInfo("Phase2TrackerDigiCommon") << ">>> Invalid subdetId()  " ;
+      }
     }
     return layer;
   }
