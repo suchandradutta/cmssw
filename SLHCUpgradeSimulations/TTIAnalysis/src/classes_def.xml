@@ -1,0 +1,25 @@
+<lcgdict>
+  <class name="TTIStudy::Event" ClassVersion="1">
+    <version ClassVersion="1" checksum="2709745862"/>
+  </class>
+  <class name="TTIStudy::SimTrack" ClassVersion="1">
+    <version ClassVersion="1" checksum="2133083106" />
+  </class>
+  <class name="TTIStudy::Track" ClassVersion="1">
+    <version ClassVersion="1" checksum="404128520"/>
+  </class>
+  <class name="TTIStudy::Electron" ClassVersion="1">
+    <version ClassVersion="1" checksum="2675528813"/>
+  </class>
+  <class name="TTIStudy::Tracklet" ClassVersion="1">
+    <version ClassVersion="1" checksum="3635576153" />
+  </class>
+  <class name="TTIStudy::GenParticle" ClassVersion="1">
+    <version ClassVersion="1" checksum="22274846" />
+  </class>
+  <class name="std::vector<TTIStudy::SimTrack>"  persistent="true" />
+  <class name="std::vector<TTIStudy::Track>"  persistent="true" />
+  <class name="std::vector<TTIStudy::Electron>"  persistent="true" />
+  <class name="std::vector<TTIStudy::Tracklet>"  persistent="true" />
+  <class name="std::vector<TTIStudy::GenParticle>"  persistent="true" />
+</lcgdict>
