@@ -61,6 +61,7 @@
 #include "DataFormats/L1TrackTrigger/interface/TTCluster.h"
 #include "DataFormats/L1TrackTrigger/interface/TTStub.h"
 #include "DataFormats/L1TrackTrigger/interface/TTTrack.h"
+#include "DataFormats/L1TrackTrigger/interface/TTPixelTrack.h"
 
 #include "DataFormats/EcalDigi/interface/EcalTriggerPrimitiveDigi.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
@@ -121,6 +122,7 @@ namespace {
   //  typedef std::vector<stubRef>::const_iterator stubIter;
   typedef stubRefCollection::iterator stubIter;
   typedef std::vector< TTTrack< Ref_PixelDigi_ > > L1TTTrackCollection;
+  typedef std::vector<TTPixelTrack> L1TTPixelTrackCollection;
 }
 namespace TTIStudy {
   bool compareStubLayer(const stubRef& s1, const stubRef & s2) {
@@ -258,6 +260,7 @@ private:
   std::vector<TTIStudy::Electron>* electronsBr_; 
   std::vector<TTIStudy::SimTrack>* simTracksBr_;  
   std::vector<TTIStudy::Track>* tracksBr_;  
+  std::vector<TTIStudy::Track>* pxTracksBr_;  
 
   // ntuples:
 
@@ -268,6 +271,7 @@ private:
   unsigned int mcType_ ;
   edm::InputTag egammaSrc_;
   edm::InputTag trkSrc_;
+  edm::InputTag pxTrkSrc_;
   edm::InputTag stubSrc_;
   edm::InputTag trkTruthSrc_;
   edm::InputTag stubTruthSrc_;
@@ -300,6 +304,7 @@ private:
 
 
   edm::Handle< std::vector< TTTrack< Ref_PixelDigi_ > > > TTTrackHandle;
+  edm::Handle< std::vector< TTPixelTrack > > TTPixelTrackHandle;
   edm::Handle< TTTrackAssociationMap< Ref_PixelDigi_ > > mcTruthTTTrackHandle;
 
   edm::Handle<std::vector<TrackingParticle> > tpHandle;
@@ -307,6 +312,7 @@ private:
   edm::SimVertexContainer simVertices_;
   L1TTTrackCollection l1TTTracks_;
   l1slhc::L1EGCrystalClusterCollection clusColl_;
+  L1TTPixelTrackCollection l1TTPixelTracks_;
 
 };
 
@@ -320,6 +326,7 @@ ElectronStudy::ElectronStudy(const edm::ParameterSet& iConfig)
   egammaSrc_        = iConfig.getParameter<edm::InputTag>("egammaSrc");
   trkSrc_           = iConfig.getParameter<edm::InputTag>("trkSrc");
   trkTruthSrc_      = iConfig.getParameter<edm::InputTag>("trkTruthSrc");
+  pxTrkSrc_           = iConfig.getParameter<edm::InputTag>("pixelTrkSrc");
   stubSrc_          = iConfig.getParameter<edm::InputTag>("stubSrc");
   stubTruthSrc_     = iConfig.getParameter<edm::InputTag>("stubTruthSrc");
   debugFlag_        = iConfig.getParameter<bool>("DebugFlag");
@@ -356,6 +363,8 @@ ElectronStudy::~ElectronStudy()
   delete simTracksBr_; 
   delete tracksBr_; 
   delete electronsBr_; 
+  delete pxTracksBr_;  
+
 }
 
 
@@ -372,6 +381,7 @@ ElectronStudy::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   simTracksBr_->clear(); 
   tracksBr_->clear(); 
   electronsBr_->clear(); 
+  pxTracksBr_->clear();
 
   nEvents_++;
   std::cout << " Event # " << nEvents_ << std::endl;
@@ -396,6 +406,9 @@ ElectronStudy::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   // Extract Beamspot, Mag Field, etc
   //////////////////////////////////////////////////////////
   iEvent.getByLabel("BeamSpotFromSim", "BeamSpot", beamSpotHandle);
+  eventBr_->beamSpotX0 = beamSpotHandle->x0();
+  eventBr_->beamSpotY0 = beamSpotHandle->y0();
+  eventBr_->beamSpotZ0 = beamSpotHandle->z0();
  
   iSetup.get<IdealMagneticFieldRecord>().get(theMagField);
   magnetStrength = theMagField.product()->inTesla(GlobalPoint(0,0,0)).z();
@@ -461,6 +474,10 @@ ElectronStudy::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   l1TTTracks_ = (*TTTrackHandle.product());
   std::cout << "Found " << l1TTTracks_.size() << " L1 Tracks" << std::endl;
 
+  iEvent.getByLabel(pxTrkSrc_, TTPixelTrackHandle);
+  l1TTPixelTracks_ = (*TTPixelTrackHandle.product());
+  std::cout << "Found " << l1TTPixelTracks_.size() << " L1 Pixel Tracks" << std::endl;
+
   iEvent.getByLabel(trkTruthSrc_, mcTruthTTTrackHandle);
   fillSimTrackInfo();
   fillRecTrackInfo();
@@ -507,6 +524,10 @@ ElectronStudy::beginJob()
   
   tracksBr_ = new std::vector<TTIStudy::Track>(); 
   tree->Branch("Track", "std::vector<TTIStudy::Track>", &tracksBr_);
+
+  pxTracksBr_ = new std::vector<TTIStudy::Track>(); 
+  tree->Branch("PixelTrack", "std::vector<TTIStudy::Track>", &pxTracksBr_);
+
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
@@ -861,6 +882,20 @@ void ElectronStudy::fillRecTrackInfo() {
     recTk.vertexId  = VtxId;
     recTk.matchedSimTrack = mcTruthTTTrackHandle->isGenuine(l1track_ptr);
     tracksBr_->push_back(recTk);
+  }
+  //Store Pixel Tracks
+  L1TTPixelTrackCollection::const_iterator iterL1PixelTrack;
+  for ( L1TTPixelTrackCollection::const_iterator pxTrk = l1TTPixelTracks_.begin(); pxTrk != l1TTPixelTracks_.end(); pxTrk++ ) {
+    TTIStudy::Track recPxTk;
+    recPxTk.pt        = pxTrk->getMomentum().perp();
+    recPxTk.eta       = pxTrk->getMomentum().eta();
+    recPxTk.phi       = pxTrk->getMomentum().phi();
+    recPxTk.chiSquare = pxTrk->getChi2();
+    recPxTk.curvature = pxTrk->getRInv();
+    recPxTk.vertexX   = pxTrk->getPOCA().x();
+    recPxTk.vertexY   = pxTrk->getPOCA().y();
+    recPxTk.vertexZ   = pxTrk->getPOCA().z();
+    pxTracksBr_->push_back(recPxTk);
   }
 }
 //

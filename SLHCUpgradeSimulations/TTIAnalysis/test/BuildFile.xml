@@ -1,5 +1,20 @@
 <environment>
-  <library   file="*.cc" name="SLHCUpgradeSimulationsTTIAnalysisTest">
+  <library   file="ElectronStudy.cc" name="SLHCUpgradeSimulationsTTIAnalysisElectron">
+    <flags   EDM_PLUGIN="1"/>
+    <use   name="FWCore/Framework"/>
+    <use   name="FWCore/PluginManager"/>
+    <use   name="FWCore/ParameterSet"/>
+    <use   name="FWCore/Utilities"/>
+    <use   name="FWCore/ServiceRegistry"/>
+    <use   name="DataFormats/Common"/>
+    <use   name="CommonTools/UtilAlgos"/>
+    <use   name="SLHCUpgradeSimulations/L1TrackTrigger"/>    
+    <use   name="SLHCUpgradeSimulations/TTIAnalysis"/>
+    <use   name="SimDataFormats/TrackingAnalysis"/>
+    <use   name="root"/>
+    <flags   CXXFLAGS="-g -O0"/>
+  </library>
+  <library   file="BSToPhiPhiStudy.cc" name="SLHCUpgradeSimulationsTTIAnalysisBSToPhiPhi">
     <flags   EDM_PLUGIN="1"/>
     <use   name="FWCore/Framework"/>
     <use   name="FWCore/PluginManager"/>
