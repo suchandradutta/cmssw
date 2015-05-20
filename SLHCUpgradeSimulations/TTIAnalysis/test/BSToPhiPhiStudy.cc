@@ -173,7 +173,6 @@ private:
   edm::InputTag pxTrkSrc_;
   bool debugFlag_;
 
-  edm::Handle<reco::BeamSpot> beamSpotHandle;
 
   edm::ESHandle<MagneticField> theMagField;
   edm::ESHandle<StackedTrackerGeometry> stackedGeometryHandle;
@@ -257,11 +256,12 @@ BSToPhiPhiStudy::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   //////////////////////////////////////////////////////////
   // Extract Beamspot, Mag Field, etc
   //////////////////////////////////////////////////////////
+  edm::Handle<reco::BeamSpot> beamSpotHandle;
   iEvent.getByLabel("BeamSpotFromSim", "BeamSpot", beamSpotHandle);
-  eventBr_->beamSpotX0 = beamSpotHandle->x0();
-  eventBr_->beamSpotY0 = beamSpotHandle->y0();
-  eventBr_->beamSpotZ0 = beamSpotHandle->z0();
- 
+  eventBr_->beamSpotX0 = beamSpotHandle->position().x();
+  eventBr_->beamSpotY0 = beamSpotHandle->position().y();
+  eventBr_->beamSpotZ0 = beamSpotHandle->position().z();
+
   //////////////////////////////////////////////////////////
   // Gun Particle Information from GenParticle
   //////////////////////////////////////////////////////////
@@ -306,7 +306,6 @@ BSToPhiPhiStudy::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
   iEvent.getByLabel(pxTrkSrc_, TTPixelTrackHandle);
   l1TTPixelTracks_ = (*TTPixelTrackHandle.product());
   std::cout << "Found " << l1TTPixelTracks_.size() << " L1 Pixel Tracks" << std::endl;
-  //  std::cout << "Found " << TTPixelTrackHandle->size() << " L1 Pixel Tracks" << std::endl;
   
 
   iEvent.getByLabel(trkTruthSrc_, mcTruthTTTrackHandle);

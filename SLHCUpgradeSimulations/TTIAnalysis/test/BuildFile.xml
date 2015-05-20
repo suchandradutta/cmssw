@@ -29,4 +29,19 @@
     <use   name="root"/>
     <flags   CXXFLAGS="-g -O0"/>
   </library>
+  <library   file="L1TkElectronTrackObjectsAnalyzer.cc" name="SLHCUpgradeSimulationsTTIAnalysisL1TkElectronTrackObjectsAnalyzer">
+    <flags   EDM_PLUGIN="1"/>
+    <use   name="FWCore/Framework"/>
+    <use   name="FWCore/PluginManager"/>
+    <use   name="FWCore/ParameterSet"/>
+    <use   name="FWCore/Utilities"/>
+    <use   name="FWCore/ServiceRegistry"/>
+    <use   name="DataFormats/Common"/>
+    <use   name="CommonTools/UtilAlgos"/>
+    <use   name="SLHCUpgradeSimulations/L1TrackTrigger"/>    
+    <use   name="SLHCUpgradeSimulations/TTIAnalysis"/>
+    <use   name="SimDataFormats/TrackingAnalysis"/>
+    <use   name="root"/>
+    <flags   CXXFLAGS="-g -O0"/>
+  </library>
 </environment>

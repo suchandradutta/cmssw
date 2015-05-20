@@ -911,11 +911,6 @@ void ElectronStudy::fillElectronInfo(l1extra::L1EmParticleCollection::const_iter
 
   if (et_ele <= egETThreshold_) selected = false; 
     
-  /*  if (geometryOption_ == "LB_6PS") {
-    if (et_ele <= egETThreshold_) selected = false;
-  }  else {
-    if(et_ele <= egETThreshold_ || fabs(eta_ele) >=1.0) selected = false;
-    }*/
   if (!selected) return;
   
   TTIStudy::Electron elec; 
