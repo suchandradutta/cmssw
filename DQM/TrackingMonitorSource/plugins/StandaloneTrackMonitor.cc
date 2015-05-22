@@ -44,46 +44,6 @@ StandaloneTrackMonitor::StandaloneTrackMonitor(const edm::ParameterSet& ps):
   puScaleFactorFile_(parameters_.getUntrackedParameter<std::string>("puScaleFactorFile", "PileupScaleFactor_run203002.root")),
   verbose_(parameters_.getUntrackedParameter<bool>("verbose", false))
 {
-  trackEtaH_ = nullptr; 
-  trackEtaerrH_ = nullptr;
-  trackCosThetaH_ = nullptr;
-  trackThetaerrH_ = nullptr;
-  trackPhiH_ = nullptr;
-  trackPhierrH_ = nullptr;
-  trackPH_ = nullptr;
-  trackPtH_ = nullptr;
-  trackPtUpto2GeVH_ = nullptr;
-  trackPtOver10GeVH_ = nullptr;
-  trackPterrH_ = nullptr;
-  trackqOverpH_ = nullptr;
-  trackqOverperrH_ = nullptr;
-  trackChargeH_ = nullptr;
-  nlostHitsH_ = nullptr;
-  nvalidTrackerHitsH_ = nullptr;
-  nvalidPixelHitsH_ = nullptr;
-  nvalidStripHitsH_ = nullptr;
-  trkLayerwithMeasurementH_ = nullptr;
-  pixelLayerwithMeasurementH_ = nullptr;
-  stripLayerwithMeasurementH_ = nullptr;
-  beamSpotXYposH_ = nullptr;
-  beamSpotXYposerrH_ = nullptr;
-  beamSpotZposH_ = nullptr;
-  beamSpotZposerrH_ = nullptr;
-  trackChi2H_ = nullptr;
-  tracknDOFH_ = nullptr;
-  trackd0H_ = nullptr;
-  trackChi2bynDOFH_ = nullptr;
-  vertexXposH_ = nullptr;
-  vertexYposH_ = nullptr;
-  vertexZposH_ = nullptr;
-
-  nPixBarrelH_ = nullptr;
-  nPixEndcapH_ = nullptr;
-  nStripTIBH_ = nullptr;
-  nStripTOBH_ = nullptr;
-  nStripTECH_ = nullptr;
-  nStripTIDH_ = nullptr;
-  nTracksH_ = nullptr;
   
   // for MC only
   nVertexH_ = nullptr;
@@ -131,127 +91,104 @@ void StandaloneTrackMonitor::bookHistograms(DQMStore::IBooker &iBook, edm::Run c
 
   // The following are common with the official tool
   if (haveAllHistograms_) {
-    if (!trackEtaH_) trackEtaH_ = iBook.book1D("trackEta", "Track Eta", 
-					     TrackEtaHistoPar.getParameter<int32_t>("Xbins"),
-					     TrackEtaHistoPar.getParameter<double>("Xmin"), 
-					     TrackEtaHistoPar.getParameter<double>("Xmax"));
-    if (!trackEtaerrH_) trackEtaerrH_ = iBook.book1D("trackEtaerr", "Track Eta Error", 50,0.0,1.0);
-    if (!trackCosThetaH_) trackCosThetaH_ = iBook.book1D("trackCosTheta", "Track Cos(Theta)", 50,-1.0,1.0);
-    if (!trackThetaerrH_) trackThetaerrH_ = iBook.book1D("trackThetaerr", "Track Theta Error", 50,0.0,1.0);
-    if (!trackPhiH_) trackPhiH_ = iBook.book1D("trackPhi", "Track Phi", 70,-3.5,3.5);
-    if (!trackPhierrH_) trackPhierrH_ = iBook.book1D("trackPhierr", "Track Phi Error", 50,0.0,1.0);
+    trackEtaH_ = iBook.book1D("trackEta", "Track Eta", 
+			      TrackEtaHistoPar.getParameter<int32_t>("Xbins"),
+			      TrackEtaHistoPar.getParameter<double>("Xmin"), 
+			      TrackEtaHistoPar.getParameter<double>("Xmax"));
     
-    if (!trackPH_) trackPH_ = iBook.book1D("trackP", "Track 4-momentum", 50,0.0,10.0);
-    if (!trackPtH_) trackPtH_ = iBook.book1D("trackPt", "Track Pt", 
-					   TrackPtHistoPar.getParameter<int32_t>("Xbins"),
-					   TrackPtHistoPar.getParameter<double>("Xmin"),
-					   TrackPtHistoPar.getParameter<double>("Xmax"));
-    if (!trackPtUpto2GeVH_) trackPtUpto2GeVH_ = iBook.book1D("trackPtUpto2GeV", "Track Pt upto 2GeV",100,0,2.0);
-    if (!trackPtOver10GeVH_) trackPtOver10GeVH_ = iBook.book1D("trackPtOver10GeV","Track Pt greater than 10 GeV",100,0,100.0);
-    if (!trackPterrH_) trackPterrH_ = iBook.book1D("trackPterr", "Track Pt Error",100,0.0,100.0);
-    if (!trackqOverpH_) trackqOverpH_ = iBook.book1D("trackqOverp", "q Over p",40,-10.0,10.0);
-    if (!trackqOverperrH_) trackqOverperrH_ = iBook.book1D("trackqOverperr","q Over p Error",50,0.0,25.0);
-    if (!trackChargeH_) trackChargeH_ = iBook.book1D("trackCharge", "Track Charge", 50, -5, 5);
-    if (!trackChi2H_) trackChi2H_ = iBook.book1D("trackChi2", "Chi2",100,0.0,100.0);
-    if (!tracknDOFH_) tracknDOFH_ = iBook.book1D("tracknDOF", "nDOF",100,0.0,100.0);
-    if (!trackd0H_) trackd0H_ = iBook.book1D("trackd0", "Track d0",100,-1,1);
-    if (!trackChi2bynDOFH_) trackChi2bynDOFH_ = iBook.book1D("trackChi2bynDOF", "Chi2 Over nDOF",100,0.0,10.0);
+    trackEtaerrH_ = iBook.book1D("trackEtaerr", "Track Eta Error", 50,0.0,1.0);
+    trackCosThetaH_ = iBook.book1D("trackCosTheta", "Track Cos(Theta)", 50,-1.0,1.0);
+    trackThetaerrH_ = iBook.book1D("trackThetaerr", "Track Theta Error", 50,0.0,1.0);
+    trackPhiH_ = iBook.book1D("trackPhi", "Track Phi", 70,-3.5,3.5);
+    trackPhierrH_ = iBook.book1D("trackPhierr", "Track Phi Error", 50,0.0,1.0);
+    
+    trackPH_ = iBook.book1D("trackP", "Track 4-momentum", 50,0.0,10.0);
+    trackPtH_ = iBook.book1D("trackPt", "Track Pt", 
+			     TrackPtHistoPar.getParameter<int32_t>("Xbins"),
+			     TrackPtHistoPar.getParameter<double>("Xmin"),
+			     TrackPtHistoPar.getParameter<double>("Xmax"));
+    trackPtUpto2GeVH_ = iBook.book1D("trackPtUpto2GeV", "Track Pt upto 2GeV",100,0,2.0);
+    trackPtOver10GeVH_ = iBook.book1D("trackPtOver10GeV","Track Pt greater than 10 GeV",100,0,100.0);
+    trackPterrH_ = iBook.book1D("trackPterr", "Track Pt Error",100,0.0,100.0);
+    trackqOverpH_ = iBook.book1D("trackqOverp", "q Over p",40,-10.0,10.0);
+    trackqOverperrH_ = iBook.book1D("trackqOverperr","q Over p Error",50,0.0,25.0);
+    trackChargeH_ = iBook.book1D("trackCharge", "Track Charge", 50, -5, 5);
+    trackChi2H_ = iBook.book1D("trackChi2", "Chi2",100,0.0,100.0);
+    tracknDOFH_ = iBook.book1D("tracknDOF", "nDOF",100,0.0,100.0);
+    trackd0H_ = iBook.book1D("trackd0", "Track d0",100,-1,1);
+    trackChi2bynDOFH_ = iBook.book1D("trackChi2bynDOF", "Chi2 Over nDOF",100,0.0,10.0);
 
-    if (!nlostHitsH_) nlostHitsH_ = iBook.book1D("nlostHits", "No. of Lost Hits",10,0.0,10.0);
-    if (!nvalidTrackerHitsH_) nvalidTrackerHitsH_ = iBook.book1D("nvalidTrackerhits", "No. of Valid Tracker Hits",35,0.0,35.0);
-    if (!nvalidPixelHitsH_) nvalidPixelHitsH_ = iBook.book1D("nvalidPixelHits", "No. of Valid Hits in Pixel",10,0.0,10.0);
-    if (!nvalidStripHitsH_) nvalidStripHitsH_ = iBook.book1D("nvalidStripHits", "No.of Valid Hits in Strip",25,0.0,25.0);
+    nlostHitsH_ = iBook.book1D("nlostHits", "No. of Lost Hits",10,0.0,10.0);
+    nvalidTrackerHitsH_ = iBook.book1D("nvalidTrackerhits", "No. of Valid Tracker Hits",35,0.0,35.0);
+    nvalidPixelHitsH_ = iBook.book1D("nvalidPixelHits", "No. of Valid Hits in Pixel",10,0.0,10.0);
+    nvalidStripHitsH_ = iBook.book1D("nvalidStripHits", "No.of Valid Hits in Strip",25,0.0,25.0);
 
-    if (!trkLayerwithMeasurementH_) 
-      trkLayerwithMeasurementH_ = iBook.book1D("trkLayerwithMeasurement", "No. of Layers per Track",25,0.0,25.0);
-    if (!pixelLayerwithMeasurementH_) 
-      pixelLayerwithMeasurementH_ = iBook.book1D("pixelLayerwithMeasurement", "No. of Pixel Layers per Track",10,0.0,10.0);
-    if (!stripLayerwithMeasurementH_) 
-      stripLayerwithMeasurementH_ = iBook.book1D("stripLayerwithMeasurement", "No. of Strip Layers per Track",20,0.0,20.0);
+    trkLayerwithMeasurementH_ = iBook.book1D("trkLayerwithMeasurement", "No. of Layers per Track",25,0.0,25.0);
+    pixelLayerwithMeasurementH_ = iBook.book1D("pixelLayerwithMeasurement", "No. of Pixel Layers per Track",10,0.0,10.0);
+    stripLayerwithMeasurementH_ = iBook.book1D("stripLayerwithMeasurement", "No. of Strip Layers per Track",20,0.0,20.0);
 
-    if (!beamSpotXYposH_) beamSpotXYposH_ = iBook.book1D("beamSpotXYpos", "XY position of beam spot",40,-4.0,4.0);
-    if (!beamSpotXYposerrH_) beamSpotXYposerrH_ = iBook.book1D("beamSpotXYposerr", "Error in XY position of beam spot",20,0.0,4.0);
-    if (!beamSpotZposH_) beamSpotZposH_ = iBook.book1D("beamSpotZpos", "Z position of beam spot",100,-20.0,20.0);
-    if (!beamSpotZposerrH_) beamSpotZposerrH_ = iBook.book1D("beamSpotZposerr", "Error in Z position of beam spot", 50, 0.0, 5.0);
+    beamSpotXYposH_ = iBook.book1D("beamSpotXYpos", "XY position of beam spot",40,-4.0,4.0);
+    beamSpotXYposerrH_ = iBook.book1D("beamSpotXYposerr", "Error in XY position of beam spot",20,0.0,4.0);
+    beamSpotZposH_ = iBook.book1D("beamSpotZpos", "Z position of beam spot",100,-20.0,20.0);
+    beamSpotZposerrH_ = iBook.book1D("beamSpotZposerr", "Error in Z position of beam spot", 50, 0.0, 5.0);
 
-    if (!vertexXposH_) vertexXposH_ = iBook.book1D("vertexXpos", "Vertex X position", 50, -1.0, 1.0);
-    if (!vertexYposH_) vertexYposH_ = iBook.book1D("vertexYpos", "Vertex Y position", 50, -1.0, 1.0);
-    if (!vertexZposH_) vertexZposH_ = iBook.book1D("vertexZpos", "Vertex Z position", 100,-20.0,20.0);
-    if (!nVertexH_) nVertexH_ = iBook.book1D("nVertex", "# of vertices", 60, -0.5, 59.5);
+    vertexXposH_ = iBook.book1D("vertexXpos", "Vertex X position", 50, -1.0, 1.0);
+    vertexYposH_ = iBook.book1D("vertexYpos", "Vertex Y position", 50, -1.0, 1.0);
+    vertexZposH_ = iBook.book1D("vertexZpos", "Vertex Z position", 100,-20.0,20.0);
+    nVertexH_ = iBook.book1D("nVertex", "# of vertices", 60, -0.5, 59.5);
 
-    if (!nPixBarrelH_) 
-      nPixBarrelH_ = iBook.book1D("nHitPixelBarrel", "No. of hits in Pixel Barrel per Track", 20, 0, 20.0);
-    if (!nPixEndcapH_) 
-      nPixEndcapH_ = iBook.book1D("nHitPixelEndcap", "No. of hits in Pixel Endcap per Track", 20, 0, 20.0);
-    if (!nStripTIBH_) 
-      nStripTIBH_ = iBook.book1D("nHitStripTIB", "No. of hits in Strip TIB per Track", 30, 0, 30.0);
-    if (!nStripTOBH_) 
-      nStripTOBH_ = iBook.book1D("nHitStripTOB", "No. of hits in Strip TOB per Track", 30, 0, 30.0);
-    if (!nStripTECH_) 
-      nStripTECH_ = iBook.book1D("nHitStripTEC", "No. of hits in Strip TEC per Track", 30, 0, 30.0);
-    if (!nStripTIDH_) 
-      nStripTIDH_ = iBook.book1D("nHitStripTID", "No. of hits in Strip TID per Tracks", 30, 0, 30.0);
+    nPixBarrelH_ = iBook.book1D("nHitPixelBarrel", "No. of hits in Pixel Barrel per Track", 20, 0, 20.0);
+    nPixEndcapH_ = iBook.book1D("nHitPixelEndcap", "No. of hits in Pixel Endcap per Track", 20, 0, 20.0);
+    nStripTIBH_ = iBook.book1D("nHitStripTIB", "No. of hits in Strip TIB per Track", 30, 0, 30.0);
+    nStripTOBH_ = iBook.book1D("nHitStripTOB", "No. of hits in Strip TOB per Track", 30, 0, 30.0);
+    nStripTECH_ = iBook.book1D("nHitStripTEC", "No. of hits in Strip TEC per Track", 30, 0, 30.0);
+    nStripTIDH_ = iBook.book1D("nHitStripTID", "No. of hits in Strip TID per Tracks", 30, 0, 30.0);
 
-    if (!nTracksH_) nTracksH_ = iBook.book1D("nTracks", "No. of Tracks", 100, -0.5, 999.5);
+    nTracksH_ = iBook.book1D("nTracks", "No. of Tracks", 100, -0.5, 999.5);
   }
   if (isMC_) {
-    if (!bunchCrossingH_) bunchCrossingH_ = iBook.book1D("bunchCrossing", "Bunch Crosssing", 60, 0, 60.0);
-    if (!nPUH_) nPUH_ = iBook.book1D("nPU", "No of Pileup", 60, 0, 60.0);
-    if (!trueNIntH_) trueNIntH_ = iBook.book1D("trueNInt", "True no of Interactions", 60, 0, 60.0);
+    bunchCrossingH_ = iBook.book1D("bunchCrossing", "Bunch Crosssing", 60, 0, 60.0);
+    nPUH_ = iBook.book1D("nPU", "No of Pileup", 60, 0, 60.0);
+    trueNIntH_ = iBook.book1D("trueNInt", "True no of Interactions", 60, 0, 60.0);
   }
   // Exclusive histograms
-  if (!nHitsVspTH_) 
     nHitsVspTH_ = iBook.bookProfile("nHitsVspT", "Number of Hits Vs pT",
 						  TrackPtHistoPar.getParameter<int32_t>("Xbins"),
 						  TrackPtHistoPar.getParameter<double>("Xmin"),
 						  TrackPtHistoPar.getParameter<double>("Xmax"),0.0,0.0,"g");
-  if (!nHitsVsnVtxH_) 
     nHitsVsnVtxH_ = iBook.bookProfile("nHitsVsnVtx", "Number of Hits Vs Number of Vertex", 100,0,50,0.0,0.0,"g");
-  if (!nHitsVsEtaH_) 
     nHitsVsEtaH_ = iBook.bookProfile("nHitsVsEta", "Number of Hits Vs Eta", 
 						    TrackEtaHistoPar.getParameter<int32_t>("Xbins"),
 						    TrackEtaHistoPar.getParameter<double>("Xmin"),
 						    TrackEtaHistoPar.getParameter<double>("Xmax"),0.0,0.0,"g");
-  if (!nHitsVsCosThetaH_) 
+
     nHitsVsCosThetaH_ = iBook.bookProfile("nHitsVsCosTheta", "Number of Hits Vs Cos(Theta)", 50,-1.0,1.0,0.0,0.0,"g");
-  if (!nHitsVsPhiH_) 
     nHitsVsPhiH_ = iBook.bookProfile("nHitsVsPhi", "Number of Hits Vs Phi", 100,-3.5,3.5,0.0,0.0,"g");
 
-  if (!nLostHitsVspTH_) 
     nLostHitsVspTH_ = iBook.bookProfile("nLostHitsVspT", "Number of Lost Hits Vs pT",
 							  TrackPtHistoPar.getParameter<int32_t>("Xbins"),
 							  TrackPtHistoPar.getParameter<double>("Xmin"),
 							  TrackPtHistoPar.getParameter<double>("Xmax"),0.0,0.0,"g");
-  if (!nLostHitsVsEtaH_) 
     nLostHitsVsEtaH_ = iBook.bookProfile("nLostHitsVsEta", "Number of Lost Hits Vs Eta", 
 							    TrackEtaHistoPar.getParameter<int32_t>("Xbins"), 
 							    TrackEtaHistoPar.getParameter<double>("Xmin"),
 							    TrackEtaHistoPar.getParameter<double>("Xmax"),0.0,0.0,"g");
-  if (!nLostHitsVsCosThetaH_) 
     nLostHitsVsCosThetaH_ = iBook.bookProfile("nLostHitsVsCosTheta", "Number of Lost Hits Vs Cos(Theta)",50,-1.0,1.0,0.0,0.0,"g");
-  if (!nLostHitsVsPhiH_) 
     nLostHitsVsPhiH_ = iBook.bookProfile("nLostHitsVsPhi", "Number of Lost Hits Vs Phi",100,-3.5,3.5,0.0,0.0,"g");
 
   // On and off-track cluster properties
-  if (!hOnTrkClusChargeThinH_) 
     hOnTrkClusChargeThinH_ = iBook.book1D("hOnTrkClusChargeThin", "On-track Cluster Charge (Thin Sensor)", 100, 0, 1000);
-  if (!hOnTrkClusWidthThinH_) 
     hOnTrkClusWidthThinH_ = iBook.book1D("hOnTrkClusWidthThin", "On-track Cluster Width (Thin Sensor)", 20, -0.5, 19.5);
-  if (!hOnTrkClusChargeThickH_) 
     hOnTrkClusChargeThickH_ = iBook.book1D("hOnTrkClusChargeThick", "On-track Cluster Charge (Thick Sensor)", 100, 0, 1000);
-  if (!hOnTrkClusWidthThickH_) 
     hOnTrkClusWidthThickH_ = iBook.book1D("hOnTrkClusWidthThick", "On-track Cluster Width (Thick Sensor)", 20, -0.5, 19.5);
 
-  if (!hOffTrkClusChargeThinH_) 
     hOffTrkClusChargeThinH_ = iBook.book1D("hOffTrkClusChargeThin", "Off-track Cluster Charge (Thin Sensor)", 100, 0, 1000);
-  if (!hOffTrkClusWidthThinH_) 
     hOffTrkClusWidthThinH_ = iBook.book1D("hOffTrkClusWidthThin", "Off-track Cluster Width (Thin Sensor)", 20, -0.5, 19.5);
-  if (!hOffTrkClusChargeThickH_) 
     hOffTrkClusChargeThickH_ = iBook.book1D("hOffTrkClusChargeThick", "Off-track Cluster Charge (Thick Sensor)", 100, 0, 1000);
-  if (!hOffTrkClusWidthThickH_) 
     hOffTrkClusWidthThickH_ = iBook.book1D("hOffTrkClusWidthThick", "Off-track Cluster Width (Thick Sensor)", 20, -0.5, 19.5);
 }
 void StandaloneTrackMonitor::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup) {
+
   // Get event setup (to get global transformation)                                  
   edm::ESHandle<TrackerGeometry> geomHandle;
   iSetup.get<TrackerDigiGeometryRecord>().get(geomHandle);
@@ -302,6 +239,7 @@ void StandaloneTrackMonitor::analyze(edm::Event const& iEvent, edm::EventSetup c
     edm::LogInfo("StandaloneTrackMonitor") << "Total # of Tracks: " << tracks->size();
     if (verbose_) edm::LogInfo("StandaloneTrackMonitor") <<"Total # of Tracks: " << tracks->size();
     reco::Track::TrackQuality quality = reco::Track::qualityByName(trackQuality_);
+
     for (auto const& track : *tracks) {
       if (!track.quality(quality)) continue;
 
@@ -314,7 +252,10 @@ void StandaloneTrackMonitor::analyze(edm::Event const& iEvent, edm::EventSetup c
 
       const reco::HitPattern& hitp = track.hitPattern();
       double nValidTrackerHits = hitp.numberOfValidTrackerHits();
+
       nHitsVsEtaH_->Fill(eta, nValidTrackerHits);
+
+      
       nHitsVsCosThetaH_->Fill(std::cos(theta), nValidTrackerHits);
       nHitsVsPhiH_->Fill(phi, nValidTrackerHits);
       nHitsVspTH_->Fill(pt, nValidTrackerHits);
