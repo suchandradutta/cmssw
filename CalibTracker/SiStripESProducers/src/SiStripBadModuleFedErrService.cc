@@ -1,3 +1,4 @@
+
 #include "CalibTracker/SiStripESProducers/interface/SiStripBadModuleFedErrService.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "DQMServices/Core/interface/MonitorElement.h"
@@ -60,10 +61,9 @@ SiStripBadStrip* SiStripBadModuleFedErrService::readBadComponentsFromFed(const S
     if (me) {
       std::vector<std::pair<uint16_t, uint16_t>> channelList;
       getFedBadChannelList(me, channelList); 
-      uint32_t detId_last = 0;
       uint16_t fId_last = 9999;
       uint16_t fChan_last = 9999;
-      std::vector<uint16_t> pairs;
+      std::map< uint32_t , std::set<int> > detectorMap;
       for (std::vector<std::pair<uint16_t, uint16_t>>::iterator it = channelList.begin(); it != channelList.end(); it++) {
 	uint16_t fId = it->first;        
 
@@ -73,48 +73,43 @@ SiStripBadStrip* SiStripBadModuleFedErrService::readBadComponentsFromFed(const S
 	FedChannelConnection channel = cabling->fedConnection(fId, fChan);
 	const uint32_t detId =  channel.detId(); 
 	const uint16_t ipair = channel.apvPairNumber();
-
-	if (detId_last && detId != detId_last) { 
-	  std::sort(pairs.begin(), pairs.end());
-	  SiStripQuality::InputVector theSiStripVector;	  
-          unsigned short firstBadStrip = 0;
-	  unsigned short fNconsecutiveBadStrips = 0;
-	  unsigned int theBadStripRange;
-	  for (unsigned int i = 0; i < pairs.size(); i++) {
-	    if (i == 0) {
-	      firstBadStrip = pairs[i] * 128 * 2;
-	      fNconsecutiveBadStrips = 128*2;
-	    } else if (pairs[i] - pairs[i-1] > 1) {
-	      theBadStripRange = obj_->encode(firstBadStrip,fNconsecutiveBadStrips);       
-	      theSiStripVector.push_back(theBadStripRange);
-	      firstBadStrip = pairs[i] * 128 * 2;
-	      fNconsecutiveBadStrips = 128*2;
-	    } else { 
-	      fNconsecutiveBadStrips += 128*2;
-	    }
-          }
-	  theBadStripRange = obj_->encode(firstBadStrip,fNconsecutiveBadStrips);       
-	  theSiStripVector.push_back(theBadStripRange);
-	
-	  edm::LogInfo("SiStripBadModuleFedErrService") << " SiStripBadModuleFedErrService::readBadComponentsFromFed " 
-                                                       << " detid " << detId_last 
-						       << " FED Id " << fId 
-						       << " FED Channel " << fChan 
-						       << " Apv Id " << it->second 
-						       << " firstBadStrip " << firstBadStrip 
-						       << " NconsecutiveBadStrips " << fNconsecutiveBadStrips 
-							 << " packed integer " << std::hex << theBadStripRange  << std::dec; 
-	  SiStripBadStrip::Range range(theSiStripVector.begin(),theSiStripVector.end());
-	  if ( !obj_->put(detId_last,range) ) {
-	    edm::LogError("SiStripBadModuleFedErrService")<<"[SiStripBadModuleFedErrService::readBadComponentsFromFed] detid already exists"<<std::endl; 
-	  } 
-          pairs.clear();   	  
+        detectorMap[detId].insert(ipair);
+      }
+      for (std::map< uint32_t , std::set<int> >::iterator im =  detectorMap.begin(); im != detectorMap.end(); im++) {
+        const uint32_t detId = im->first;
+	std::set<int> pairs = im->second;		
+        SiStripQuality::InputVector theSiStripVector;	  
+	unsigned short firstBadStrip = 0;
+	unsigned short fNconsecutiveBadStrips = 0;
+	unsigned int theBadStripRange;
+        int last_pair = -1;
+	for (std::set<int>::iterator ip = pairs.begin(); ip != pairs.end(); ip++) {
+          if (last_pair == -1) {
+	    firstBadStrip = (*ip) * 128 * 2;
+	    fNconsecutiveBadStrips = 128*2;
+	  } else if ((*ip) - last_pair  > 1) {
+	    theBadStripRange = obj_->encode(firstBadStrip,fNconsecutiveBadStrips);       
+	    theSiStripVector.push_back(theBadStripRange);
+	    firstBadStrip = (*ip) * 128 * 2;
+	    fNconsecutiveBadStrips = 128*2;
+	  } else { 
+	    fNconsecutiveBadStrips += 128*2;
+	  }
+          last_pair = (*ip);
 	}
-	pairs.push_back(ipair);
-        fId_last  = fId;
-        fChan_last  = fChan;
-	detId_last  =  detId;
-      }                  
+	theBadStripRange = obj_->encode(firstBadStrip,fNconsecutiveBadStrips);       
+	theSiStripVector.push_back(theBadStripRange);
+	
+	edm::LogInfo("SiStripBadModuleFedErrService") << " SiStripBadModuleFedErrService::readBadComponentsFromFed " 
+						      << " detid " << detId 
+						      << " firstBadStrip " << firstBadStrip 
+						      << " NconsecutiveBadStrips " << fNconsecutiveBadStrips 
+						      << " packed integer " << std::hex << theBadStripRange  << std::dec; 
+	SiStripBadStrip::Range range(theSiStripVector.begin(),theSiStripVector.end());
+	if ( !obj_->put(detId,range) ) {
+	  edm::LogError("SiStripBadModuleFedErrService")<<"[SiStripBadModuleFedErrService::readBadComponentsFromFed] detid already exists"<<std::endl; 
+	} 
+      }
       obj_->cleanUp();
     }
   }
@@ -142,13 +137,28 @@ void SiStripBadModuleFedErrService::getFedBadChannelList(MonitorElement* me, std
   float cutoff = iConfig_.getParameter<double>("BadStripCutoff");
   if (me->kind() == MonitorElement::DQM_KIND_TH2F) {
     TH2F* th2 = me->getTH2F();
-    float max = th2->GetBinContent(th2->GetMaximumBin()); 
+    float entries = getProcessedEvents();
+    if (!entries) entries = th2->GetBinContent(th2->GetMaximumBin()); 
     for (uint16_t i = 1; i < th2->GetNbinsY()+1; i++) { 
       for (uint16_t j = 1; j < th2->GetNbinsX()+1; j++) { 
-        if (th2->GetBinContent(j,i) > cutoff * max) {
+        if (th2->GetBinContent(j,i) > cutoff * entries) {
+	  std::cout << " FedId & Channel " << th2->GetYaxis()->GetBinLowEdge(i) <<   "  " << th2->GetXaxis()->GetBinLowEdge(j) << std::endl;
           list.push_back(std::pair<uint16_t, uint16_t>(th2->GetYaxis()->GetBinLowEdge(i), th2->GetXaxis()->GetBinLowEdge(j)));  
 	}
       }
     }
   }
+}
+float SiStripBadModuleFedErrService::getProcessedEvents() {
+
+  dqmStore_->cd();
+  
+  std::string dname = "SiStrip/ReadoutView";
+  std::string hpath = dname;
+  hpath += "/nTotalBadActiveChannels";
+  if (dqmStore_->dirExists(dname)) {
+    MonitorElement* me = dqmStore_->get(hpath);
+    if (me) return (me->getEntries());
+  } 
+  return 0; 
 }

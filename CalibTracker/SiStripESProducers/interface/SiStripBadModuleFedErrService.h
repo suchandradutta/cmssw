@@ -39,6 +39,7 @@ private:
   SiStripBadStrip* readBadComponentsFromFed(const SiStripFedCabling* cabling);
   bool openRequestedFile();
   void getFedBadChannelList(MonitorElement* me, std::vector<std::pair<uint16_t, uint16_t>>& list);
+  float getProcessedEvents();
 
   DQMStore* dqmStore_;
 
