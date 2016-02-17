@@ -49,7 +49,11 @@ SiStripBadStrip* SiStripBadModuleFedErrService::readBadComponentsFromFed(const S
   
   SiStripQuality* obj_  = new SiStripQuality();
 
-  if (!openRequestedFile()) return obj_;
+  bool readFlag = iConfig_.getParameter<bool>("ReadFromFile");
+  dqmStore_ = edm::Service<DQMStore>().operator->();
+
+  
+  if (readFlag && !openRequestedFile()) return obj_;
   
   dqmStore_->cd();
   
@@ -118,7 +122,7 @@ SiStripBadStrip* SiStripBadModuleFedErrService::readBadComponentsFromFed(const S
 
 
 bool SiStripBadModuleFedErrService::openRequestedFile() {
-  dqmStore_ = edm::Service<DQMStore>().operator->();
+  
   std::string fileName = iConfig_.getParameter<std::string>("FileName");
     
   edm::LogInfo("SiStripBadModuleFedErrService") <<  "[SiStripBadModuleFedErrService::openRequestedFile] Accessing root File" << fileName;
@@ -142,7 +146,7 @@ void SiStripBadModuleFedErrService::getFedBadChannelList(MonitorElement* me, std
     for (uint16_t i = 1; i < th2->GetNbinsY()+1; i++) { 
       for (uint16_t j = 1; j < th2->GetNbinsX()+1; j++) { 
         if (th2->GetBinContent(j,i) > cutoff * entries) {
-	  edm::LogInfo("SiStripBadModuleFedErrService") << " [SiStripBadModuleFedErrService::getFedBadChannelList) :: FedId & Channel " << th2->GetYaxis()->GetBinLowEdge(i) <<   "  " << th2->GetXaxis()->GetBinLowEdge(j);
+	  edm::LogInfo("SiStripBadModuleFedErrService") << " [SiStripBadModuleFedErrService::getFedBadChannelList] :: FedId & Channel " << th2->GetYaxis()->GetBinLowEdge(i) <<   "  " << th2->GetXaxis()->GetBinLowEdge(j);
           list.push_back(std::pair<uint16_t, uint16_t>(th2->GetYaxis()->GetBinLowEdge(i), th2->GetXaxis()->GetBinLowEdge(j)));  
 	}
       }
