@@ -9,6 +9,7 @@ digiValid = cms.EDAnalyzer("Phase2TrackerValidateDigi",
     SimTrackSource = cms.InputTag("g4SimHits"),
     PSimHitSource  = cms.InputTag("g4SimHits","TrackerHitsPixelBarrelLowTof"),
     SimVertexSource = cms.InputTag("g4SimHits"),
+    GeometryType = cms.string('idealForDigi'),
     PtCutOff      = cms.double(10.0),                           
     EtaCutOff      = cms.double(2.5),                           
     TrackPtH = cms.PSet(
