@@ -1,0 +1,21 @@
+import FWCore.ParameterSet.Config as cms
+bsStudy = cms.EDAnalyzer("BSToPhiPhiStudy",
+     trkSrc      = cms.InputTag("TTTracks" "Level1TTTracks"),
+#     trkTruthSrc = cms.InputTag("TTTrackAssociatorFromPixelDigis","Level1TTTracks"),
+     pixelTrkSrc = cms.InputTag("L1PixelTrackFit","Level1PixelTracks"),
+     recoTrkSrc = cms.InputTag("generalTracks",""),
+     beamspotSrc = cms.InputTag("offlineBeamSpot"),
+     vertexSrc = cms.InputTag("goodOfflinePrimaryVertices"),
+     l1VertexSrc     = cms.InputTag("L1TkPrimaryVertex"),
+     l1TkJetSrc      = cms.InputTag("L1TkJetsL1", "Central"),
+     l1TkMuonSrc     = cms.InputTag("L1TkMuonsMerge", ""),
+     DebugFlag   = cms.bool(False),
+     l1TrackFlag   = cms.bool(True),
+     simTrackFlag    = cms.bool(True),
+     l1VertexFlag    = cms.bool(True),
+     l1JetFlag       = cms.bool(True),
+     l1MuonFlag      = cms.bool(True),
+     pixelTrackFlag  = cms.bool(True),
+     recoTrackFlag   = cms.bool(False),
+     genParticleFlag = cms.bool(False)
+)

@@ -1,0 +1,33 @@
+<lcgdict>
+  <class name="TTStudy::Event" ClassVersion="1">
+    <version ClassVersion="1" checksum="2862319794"/>
+  </class>
+  <class name="TTStudy::SimTrack" ClassVersion="1">
+    <version ClassVersion="1" checksum="2469775594" />
+  </class>
+  <class name="TTStudy::Track" ClassVersion="1">
+    <version ClassVersion="1" checksum="1016460788" />
+  </class>
+  <class name="TTStudy::Electron" ClassVersion="1">
+    <version ClassVersion="1" checksum="16612446"/>
+  </class>
+  <class name="TTStudy::Tracklet" ClassVersion="1">
+    <version ClassVersion="1" checksum="625141849" />
+  </class>
+  <class name="TTStudy::GenParticle" ClassVersion="1">
+    <version ClassVersion="1" checksum="3473310076" />
+  </class>
+  <class name="TTStudy::L1Jet" ClassVersion="1">
+    <version ClassVersion="1" checksum="4118662423" />
+  </class>
+  <class name="TTStudy::L1Muon" ClassVersion="1">
+    <version ClassVersion="1" checksum="944394593" />
+  </class>
+  <class name="std::vector<TTStudy::SimTrack>" persistent="true" />
+  <class name="std::vector<TTStudy::Track>" persistent="true" />
+  <class name="std::vector<TTStudy::Electron>" persistent="true" />
+  <class name="std::vector<TTStudy::Tracklet>" persistent="true" />
+  <class name="std::vector<TTStudy::GenParticle>" persistent="true" />
+  <class name="std::vector<TTStudy::L1Jet>" persistent="true" />
+  <class name="std::vector<TTStudy::L1Muon>" persistent="true" />
+</lcgdict>
