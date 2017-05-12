@@ -21,7 +21,6 @@
 // DATA FORMATS HEADERS
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Common/interface/Ref.h"
-#include "FWCore/Utilities/interface/InputTag.h"
 
 #include "DataFormats/L1TrackTrigger/interface/TTTypes.h"
 #include "DataFormats/L1TrackTrigger/interface/TTCluster.h"
@@ -45,6 +44,11 @@
 #include "Geometry/TrackerGeometryBuilder/interface/RectangularPixelTopology.h"
 #include "Geometry/CommonDetUnit/interface/GeomDetType.h"
 #include "Geometry/CommonDetUnit/interface/GeomDetUnit.h"
+
+#include "Geometry/TrackerGeometryBuilder/interface/PixelGeomDetUnit.h"
+#include "Geometry/TrackerGeometryBuilder/interface/PixelGeomDetType.h"
+#include "Geometry/TrackerGeometryBuilder/interface/PixelTopologyBuilder.h"
+#include "Geometry/Records/interface/StackedTrackerGeometryRecord.h"
 
 ////////////////
 // PHYSICS TOOLS
@@ -114,6 +118,7 @@ private:
   edm::InputTag L1TrackInputTag;        // L1 track collection
   edm::InputTag MCTruthTrackInputTag;   // MC truth collection
   edm::InputTag MCTruthClusterInputTag;
+  edm::InputTag L1StubInputTag;
   edm::InputTag MCTruthStubInputTag;
   edm::InputTag TrackingParticleInputTag;
   edm::InputTag TrackingVertexInputTag;
@@ -182,11 +187,11 @@ private:
   std::vector<float>* m_allstub_x;
   std::vector<float>* m_allstub_y;
   std::vector<float>* m_allstub_z;
-  std::vector<float>* m_allstub_pt;
-  std::vector<float>* m_allstub_ptsign;
-  std::vector<int>*   m_allstub_isBarrel;
   std::vector<int>*   m_allstub_layer;
-  std::vector<int>*   m_allstub_isPS;
+  std::vector<float>* m_allstub_trigDisplace;
+  std::vector<float>* m_allstub_trigOffset;
+  std::vector<float>* m_allstub_trigPos;
+  std::vector<float>* m_allstub_trigBend;
 
 };
 
@@ -217,6 +222,7 @@ L1TrackNtupleMaker::L1TrackNtupleMaker(edm::ParameterSet const& iConfig) :
   MCTruthTrackInputTag = iConfig.getParameter<edm::InputTag>("MCTruthTrackInputTag");
   L1Tk_minNStub    = iConfig.getParameter< int >("L1Tk_minNStub");
 
+  L1StubInputTag      = iConfig.getParameter<edm::InputTag>("L1StubInputTag");
   MCTruthClusterInputTag = iConfig.getParameter<edm::InputTag>("MCTruthClusterInputTag");
   MCTruthStubInputTag = iConfig.getParameter<edm::InputTag>("MCTruthStubInputTag");
   TrackingParticleInputTag = iConfig.getParameter<edm::InputTag>("TrackingParticleInputTag");
@@ -225,6 +231,7 @@ L1TrackNtupleMaker::L1TrackNtupleMaker(edm::ParameterSet const& iConfig) :
   ttTrackToken_ = consumes< std::vector< TTTrack< Ref_Phase2TrackerDigi_ > > >(L1TrackInputTag);
   ttTrackMCTruthToken_ = consumes< TTTrackAssociationMap< Ref_Phase2TrackerDigi_ > >(MCTruthTrackInputTag);
 
+  ttStubToken_ = consumes< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > > >(L1StubInputTag);
   ttClusterMCTruthToken_ = consumes< TTClusterAssociationMap< Ref_Phase2TrackerDigi_ > >(MCTruthClusterInputTag);
   ttStubMCTruthToken_ = consumes< TTStubAssociationMap< Ref_Phase2TrackerDigi_ > >(MCTruthStubInputTag);
 
@@ -305,11 +312,11 @@ void L1TrackNtupleMaker::beginJob()
   m_allstub_x = new std::vector<float>;
   m_allstub_y = new std::vector<float>;
   m_allstub_z = new std::vector<float>;
-  m_allstub_pt     = new std::vector<float>;
-  m_allstub_ptsign = new std::vector<float>;
-  m_allstub_isBarrel = new std::vector<int>;
   m_allstub_layer    = new std::vector<int>;
-  m_allstub_isPS     = new std::vector<int>;
+  m_allstub_trigDisplace = new std::vector<float>;
+  m_allstub_trigOffset   = new std::vector<float>;
+  m_allstub_trigPos      = new std::vector<float>;
+  m_allstub_trigBend     = new std::vector<float>;
 
 
   // ntuple
@@ -362,11 +369,11 @@ void L1TrackNtupleMaker::beginJob()
     eventTree->Branch("allstub_x", &m_allstub_x);
     eventTree->Branch("allstub_y", &m_allstub_y);
     eventTree->Branch("allstub_z", &m_allstub_z);
-    eventTree->Branch("allstub_pt",    &m_allstub_pt);
-    eventTree->Branch("allstub_ptsign",&m_allstub_ptsign);
-    eventTree->Branch("allstub_isBarrel", &m_allstub_isBarrel);
-    eventTree->Branch("allstub_layer",    &m_allstub_layer);
-    eventTree->Branch("allstub_isPS",     &m_allstub_isPS);
+    eventTree->Branch("allstub_layer", &m_allstub_layer);
+    eventTree->Branch("allstub_trigDisplace", &m_allstub_trigDisplace);
+    eventTree->Branch("allstub_trigOffset", &m_allstub_trigOffset);
+    eventTree->Branch("allstub_trigPos", &m_allstub_trigPos);
+    eventTree->Branch("allstub_trigBend", &m_allstub_trigBend);
   }
 
 }
@@ -434,25 +441,26 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
     m_allstub_x->clear();
     m_allstub_y->clear();
     m_allstub_z->clear();
-    m_allstub_pt->clear();
-    m_allstub_ptsign->clear();
-    m_allstub_isBarrel->clear();
     m_allstub_layer->clear();
-    m_allstub_isPS->clear();
+    m_allstub_trigDisplace->clear();
+    m_allstub_trigOffset->clear();
+    m_allstub_trigPos->clear();
+    m_allstub_trigBend->clear();
   }
 
 
-  //-----------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
   // retrieve various containers
-  //-----------------------------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------------------------
 
   // L1 tracks
   edm::Handle< std::vector< TTTrack< Ref_Phase2TrackerDigi_ > > > TTTrackHandle;
   iEvent.getByToken(ttTrackToken_, TTTrackHandle);
   
   // L1 stubs
-  //edm::Handle< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > > > TTStubHandle;
-  //if (SaveStubs) iEvent.getByLabel("TTStubsFromPhase2TrackerDigis", "StubAccepted", TTStubHandle);
+  edm::Handle< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > > > TTStubHandle;
+  if (SaveStubs) iEvent.getByToken(ttStubToken_, TTStubHandle);
+
 
   // MC truth association maps
   edm::Handle< TTClusterAssociationMap< Ref_Phase2TrackerDigi_ > > MCTruthTTClusterHandle;
@@ -467,6 +475,91 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
   edm::Handle< std::vector< TrackingVertex > > TrackingVertexHandle;
   iEvent.getByToken(TrackingParticleToken_, TrackingParticleHandle);
   iEvent.getByToken(TrackingVertexToken_, TrackingVertexHandle);
+
+
+  // -----------------------------------------------------------------------------------------------
+  // more for TTStubs
+  edm::ESHandle<TrackerGeometry> geometryHandle;
+  iSetup.get<TrackerDigiGeometryRecord>().get(geometryHandle);
+
+  edm::ESHandle<TrackerTopology> tTopoHandle;
+  iSetup.get<TrackerTopologyRcd>().get(tTopoHandle);
+
+  edm::ESHandle<TrackerGeometry> tGeomHandle;
+  iSetup.get<TrackerDigiGeometryRecord>().get(tGeomHandle);
+
+  const TrackerTopology* const tTopo = tTopoHandle.product();
+  const TrackerGeometry* const theTrackerGeom = tGeomHandle.product();
+
+
+  // ----------------------------------------------------------------------------------------------
+  // loop over L1 stubs
+  // ----------------------------------------------------------------------------------------------
+
+  if (SaveStubs) {
+
+    for (auto gd=theTrackerGeom->dets().begin(); gd != theTrackerGeom->dets().end(); gd++) {
+    
+      DetId detid = (*gd)->geographicalId();
+      if(detid.subdetId()!=StripSubdetector::TOB && detid.subdetId()!=StripSubdetector::TID ) continue;
+      if(!tTopo->isLower(detid) ) continue; // loop on the stacks: choose the lower arbitrarily
+      DetId stackDetid = tTopo->stack(detid); // Stub module detid
+
+      if (TTStubHandle->find( stackDetid ) == TTStubHandle->end() ) continue;
+
+      // Get the DetSets of the Clusters
+      edmNew::DetSet< TTStub< Ref_Phase2TrackerDigi_ > > stubs = (*TTStubHandle)[ stackDetid ];
+      const GeomDetUnit* det0 = theTrackerGeom->idToDetUnit( detid );
+      const PixelGeomDetUnit* theGeomDet = dynamic_cast< const PixelGeomDetUnit* >( det0 );
+      const PixelTopology* topol = dynamic_cast< const PixelTopology* >( &(theGeomDet->specificTopology()) );
+    
+      // loop over stubs
+      for ( auto stubIter = stubs.begin();stubIter != stubs.end();++stubIter ) {
+	edm::Ref< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_  > >, TTStub< Ref_Phase2TrackerDigi_  > >
+	  tempStubPtr = edmNew::makeRefTo( TTStubHandle, stubIter );
+	
+	MeasurementPoint coords = tempStubPtr->getClusterRef(0)->findAverageLocalCoordinatesCentered();      
+	LocalPoint clustlp = topol->localPosition(coords);
+	
+	GlobalPoint posStub  =  theGeomDet->surface().toGlobal(clustlp);
+
+	double tmp_stub_x=posStub.x();
+	double tmp_stub_y=posStub.y();
+	double tmp_stub_z=posStub.z();
+	
+	int layer=-999999;
+	if ( detid.subdetId()==StripSubdetector::TOB ) {
+	  layer  = static_cast<int>(tTopo->layer(detid));
+	}
+	else if ( detid.subdetId()==StripSubdetector::TID ) {
+	  layer  = static_cast<int>(tTopo->layer(detid));
+	}
+	else {
+	  cout << "WARNING -- neither TOB or TID stub, shouldn't happen..." << endl;
+	  layer = -1;
+	}
+
+
+	float trigDisplace = tempStubPtr->getTriggerDisplacement();
+	float trigOffset = tempStubPtr->getTriggerOffset();
+	float trigPos = tempStubPtr->getTriggerPosition();
+	float trigBend = tempStubPtr->getTriggerBend();
+
+	m_allstub_x->push_back(tmp_stub_x);
+	m_allstub_y->push_back(tmp_stub_y);
+	m_allstub_z->push_back(tmp_stub_z);
+	m_allstub_layer->push_back(layer);
+
+	m_allstub_trigDisplace->push_back(trigDisplace);
+	m_allstub_trigOffset->push_back(trigOffset);
+	m_allstub_trigPos->push_back(trigPos);
+	m_allstub_trigBend->push_back(trigBend);
+
+      }
+    }
+
+  }
+
 
 
   // ----------------------------------------------------------------------------------------------
