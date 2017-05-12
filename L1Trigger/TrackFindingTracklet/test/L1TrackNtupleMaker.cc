@@ -594,7 +594,42 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
 
       float tmp_trk_chi2 = iterL1Track->getChi2(L1Tk_nPar);
       int tmp_trk_nstub  = (int) iterL1Track->getStubRefs().size();
-            
+
+
+      // ----------------------------------------------------------------------------------------------
+      // loop over stubs on tracks
+      if (DebugMode && SaveStubs) {
+
+	// loop over stubs
+	std::vector< edm::Ref< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > >, TTStub< Ref_Phase2TrackerDigi_ > > > stubRefs = iterL1Track->getStubRefs();
+	for (int is=0; is<tmp_trk_nstub; is++) {
+	  
+	  //detID of stub
+	  DetId detIdStub = theTrackerGeom->idToDet( (stubRefs.at(is)->getClusterRef(0))->getDetId() )->geographicalId();
+
+	  MeasurementPoint coords = stubRefs.at(is)->getClusterRef(0)->findAverageLocalCoordinatesCentered();      
+	  const GeomDet* theGeomDet = theTrackerGeom->idToDet(detIdStub);
+	  Global3DPoint posStub = theGeomDet->surface().toGlobal( theGeomDet->topology().localPosition(coords) );
+	  
+	  double x=posStub.x();
+	  double y=posStub.y();
+	  double z=posStub.z();
+	  
+	  int layer=-999999;
+	  if ( detIdStub.subdetId()==StripSubdetector::TOB ) {
+	    layer  = static_cast<int>(tTopo->layer(detIdStub));
+	    cout << "   stub in layer " << layer << " at position x y z = " << x << " " << y << " " << z << endl;
+	  }
+	  else if ( detIdStub.subdetId()==StripSubdetector::TID ) {
+	    layer  = static_cast<int>(tTopo->layer(detIdStub));
+	    cout << "   stub in disk " << layer << " at position x y z = " << x << " " << y << " " << z << endl;
+	  }	  
+	  
+	}//end loop over stubs
+      }
+      // ----------------------------------------------------------------------------------------------
+
+
       int tmp_trk_genuine = 0;
       int tmp_trk_loose = 0;
       int tmp_trk_unknown = 0;
