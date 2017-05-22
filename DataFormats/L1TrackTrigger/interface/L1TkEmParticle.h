@@ -7,7 +7,7 @@
 // Class  :     L1TkEmParticle
 // 
 
-#include "DataFormats/Candidate/interface/LeafCandidate.h"
+#include "DataFormats/L1Trigger/interface/L1Candidate.h"
 #include "DataFormats/Common/interface/Ref.h"
 
 #include "DataFormats/L1Trigger/interface/EGamma.h"
@@ -17,7 +17,7 @@
 
 namespace l1t {
          
-   class L1TkEmParticle : public reco::LeafCandidate
+   class L1TkEmParticle : public L1Candidate
    {     
          
       public:
@@ -32,7 +32,7 @@ namespace l1t {
 
          // ---------- const member functions ---------------------
 
-	 const edm::Ref< l1t::EGammaBxCollection >& getEGRef() const
+	 const edm::Ref< EGammaBxCollection >& getEGRef() const
 	 { return egRef_ ; }
 
 	 float getTrkIsol() const { return TrkIsol_ ; } 
@@ -46,7 +46,7 @@ namespace l1t {
 
       private:
 
-	 edm::Ref< l1t::EGammaBxCollection > egRef_ ;
+	 edm::Ref< EGammaBxCollection > egRef_ ;
 	 float TrkIsol_;
 
     };

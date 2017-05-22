@@ -15,27 +15,14 @@ L1TkEmParticle::L1TkEmParticle()
 }
 
 L1TkEmParticle::L1TkEmParticle( const LorentzVector& p4,
-         const edm::Ref< l1t::EGammaBxCollection >& egRef,
+         const edm::Ref< EGammaBxCollection >& egRef,
 	 float tkisol )
-   : LeafCandidate( ( char ) 0, p4 ),
+   : L1Candidate( p4 ),
      egRef_ ( egRef ),
      TrkIsol_ ( tkisol ) 
 {
 
 }
-
-
-/*int L1TkEmParticle::bx() const {
-  int dummy = -999;
-  if ( egRef_.isNonnull() ) {
-    return (getEGRef() -> bx()) ;
-  }
-  else {
-    return dummy;
-    
- }
-}*/
-
 
 
 
