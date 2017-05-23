@@ -6,8 +6,7 @@ import FWCore.ParameterSet.Config as cms
 import os
 process = cms.Process("L1TrackNtuple")
 
-
-GEOMETRY = "D10"
+GEOMETRY = "D13"
 
  
 ############################################################
@@ -41,7 +40,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 # input and output
 ############################################################
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
 
 if GEOMETRY == "D10": 
     #D10 (flat barrel)
@@ -92,6 +91,9 @@ if GEOMETRY == "D10":
 process.TTClusterStub = cms.Path(process.TrackTriggerClustersStubs)
 
 process.load("L1Trigger.TrackFindingTracklet.L1TrackletTracks_cff")
+#from L1Trigger.TrackFindingTracklet.Tracklet_cfi import *
+#TTTracksFromTracklet.asciiFileName = cms.untracked.string("evlist.txt")
+
 
 # run only the tracking (no MC truth associators)
 process.TTTracks = cms.Path(process.L1TrackletTracks)
@@ -111,7 +113,7 @@ process.TTTracksWithTruth = cms.Path(process.L1TrackletTracksWithAssociators)
 ############################################################
 
 process.L1TrackNtuple = cms.EDAnalyzer('L1TrackNtupleMaker',
-                                       MyProcess = cms.int32(13),
+                                       MyProcess = cms.int32(1),
                                        DebugMode = cms.bool(False),      # printout lots of debug statements
                                        SaveAllTracks = cms.bool(True),   # save *all* L1 tracks, not just truth matched to primary particle
                                        SaveStubs = cms.bool(False),      # save some info for *all* stubs
