@@ -9,8 +9,10 @@
 using namespace std;
 
 #include "L1TStub.hh"
+#include "L1TTrack.hh"
 #include "L1TTracklet.hh"
 #include "L1TGeomBase.hh"
+
 
 class L1TDisk: public L1TGeomBase{
 
@@ -58,6 +60,7 @@ public:
 	  double r1=stubs_[iSector][i].r();
 	  double z1=stubs_[iSector][i].z();
 	  double phi1=stubs_[iSector][i].phi();
+	  int stublayer1 = stubs_[iSector][i].layer();
 
 	  //cout << "r1 z1 phi1 : " << r1 << " " << z1 << " " << phi1 << endl; 
 
@@ -69,8 +72,12 @@ public:
 
 	    double phi2=D->stubs_[jSector][j].phi();
 	    
-	    if (r1>60.0||r2>60.0) continue; //we only form tracklets from disk stubs in PS modules
+	    int stublayer2 = stubs_[iSector][j].layer();
 
+	    //if (r1>60.0||r2>60.0) continue; //we only form tracklets from disk stubs in PS modules
+	    if ( isTilted && ( (stublayer1>1009 && stublayer1<2000) || (stublayer1>2009) || (stublayer2>1009 && stublayer2<2000) || (stublayer2>2009) ) ) continue; // <=== TILTED
+	    if ( !isTilted && ( (stublayer1>1008 && stublayer1<2000) || (stublayer1>2008) || (stublayer2>1008 && stublayer2<2000) || (stublayer2>2008) ) ) continue; // <=== FLAT
+	    
 	    double deltaphi=phi1-phi2;
 
 	    if (deltaphi>0.5*two_pi) deltaphi-=two_pi;
@@ -166,7 +173,13 @@ public:
 	    int iphi=D->stubs_[jSector][j].iphi();
 	    double width=4.572; //4.608;
 	    double nstrip=508.0;
-	    if (r<60.0) {
+	    int stublayer = D->stubs_[jSector][j].layer();
+	    //if (r<60.0) {
+	    if (isTilted && ( (stublayer>999 && stublayer<1010) || (stublayer>1999 && stublayer<2010) ) ) { // <=== TILTED
+	      width=4.8;
+	      nstrip=480;
+	    }
+	    else if ( !isTilted && ( (stublayer>999 && stublayer<1009) || (stublayer>1999 && stublayer<2009) ) ) { // <=== FLAT
 	      width=4.8;
 	      nstrip=480;
 	    }
@@ -204,7 +217,13 @@ public:
 
 	    double dist=0.0;
 
-	    if (r<60) {
+	    //if (r<60) {
+	    if ( isTilted && ( (stublayer>999 && stublayer<1010) || (stublayer>1999 && stublayer<2010) ) ) { // <=== TILTED
+	      if (fabs(rdeltaphi)>rphicut1*phiSF) continue;
+	      if (fabs(deltar)>rcut1) continue;
+	      dist=hypot(rdeltaphi/(rphicut1*phiSF),deltar/rcut1);
+	    }
+	    else if ( !isTilted && ( (stublayer>999 && stublayer<1009) || (stublayer>1999 && stublayer<2009) ) ) { // <=== FLAT
 	      if (fabs(rdeltaphi)>rphicut1*phiSF) continue;
 	      if (fabs(deltar)>rcut1) continue;
 	      dist=hypot(rdeltaphi/(rphicut1*phiSF),deltar/rcut1);

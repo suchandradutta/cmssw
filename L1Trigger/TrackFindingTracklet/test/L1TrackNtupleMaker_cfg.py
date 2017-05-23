@@ -5,7 +5,10 @@
 import FWCore.ParameterSet.Config as cms
 import os
 process = cms.Process("L1TrackNtuple")
- 
+
+
+GEOMETRY = "D10"
+
  
 ############################################################
 # import standard configurations
@@ -15,10 +18,17 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
-#process.load('Configuration.Geometry.GeometryExtended2023D10Reco_cff')
-#process.load('Configuration.Geometry.GeometryExtended2023D10_cff')
-process.load('Configuration.Geometry.GeometryExtended2023D13Reco_cff')
-process.load('Configuration.Geometry.GeometryExtended2023D13_cff')
+
+if GEOMETRY == "D10": 
+    print "using geometry " + GEOMETRY + " (flat), remember to check FLAT vs TILTED flats in L1TTrack.hh"
+    process.load('Configuration.Geometry.GeometryExtended2023D10Reco_cff')
+    process.load('Configuration.Geometry.GeometryExtended2023D10_cff')
+elif GEOMETRY == "D13":
+    print "using geometry " + GEOMETRY + " (tilted), remember to check FLAT vs TILTED flats in L1TTrack.hh"
+    process.load('Configuration.Geometry.GeometryExtended2023D13Reco_cff')
+    process.load('Configuration.Geometry.GeometryExtended2023D13_cff')
+else:
+    print "this is not a valid geometry!!!"
 
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -32,37 +42,54 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 ############################################################
 
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
-Source_Files = cms.untracked.vstring(
-#D10 (flat barrel)
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/044925F3-5F2E-E711-A92B-0CC47A7AB7A0.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/10EEBD9F-5F2E-E711-8E06-0CC47A4D7616.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/42543260-602E-E711-A41C-0025905A48C0.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/72D6B8B7-612E-E711-A727-0CC47A4D7692.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/786DD1A7-612E-E711-84EB-0025905B855E.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/9255C706-602E-E711-BDE0-0025905A609A.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/BE75B044-602E-E711-8DC3-0CC47A4D7692.root",
-#"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/EA054BA3-5F2E-E711-B7F4-0025905A6084.root",
 
-#D13 (tilted barrel)
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/003A8F87-6A2E-E711-AFAC-003048FFCC16.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/20F6CC9B-692E-E711-B7B6-0CC47A4D76C6.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/308255CD-682E-E711-89BE-0025905B85CA.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/44734904-6B2E-E711-82BB-0025905B85B2.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/620FE305-6B2E-E711-A312-0025905A60BE.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/6CD6D66E-6A2E-E711-8F75-0025905A6136.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/888282CA-682E-E711-8DB0-0025905A4964.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/8A1BD86E-6A2E-E711-8DB6-0025905A4964.root",
-"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/BCB8C8A5-692E-E711-BA94-0025905A612E.root",
+if GEOMETRY == "D10": 
+    #D10 (flat barrel)
+    Source_Files = cms.untracked.vstring(
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/044925F3-5F2E-E711-A92B-0CC47A7AB7A0.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/10EEBD9F-5F2E-E711-8E06-0CC47A4D7616.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/42543260-602E-E711-A41C-0025905A48C0.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/72D6B8B7-612E-E711-A727-0CC47A4D7692.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/786DD1A7-612E-E711-84EB-0025905B855E.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/9255C706-602E-E711-BDE0-0025905A609A.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/BE75B044-602E-E711-8DC3-0CC47A4D7692.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/EA054BA3-5F2E-E711-B7F4-0025905A6084.root",
+
+    # pt=1 TeV
+    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/4ACB4C78-682E-E711-A521-0025905B860E.root",
+    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/6218A041-692E-E711-880D-0025905B8560.root",
+    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/6CDE1F42-692E-E711-816E-0025905A613C.root",
+    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/F2A15C76-682E-E711-A399-0025905A6118.root"
+)
+elif GEOMETRY == "D13":
+    #D13 (tilted barrel)
+    Source_Files = cms.untracked.vstring(
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/003A8F87-6A2E-E711-AFAC-003048FFCC16.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/20F6CC9B-692E-E711-B7B6-0CC47A4D76C6.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/308255CD-682E-E711-89BE-0025905B85CA.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/44734904-6B2E-E711-82BB-0025905B85B2.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/620FE305-6B2E-E711-A312-0025905A60BE.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/6CD6D66E-6A2E-E711-8F75-0025905A6136.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/888282CA-682E-E711-8DB0-0025905A4964.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/8A1BD86E-6A2E-E711-8DB6-0025905A4964.root",
+    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/BCB8C8A5-692E-E711-BA94-0025905A612E.root",
     )
 process.source = cms.Source("PoolSource", fileNames = Source_Files)
 
-#process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_D10_PU0.root'), closeFileFast = cms.untracked.bool(True))
-process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_D13_PU0.root'), closeFileFast = cms.untracked.bool(True))
+process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_'+GEOMETRY+'.root'), closeFileFast = cms.untracked.bool(True))
 
 
 ############################################################
 # L1 tracking
 ############################################################
+
+# remake stubs 
+process.load('L1Trigger.TrackTrigger.TrackTrigger_cff')
+from L1Trigger.TrackTrigger.TTStubAlgorithmRegister_cfi import *
+
+if GEOMETRY == "D10": 
+    TTStubAlgorithm_official_Phase2TrackerDigi_.zMatchingPS = cms.bool(False)
+process.TTClusterStub = cms.Path(process.TrackTriggerClustersStubs)
 
 process.load("L1Trigger.TrackFindingTracklet.L1TrackletTracks_cff")
 
@@ -84,7 +111,7 @@ process.TTTracksWithTruth = cms.Path(process.L1TrackletTracksWithAssociators)
 ############################################################
 
 process.L1TrackNtuple = cms.EDAnalyzer('L1TrackNtupleMaker',
-                                       MyProcess = cms.int32(1),
+                                       MyProcess = cms.int32(13),
                                        DebugMode = cms.bool(False),      # printout lots of debug statements
                                        SaveAllTracks = cms.bool(True),   # save *all* L1 tracks, not just truth matched to primary particle
                                        SaveStubs = cms.bool(False),      # save some info for *all* stubs
@@ -106,5 +133,8 @@ process.L1TrackNtuple = cms.EDAnalyzer('L1TrackNtupleMaker',
                                        )
 process.ana = cms.Path(process.L1TrackNtuple)
 
-process.schedule = cms.Schedule(process.TTTracksWithTruth,process.ana)
+if GEOMETRY == "D10": 
+    process.schedule = cms.Schedule(process.TTClusterStub,process.TTTracksWithTruth,process.ana)
+else:
+    process.schedule = cms.Schedule(process.TTTracksWithTruth,process.ana)
 

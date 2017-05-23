@@ -158,16 +158,13 @@ private:
   edm::InputTag simTrackSrc_;
   edm::InputTag simVertexSrc_;
   edm::InputTag ttStubSrc_;
-
   edm::InputTag bsSrc_;
-  
+
   const edm::EDGetTokenT< edm::SimTrackContainer > simTrackToken_;
   const edm::EDGetTokenT< edm::SimVertexContainer > simVertexToken_;
-  
   const edm::EDGetTokenT< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > > > ttStubToken_;
-
   const edm::EDGetTokenT< reco::BeamSpot > bsToken_;
-  
+
 
   /// ///////////////// ///
   /// MANDATORY METHODS ///
@@ -236,6 +233,9 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool doMyDebug = false; 
   if (doMyDebug) std::cout << "start in L1TrackProducer::produce()" << std::endl;
 
+  if (isTilted && doMyDebug) std::cout << "assuming the tilted barrel geometry!" << std::endl;
+
+
   typedef std::map< L1TStub, edm::Ref< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > >, TTStub< Ref_Phase2TrackerDigi_ >  >, L1TStubCompare > stubMapType;
 
 
@@ -245,8 +245,7 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   stubMapType stubMap;
 
   /// Geometry handles etc
-  edm::ESHandle<TrackerGeometry>                               geometryHandle;
-  //const TrackerGeometry*                                       theGeometry;
+  edm::ESHandle<TrackerGeometry> geometryHandle;
 
 
   /// Set pointers to Stacked Modules
@@ -255,15 +254,14 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   ////////////////////////
   // GET MAGNETIC FIELD //
-
   edm::ESHandle<MagneticField> magneticFieldHandle;
   iSetup.get<IdealMagneticFieldRecord>().get(magneticFieldHandle);
   const MagneticField* theMagneticField = magneticFieldHandle.product();
   double mMagneticFieldStrength = theMagneticField->inTesla(GlobalPoint(0,0,0)).z();
 
+
   ////////////
   // GET BS //
-  ////////////
   edm::Handle<reco::BeamSpot> beamSpotHandle;
   iEvent.getByToken( bsToken_, beamSpotHandle );
   math::XYZPoint bsPosition=beamSpotHandle->position();
@@ -334,14 +332,7 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   /// COLLECT STUB INFORMATION ///
   ////////////////////////////////
 
-  /*
-  /// Maps to store TrackingParticle information
-  std::map< unsigned int, std::vector< edm::Ptr< TrackingParticle > > > tpPerStubLayer;
-  std::map< unsigned int, std::vector< edm::Ptr< TrackingParticle > > > tpPerStubDisk;
-  */
-
   // loop over stubs
-
   if (doMyDebug) std::cout << "loop over stubs" << std::endl;
 
   for (auto gd=theTrackerGeom->dets().begin(); gd != theTrackerGeom->dets().end(); gd++) {
@@ -368,7 +359,7 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       LocalPoint clustlp = topol->localPosition(coords);
 
       GlobalPoint posStub  =  theGeomDet->surface().toGlobal(clustlp);
-      //double displStub    = tempStubPtr->getTriggerDisplacement();
+      
 
       int layer=-999999;
       int ladder=-999999;
@@ -382,49 +373,54 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	layer  = static_cast<int>(tTopo->layer(detid));
         module = static_cast<int>(tTopo->module(detid));
 	ladder = static_cast<int>(tTopo->tobRod(detid));
-	if (layer==1)
-	  {
-	    if (z<-15.0) {
-	      module = static_cast<int>(tTopo->tobRod(detid));
-	      ladder = static_cast<int>(tTopo->module(detid));
-	    }
-	    if (z>15.0) {
-	      module = 18+static_cast<int>(tTopo->tobRod(detid));
-	      ladder = static_cast<int>(tTopo->module(detid));
-	    }
-	    if (fabs(z)<15.0)  module = 11+static_cast<int>(tTopo->module(detid));
-	  }
+	if (doMyDebug) cout << "layer = " << layer << " vs " << static_cast<int>(tTopo->tobLayer(detid)) << endl;
 
-	if (layer==2)
-	  {
-	    if (z<-25.0) {
-	      module = static_cast<int>(tTopo->tobRod(detid));
-	      ladder = static_cast<int>(tTopo->module(detid));
+	if (isTilted) {
+	  if (layer==1)
+	    {
+	      if (z<-15.0) {
+		module = static_cast<int>(tTopo->tobRod(detid));
+		ladder = static_cast<int>(tTopo->module(detid));
+	      }
+	      if (z>15.0) {
+		module = 18+static_cast<int>(tTopo->tobRod(detid));
+		ladder = static_cast<int>(tTopo->module(detid));
+	      }
+	      if (fabs(z)<15.0)  module = 11+static_cast<int>(tTopo->module(detid));
 	    }
-	    if (z>25.0)  {
-	      module = 23+static_cast<int>(tTopo->tobRod(detid));
-	      ladder = static_cast<int>(tTopo->module(detid));
+	  
+	  if (layer==2)
+	    {
+	      if (z<-25.0) {
+		module = static_cast<int>(tTopo->tobRod(detid));
+		ladder = static_cast<int>(tTopo->module(detid));
+	      }
+	      if (z>25.0)  {
+		module = 23+static_cast<int>(tTopo->tobRod(detid));
+		ladder = static_cast<int>(tTopo->module(detid));
+	      }
+	      if (fabs(z)<25.0)  module = 12+static_cast<int>(tTopo->module(detid));
 	    }
-	    if (fabs(z)<25.0)  module = 12+static_cast<int>(tTopo->module(detid));
-	  }
-
-	if (layer==3)
-	  {
-	    if (z<-34.0) {
-	      module = static_cast<int>(tTopo->tobRod(detid));
-	      ladder = static_cast<int>(tTopo->module(detid));
+	  
+	  if (layer==3)
+	    {
+	      if (z<-34.0) {
+		module = static_cast<int>(tTopo->tobRod(detid));
+		ladder = static_cast<int>(tTopo->module(detid));
+	      }
+	      if (z>34.0)  {
+		module = 28+static_cast<int>(tTopo->tobRod(detid));
+		ladder = static_cast<int>(tTopo->module(detid));
+	      }
+	      if (fabs(z)<34.0)  module = 13+static_cast<int>(tTopo->module(detid));
 	    }
-	    if (z>34.0)  {
-	      module = 28+static_cast<int>(tTopo->tobRod(detid));
-	      ladder = static_cast<int>(tTopo->module(detid));
-	    }
-	    if (fabs(z)<34.0)  module = 13+static_cast<int>(tTopo->module(detid));
-	  } 
+	}//end special stuff for tilted barrel
       }
       else if ( detid.subdetId()==StripSubdetector::TID ) {
 	layer  = 1000+static_cast<int>(tTopo->tidRing(detid));
 	ladder =  static_cast<int>(tTopo->module(detid)); 
 	module = static_cast<int>(tTopo->tidWheel(detid));
+	if (doMyDebug) cout << "disk = " << layer << " vs ring = " << static_cast<int>(tTopo->tidRing(detid)) << endl;
       }
 
       if (doMyDebug) std::cout << "... stub with layer module ladder = " << layer << " " << ladder << " " << module << std::endl;
@@ -474,14 +470,14 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       for (unsigned int ihit=0;ihit<outerrows.size();ihit++){
 
 	if (layer<1000) {
-	  innerStack.push_back(true);
+	  innerStack.push_back(false);
 	  irphi.push_back(outerrows[ihit]);
 	  iz.push_back(outercols[ihit]);
 	  iladder.push_back(static_cast<int>(tTopo->tobRod(outerDetId)));
 	  imodule.push_back(static_cast<int>(tTopo->module(outerDetId)));
 	}
 	else {
-	  innerStack.push_back(true);
+	  innerStack.push_back(false);
 	  irphi.push_back(outerrows[ihit]);
 	  iz.push_back(outercols[ihit]);
 	  iladder.push_back(static_cast<int>(tTopo->tobRod(outerDetId)));

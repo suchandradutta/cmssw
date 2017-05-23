@@ -4,6 +4,7 @@
 #include <iostream>
 #include <assert.h>
 
+bool isTilted = true;
 
 using namespace std;
 
@@ -146,7 +147,12 @@ public:
 
 	double width=4.572; //4.608;
 	double nstrip=508.0;
-	if (ri<60.0) {
+	//if (ri<60.0) {
+	if ( isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1010) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2010) ) ) {  // <=== TILTED
+	  width=4.8;
+	  nstrip=480;
+	}
+	else if ( isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1009) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2009) ) ) { // <=== FLAT
 	  width=4.8;
 	  nstrip=480;
 	}
@@ -262,7 +268,12 @@ public:
 
 	double width=4.572; //4.608;
 	double nstrip=508.0;
-	if (ri<60.0) {
+	//if (ri<60.0) {
+	if ( isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1010) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2010) ) ) { // <=== TILTED
+	  width=4.8;
+	  nstrip=480;
+	}
+	else if ( !isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1009) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2009) ) ) { // <=== FLAT
 	  width=4.8;
 	  nstrip=480;
 	}
@@ -384,7 +395,12 @@ public:
 
 	double width=4.572; //4.608;
 	double nstrip=508.0;
-	if (ri<60.0) {
+	//if (ri<60.0) {
+	if ( isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1010) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2010) ) ) {  // <=== TILTED
+	  width=4.8;
+	  nstrip=480;
+	}
+	else if ( !isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1009) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2009) ) ) {  // <=== FLAT
 	  width=4.8;
 	  nstrip=480;
 	}
@@ -420,7 +436,12 @@ public:
 
 	  double width=4.572; //4.608;
 	  double nstrip=508.0;
-	  if (ri<60.0) {
+	  //if (ri<60.0) {
+	  if ( isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1010) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2010) ) ) { // <=== TILTED
+	    width=4.8;
+	    nstrip=480;
+	  }
+	  else if ( !isTilted && ( (stubs_[i].layer()>999 && stubs_[i].layer()<1009) || (stubs_[i].layer()>1999 && stubs_[i].layer()<2009) ) ) { // <=== FLAT
 	    width=4.8;
 	    nstrip=480;
 	  }

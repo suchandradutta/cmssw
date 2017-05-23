@@ -15,6 +15,7 @@ using namespace std;
 #include "L1TGeomBase.hh"
 #include "L1TDisk.hh"
 
+
 class L1TBarrel:public L1TGeomBase {
 
 private:
@@ -351,7 +352,13 @@ public:
 	    int iphi=D->stubs_[jSector][j].iphi();
 	    double width=4.572; //4.608;
 	    double nstrip=508.0;
-	    if (r<60.0) {
+	    int stublayer = D->stubs_[jSector][j].layer();
+	    //if (r<60.0) {
+	    if ( isTilted && ( (stublayer>999 && stublayer<1010) || (stublayer>1999 && stublayer<2010) ) ) { // <=== TILTED
+	      width=4.8;
+	      nstrip=480;
+	    }
+	    else if ( !isTilted && ( (stublayer>999 && stublayer<1009) || (stublayer>1999 && stublayer<2009) ) ) { // <=== FLAT
 	      width=4.8;
 	      nstrip=480;
 	    }
