@@ -123,29 +123,50 @@ private:
 
   TTree* eventTree;
 
-  // all tracking particles
-  std::vector<float>* m_tp_pt;
-  std::vector<float>* m_tp_eta;
-  std::vector<float>* m_tp_phi;
-  std::vector<float>* m_tp_dxy;
-  std::vector<float>* m_tp_d0;
-  std::vector<float>* m_tp_z0;
-  std::vector<float>* m_tp_d0_prod;
-  std::vector<float>* m_tp_z0_prod;
-  std::vector<int>*   m_tp_pdgid;
-  std::vector<int>*   m_tp_nstub;
-  std::vector<int>*   m_tp_eventid;
+  // TRACKING PARTICLES, saving those with: 
+  // pt > 2 GeV, |eta| < 2.5, |z0| < 30 cm
+  // and originates from the primary interaction (i.e. not from pileup events) 
+  // and produces >= 1 cluster in the outer tracker 
+  //
+  std::vector<float>* m_tp_pt;        // pt
+  std::vector<float>* m_tp_eta;       // eta
+  std::vector<float>* m_tp_phi;       // phi
+  std::vector<float>* m_tp_dxy;       // distance in transverse place of the tracking particle production point from the origin
+  std::vector<float>* m_tp_d0;        // transverse impact parameter, propagated back to the IP 
+  std::vector<float>* m_tp_z0;        // z0 position, i.e. longitudinal impact parameter, propagated back to the IP
+  std::vector<float>* m_tp_d0_prod;   // "d0" but at the production point (stored for reference)
+  std::vector<float>* m_tp_z0_prod;   // z coordinate of the production point of the tracking particle
+  std::vector<int>*   m_tp_pdgid;     // PDG ID 
+  std::vector<int>*   m_tp_nstub;     // # of stubs that can be associated to the tracking particle with at least one hit of at least one of its clusters 
+                                      // (see: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SLHCTrackerTriggerSWTools#MC_truth_for_TTStub)
+  std::vector<int>*   m_tp_eventid;   // event identifier, by default only eventid==0 are stored (corresponding to events from primary interaction), eventid > 0 means pileup
 
-  // ALL stubs
-  std::vector<float>* m_allstub_x;
-  std::vector<float>* m_allstub_y;
-  std::vector<float>* m_allstub_z;
-  std::vector<int>*   m_allstub_isBarrel;
-  std::vector<int>*   m_allstub_layer;
-  std::vector<float>* m_allstub_trigDisplace;
-  std::vector<float>* m_allstub_trigOffset;
-  std::vector<float>* m_allstub_trigPos;
-  std::vector<float>* m_allstub_trigBend;
+  // properties of ALL produced stubs
+  std::vector<float>* m_allstub_x;               // global x coordinate
+  std::vector<float>* m_allstub_y;               // global y coordinate
+  std::vector<float>* m_allstub_z;               // global z coordinate
+  std::vector<int>*   m_allstub_isBarrel;        // stub is in barrel (1) or in disk (0)
+  std::vector<int>*   m_allstub_layer;           // layer (1-6) or disk (1-5) number
+
+  // from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SLHCTrackerTriggerSWTools#TTStub         
+  //                                        
+  std::vector<float>* m_allstub_trigDisplace;    // relative displacement between the two cluster centroids
+  std::vector<float>* m_allstub_trigOffset;      // correction offset calculated while accepting/rejecting the stub
+  std::vector<float>* m_allstub_trigPos;         // xy coordinate of the cluster centroid
+  std::vector<float>* m_allstub_trigBend;        // corrected displacement between the cluster centroids
+
+  // from: https://twiki.cern.ch/twiki/bin/viewauth/CMS/SLHCTrackerTriggerSWTools#MC_truth_for_TTStub
+  //
+  // If both clusters are unknown, the stub is unknown
+  // If only one cluster is unknown, the stub is combinatoric
+  // If both clusters are genuine, and are associated to the same TrackingParticle, the stub is genuine
+  // If both clusters are genuine, but are associated to different TrackingParticle 's, the stub is combinatoric
+  // If both clusters are not-unknown, and at least one of them is combinatoric, one unique TrackingParticle must be associated to both in order to have a genuine stub, otherwise the stub will be combinatoric 
+  // 
+  std::vector<int>*   m_allstub_isGenuine;      
+  std::vector<int>*   m_allstub_isCombinatoric; 
+  std::vector<int>*   m_allstub_isUnknown;      
+
 
 };
 
@@ -224,6 +245,9 @@ void L1StubsExample::beginJob()
   m_allstub_trigOffset   = new std::vector<float>;
   m_allstub_trigPos      = new std::vector<float>;
   m_allstub_trigBend     = new std::vector<float>;
+  m_allstub_isGenuine = new std::vector<int>;
+  m_allstub_isCombinatoric = new std::vector<int>;
+  m_allstub_isUnknown = new std::vector<int>;
 
 
   // ntuple
@@ -250,7 +274,10 @@ void L1StubsExample::beginJob()
   eventTree->Branch("allstub_trigOffset", &m_allstub_trigOffset);
   eventTree->Branch("allstub_trigPos", &m_allstub_trigPos);
   eventTree->Branch("allstub_trigBend", &m_allstub_trigBend);
-  
+  eventTree->Branch("allstub_isGenuine", &m_allstub_isGenuine);
+  eventTree->Branch("allstub_isCombinatoric", &m_allstub_isCombinatoric);
+  eventTree->Branch("allstub_isUnknown", &m_allstub_isUnknown);
+
 }
 
 
@@ -280,7 +307,10 @@ void L1StubsExample::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   m_allstub_trigOffset->clear();
   m_allstub_trigPos->clear();
   m_allstub_trigBend->clear();
-  
+  m_allstub_isGenuine->clear();
+  m_allstub_isCombinatoric->clear();
+  m_allstub_isUnknown->clear();
+
 
   // -----------------------------------------------------------------------------------------------
   // retrieve various containers
@@ -369,6 +399,10 @@ void L1StubsExample::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       float trigOffset = tempStubPtr->getTriggerOffset();
       float trigPos = tempStubPtr->getTriggerPosition();
       float trigBend = tempStubPtr->getTriggerBend();
+
+      int isGenuine = (int) MCTruthTTStubHandle->isGenuine(tempStubPtr);
+      int isCombinatoric = (int) MCTruthTTStubHandle->isCombinatoric(tempStubPtr);
+      int isUnknown = (int) MCTruthTTStubHandle->isUnknown(tempStubPtr);
       
       m_allstub_x->push_back(tmp_stub_x);
       m_allstub_y->push_back(tmp_stub_y);
@@ -380,6 +414,10 @@ void L1StubsExample::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       m_allstub_trigOffset->push_back(trigOffset);
       m_allstub_trigPos->push_back(trigPos);
       m_allstub_trigBend->push_back(trigBend);
+
+      m_allstub_isGenuine->push_back(isGenuine);
+      m_allstub_isCombinatoric->push_back(isCombinatoric);
+      m_allstub_isUnknown->push_back(isUnknown);
       
     }
   }
