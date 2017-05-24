@@ -47,6 +47,7 @@ public:
 
   void write(ofstream& out){
     
+    if (pt_ > 2) {
     out << "SimTrack: " 
 	<< id_ << "\t" 
 	<< type_ << "\t" 
@@ -56,10 +57,12 @@ public:
 	<< vx_ << "\t" 
 	<< vy_ << "\t" 
 	<< vz_ << "\t" << endl; 
+    }
 	
   }
   void write(ostream& out){
     
+    if (pt_ > 2) {
     out << "SimTrack: " 
 	<< id_ << "\t" 
 	<< type_ << "\t" 
@@ -69,7 +72,8 @@ public:
 	<< vx_ << "\t" 
 	<< vy_ << "\t" 
 	<< vz_ << "\t" << endl; 
-	
+    }
+
   }
   
   int id() const { return id_; }
