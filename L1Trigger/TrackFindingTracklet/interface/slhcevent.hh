@@ -271,7 +271,8 @@ public:
 	   vector<int> irphi,
 	   vector<int> iz,
 	   vector<int> iladder,
-	   vector<int> imodule){
+	   vector<int> imodule,
+	   int isPSmodule){
 
     
     if (layer>999&&layer<1999&& z<0.0) {
@@ -284,7 +285,7 @@ public:
     y-=y_offset;
 
     L1TStub stub(-1,-1,-1,layer, ladder, module, strip, 
-		 x, y, z, -1.0, -1.0, pt, bend);
+		 x, y, z, -1.0, -1.0, pt, bend, isPSmodule);
 
     for(unsigned int i=0;i<innerStack.size();i++){
       if (innerStack[i]) {
@@ -440,8 +441,9 @@ public:
       double y;
       double z;
       double bend;
+      int isPSmodule;
 
-      in >> layer >> ladder >> module >> strip >> simtrk >> pt >> x >> y >> z >> bend;
+      in >> layer >> ladder >> module >> strip >> simtrk >> pt >> x >> y >> z >> bend >> isPSmodule;
 
       if (layer>999&&layer<1999&& z<0.0) {
 	//cout << "Will change layer by addding 1000, before layer = " << layer <<endl;
@@ -454,7 +456,7 @@ public:
 
       if (layer < 10) nlayer[layer]++;
 
-      L1TStub stub(-1,-1,-1,layer, ladder, module, strip, x, y, z, -1.0, -1.0, pt, bend);
+      L1TStub stub(-1,-1,-1,layer, ladder, module, strip, x, y, z, -1.0, -1.0, pt, bend, isPSmodule);
 
       in >> tmp;
 

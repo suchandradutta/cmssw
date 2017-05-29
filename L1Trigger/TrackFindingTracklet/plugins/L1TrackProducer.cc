@@ -233,6 +233,8 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   bool doMyDebug = false; 
   if (doMyDebug) std::cout << "start in L1TrackProducer::produce()" << std::endl;
 
+  bool isTilted = true;
+
   if (isTilted && doMyDebug) std::cout << "assuming the tilted barrel geometry!" << std::endl;
 
 
@@ -349,7 +351,10 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
     const GeomDetUnit* det0 = theTrackerGeom->idToDetUnit( detid );
     const PixelGeomDetUnit* theGeomDet = dynamic_cast< const PixelGeomDetUnit* >( det0 );
     const PixelTopology* topol = dynamic_cast< const PixelTopology* >( &(theGeomDet->specificTopology()) );
-    
+
+    unsigned int isPSmodule=0;
+    if (topol->nrows() == 960) isPSmodule=1;
+
     // loop over stubs
     for ( auto stubIter = stubs.begin();stubIter != stubs.end();++stubIter ) {
       edm::Ref< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_  > >, TTStub< Ref_Phase2TrackerDigi_  > >
@@ -436,10 +441,11 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       /// Get the Inner and Outer TTCluster
       edm::Ref< edmNew::DetSetVector< TTCluster<Ref_Phase2TrackerDigi_> >, TTCluster<Ref_Phase2TrackerDigi_> > innerCluster = tempStubPtr->getClusterRef(0);
 
-      const DetId innerDetId = innerCluster->getDetId();
+      //const DetId innerDetId = innerCluster->getDetId();
 
       std::vector< int > innerrows= innerCluster->getRows();
       std::vector< int > innercols= innerCluster->getCols();
+
 
       for (unsigned int ihit=0;ihit<innerrows.size();ihit++){
 
@@ -447,22 +453,26 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  innerStack.push_back(true);
 	  irphi.push_back(innerrows[ihit]);
 	  iz.push_back(innercols[ihit]);
-	  iladder.push_back(static_cast<int>(tTopo->tobRod(innerDetId)));
-	  imodule.push_back(static_cast<int>(tTopo->module(innerDetId)));
+	  //iladder.push_back(static_cast<int>(tTopo->tobRod(innerDetId)));
+	  //imodule.push_back(static_cast<int>(tTopo->module(innerDetId)));
+	  iladder.push_back(ladder);
+	  imodule.push_back(module);
 	}
 	else {
 	  innerStack.push_back(true);
 	  irphi.push_back(innerrows[ihit]);
 	  iz.push_back(innercols[ihit]);
-	  iladder.push_back(static_cast<int>(tTopo->tobRod(innerDetId)));
-	  imodule.push_back(static_cast<int>(tTopo->module(innerDetId)));
+	  //iladder.push_back(static_cast<int>(tTopo->tobRod(innerDetId)));
+	  //imodule.push_back(static_cast<int>(tTopo->module(innerDetId)));
+	  iladder.push_back(ladder);
+	  imodule.push_back(module);
 	}    
       }
 
 
       edm::Ref< edmNew::DetSetVector< TTCluster<Ref_Phase2TrackerDigi_> >, TTCluster<Ref_Phase2TrackerDigi_> > outerCluster = tempStubPtr->getClusterRef(1);
 
-      const DetId outerDetId = outerCluster->getDetId();
+      //const DetId outerDetId = outerCluster->getDetId();
 
       std::vector< int > outerrows= outerCluster->getRows();
       std::vector< int > outercols= outerCluster->getCols();
@@ -473,19 +483,22 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 	  innerStack.push_back(false);
 	  irphi.push_back(outerrows[ihit]);
 	  iz.push_back(outercols[ihit]);
-	  iladder.push_back(static_cast<int>(tTopo->tobRod(outerDetId)));
-	  imodule.push_back(static_cast<int>(tTopo->module(outerDetId)));
+	  //iladder.push_back(static_cast<int>(tTopo->tobRod(outerDetId)));
+	  //imodule.push_back(static_cast<int>(tTopo->module(outerDetId)));
+	  iladder.push_back(ladder);
+	  imodule.push_back(module);
 	}
 	else {
 	  innerStack.push_back(false);
 	  irphi.push_back(outerrows[ihit]);
 	  iz.push_back(outercols[ihit]);
-	  iladder.push_back(static_cast<int>(tTopo->tobRod(outerDetId)));
-	  imodule.push_back(static_cast<int>(tTopo->module(outerDetId)));
+	  //iladder.push_back(static_cast<int>(tTopo->tobRod(outerDetId)));
+	  //imodule.push_back(static_cast<int>(tTopo->module(outerDetId)));
+	  iladder.push_back(ladder);
+	  imodule.push_back(module);
 	}    
       }
 
-      
       if (irphi.size()!=0) {
       	strip=irphi[0];
       }
@@ -494,7 +507,7 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
       if (ev.addStub(layer,ladder,module,strip,-1,tempStubPtr->getTriggerBend(),
 		     posStub.x(),posStub.y(),posStub.z(),
-		     innerStack,irphi,iz,iladder,imodule)) {
+		     innerStack,irphi,iz,iladder,imodule,isPSmodule)) {
 		
 	L1TStub lastStub=ev.lastStub();
 	stubMap[lastStub]=tempStubPtr;
