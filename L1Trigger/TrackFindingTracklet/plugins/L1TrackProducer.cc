@@ -151,6 +151,7 @@ private:
   string asciiEventOutName_;
   std::ofstream asciiEventOut_;
 
+  string geometryType_;
 
   edm::ESHandle<TrackerTopology> tTopoHandle;
   edm::ESHandle<TrackerGeometry> tGeomHandle;
@@ -196,6 +197,8 @@ L1TrackProducer::L1TrackProducer(edm::ParameterSet const& iConfig) :
 
   asciiEventOutName_ = iConfig.getUntrackedParameter<string>("asciiFileName","");
 
+  geometryType_ = iConfig.getUntrackedParameter<double>("trackerGeometryType","");
+
   eventnum=0;
   if (asciiEventOutName_!="") {
     asciiEventOut_.open(asciiEventOutName_.c_str());
@@ -234,8 +237,12 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   if (doMyDebug) std::cout << "start in L1TrackProducer::produce()" << std::endl;
 
   bool isTilted = true;
+  if (geometryType_ == "flat" || geometryType_ == "D10") isTilted = false;
 
-  if (isTilted && doMyDebug) std::cout << "assuming the tilted barrel geometry!" << std::endl;
+  if (doMyDebug) {
+    if (isTilted) std::cout << "assuming the FILTED barrel geometry!" << std::endl;
+    else std::cout << "assuming the FLAT barrel geometry!" << std::endl;
+  }
 
 
   typedef std::map< L1TStub, edm::Ref< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_ > >, TTStub< Ref_Phase2TrackerDigi_ >  >, L1TStubCompare > stubMapType;
