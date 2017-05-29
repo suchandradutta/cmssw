@@ -19,11 +19,11 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
 
 if GEOMETRY == "D10": 
-    print "using geometry " + GEOMETRY + " (flat), remember to check FLAT vs TILTED flats in L1TTrack.hh"
+    print "using geometry " + GEOMETRY + " (flat)"
     process.load('Configuration.Geometry.GeometryExtended2023D10Reco_cff')
     process.load('Configuration.Geometry.GeometryExtended2023D10_cff')
 elif GEOMETRY == "D13":
-    print "using geometry " + GEOMETRY + " (tilted), remember to check FLAT vs TILTED flats in L1TTrack.hh"
+    print "using geometry " + GEOMETRY + " (tilted)"
     process.load('Configuration.Geometry.GeometryExtended2023D13Reco_cff')
     process.load('Configuration.Geometry.GeometryExtended2023D13_cff')
 else:
@@ -53,12 +53,6 @@ if GEOMETRY == "D10":
     "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/9255C706-602E-E711-BDE0-0025905A609A.root",
     "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/BE75B044-602E-E711-8DC3-0CC47A4D7692.root",
     "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/EA054BA3-5F2E-E711-B7F4-0025905A6084.root",
-
-    # pt=1 TeV
-    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/4ACB4C78-682E-E711-A521-0025905B860E.root",
-    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/6218A041-692E-E711-880D-0025905B8560.root",
-    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/6CDE1F42-692E-E711-816E-0025905A613C.root",
-    #"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt1000Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/F2A15C76-682E-E711-A399-0025905A6118.root"
 )
 elif GEOMETRY == "D13":
     #D13 (tilted barrel)
@@ -75,7 +69,7 @@ elif GEOMETRY == "D13":
     )
 process.source = cms.Source("PoolSource", fileNames = Source_Files)
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_'+GEOMETRY+'.root'), closeFileFast = cms.untracked.bool(True))
+process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_'+GEOMETRY+'_PU0.root'), closeFileFast = cms.untracked.bool(True))
 
 
 ############################################################
@@ -91,9 +85,11 @@ if GEOMETRY == "D10":
 process.TTClusterStub = cms.Path(process.TrackTriggerClustersStubs)
 
 process.load("L1Trigger.TrackFindingTracklet.L1TrackletTracks_cff")
-#from L1Trigger.TrackFindingTracklet.Tracklet_cfi import *
-#TTTracksFromTracklet.asciiFileName = cms.untracked.string("evlist.txt")
 
+from L1Trigger.TrackFindingTracklet.Tracklet_cfi import *
+if GEOMETRY == "D10": 
+    TTTracksFromTracklet.trackerGeometry = cms.untracked.string("flat")
+#TTTracksFromTracklet.asciiFileName = cms.untracked.string("evlist.txt")
 
 # run only the tracking (no MC truth associators)
 process.TTTracks = cms.Path(process.L1TrackletTracks)
