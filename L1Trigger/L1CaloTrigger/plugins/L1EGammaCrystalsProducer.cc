@@ -37,19 +37,20 @@ Implementation:
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 #include "Geometry/EcalAlgo/interface/EcalBarrelGeometry.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
+#include "Geometry/HcalTowerAlgo/interface/HcalTrigTowerGeometry.h"
+#include "Geometry/HcalTowerAlgo/interface/HcalGeometry.h"
 #include <iostream>
 
 #include "DataFormats/EcalRecHit/interface/EcalRecHit.h"
 #include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
 #include "DataFormats/Phase2L1CaloTrig/interface/L1EGCrystalCluster.h"
-//#include "SLHCUpgradeSimulations/L1CaloTrigger/interface/L1EGCrystalCluster.h"
 #include "Geometry/CaloTopology/interface/CaloTopology.h"
+#include "Geometry/CaloTopology/interface/HcalTopology.h"
 
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "Geometry/CommonDetUnit/interface/GeomDet.h"
 #include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
-//#include "SimDataFormats/CaloTest/interface/HcalTestNumbering.h"
 #include "DataFormats/HcalDetId/interface/HcalSubdetector.h"
 #include "DataFormats/HcalDetId/interface/HcalDetId.h"
 
@@ -76,13 +77,16 @@ class L1EGCrystalClusterProducer : public edm::EDProducer {
 
    private:
       virtual void produce(edm::Event&, const edm::EventSetup&);
-      bool cluster_passes_cuts(const l1slhc::L1EGCrystalCluster& cluster) const;
-      bool cluster_passes_electronWP98(float &cluster_pt, float &iso, float &e2x5, float &e5x5) const;
-      bool cluster_passes_photonWP90(float &cluster_pt, float &iso, float &e2x5, float &e5x5, float &e2x2) const;
+      bool cluster_passes_base_cuts(const l1slhc::L1EGCrystalCluster& cluster) const;
+      bool cluster_passes_photonWP80(float &cluster_pt, float &cluster_eta, float &iso, float &e2x5, float &e5x5, float &e2x2) const;
+      bool cluster_passes_electronWP98(float &cluster_pt, float &cluster_eta, float &iso, float &e2x5, float &e5x5) const;
 
       double EtminForStore;
+      double EcalTpEtMin;
+      double EtMinForSeedHit;
       bool debug;
       bool useRecHits;
+      bool doBremClustering;
       edm::EDGetTokenT<EcalRecHitCollection> ecalRecHitEBToken_;
       edm::EDGetTokenT<EcalEBTrigPrimDigiCollection> ecalTPEBToken_;
       edm::EDGetTokenT<HBHERecHitCollection> hcalRecHitToken_;
@@ -93,6 +97,8 @@ class L1EGCrystalClusterProducer : public edm::EDProducer {
       //const CaloSubdetectorGeometry * eeGeometry; // unused a.t.m.
       const CaloSubdetectorGeometry * hbGeometry;
       //const CaloSubdetectorGeometry * heGeometry; // unused a.t.m.
+      edm::ESHandle<HcalTopology> hbTopology;
+      const HcalTopology * hcTopology_;
 
       boost::property_tree::ptree towerMap;
       bool useTowerMap;
@@ -151,8 +157,11 @@ class L1EGCrystalClusterProducer : public edm::EDProducer {
 
 L1EGCrystalClusterProducer::L1EGCrystalClusterProducer(const edm::ParameterSet& iConfig) :
    EtminForStore(iConfig.getParameter<double>("EtminForStore")),
+   EcalTpEtMin(iConfig.getUntrackedParameter<double>("EcalTpEtMin", 0.5)), // Default to 500 MeV
+   EtMinForSeedHit(iConfig.getUntrackedParameter<double>("EtMinForSeedHit", 1.0)), // Default to 1 GeV
    debug(iConfig.getUntrackedParameter<bool>("debug", false)),
    useRecHits(iConfig.getParameter<bool>("useRecHits")),
+   doBremClustering(iConfig.getUntrackedParameter<bool>("doBremClustering", true)),
    ecalRecHitEBToken_(consumes<EcalRecHitCollection>(iConfig.getParameter<edm::InputTag>("ecalRecHitEB"))),
    ecalTPEBToken_(consumes<EcalEBTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("ecalTPEB"))),
    hcalRecHitToken_(consumes<HBHERecHitCollection>(iConfig.getParameter<edm::InputTag>("hcalRecHit"))),
@@ -161,13 +170,17 @@ L1EGCrystalClusterProducer::L1EGCrystalClusterProducer(const edm::ParameterSet& 
    towerMapName(iConfig.getUntrackedParameter<std::string>("towerMapName", "defaultMap.json"))
 
 {
-   produces<l1slhc::L1EGCrystalClusterCollection>("EGCrystalCluster");
-   produces<l1extra::L1EmParticleCollection>("EGammaCrystal");
+   produces<l1slhc::L1EGCrystalClusterCollection>("L1EGXtalClusterNoCuts");
+   produces<l1slhc::L1EGCrystalClusterCollection>("L1EGXtalClusterWithCuts");
+   produces<l1extra::L1EmParticleCollection>("L1EGCollectionWithCuts");
    
    // Get tower mapping
    if (useTowerMap) {
       std::cout << "Using tower mapping for ECAL regions.  Map name: " << towerMapName << std::endl;
-      read_json(towerMapName, towerMap);
+      std::string base = std::getenv("CMSSW_BASE");
+      std::string fpath = "/src/L1Trigger/L1CaloTrigger/data/";
+      std::string file = base+fpath+towerMapName;
+      read_json(file, towerMap);
    }
 }
 
@@ -178,9 +191,9 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
    iSetup.get<CaloGeometryRecord>().get(caloGeometry_);
    ebGeometry = caloGeometry_->getSubdetectorGeometry(DetId::Ecal, EcalBarrel);
    hbGeometry = caloGeometry_->getSubdetectorGeometry(DetId::Hcal, HcalBarrel);
-   //for ( const auto& detId : hbGeometry->getValidDetIds() ) {
-   //  std::cout << "valid hcal: " << detId() << " : subD: " << detId.subdetId() << std::endl;
-   //}
+   iSetup.get<HcalRecNumberingRecord>().get(hbTopology);
+   hcTopology_ = hbTopology.product();
+   HcalTrigTowerGeometry theTrigTowerGeometry(hcTopology_);
    
    std::vector<SimpleCaloHit> ecalhits;
    std::vector<SimpleCaloHit> hcalhits;
@@ -191,7 +204,6 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
       edm::Handle<EcalEBTrigPrimDigiCollection> pcalohits;
       iEvent.getByToken(ecalTPEBToken_,pcalohits);
       int totNumHits = 0;
-      int totNumHitsZero = 0;
       for(auto& hit : *pcalohits.product())
       {
          // Have to comment out kOutOfTime and kLiSpikeFlag because we're testing basic TPs
@@ -200,7 +212,7 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
          {
 
             float et = hit.encodedEt()/8.; // Et is 10 bit, by keeping the ADC saturation Et at 120 GeV it means that you have to divide by 8
-            if (et < 0.5) continue; // keep the 500 MeV ET Cut
+            if (et < EcalTpEtMin) continue; // keep the 500 MeV ET Cut
 
             auto cell = ebGeometry->getGeometry(hit.id());
             SimpleCaloHit ehit;
@@ -210,16 +222,14 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
             // while "DataFormats/Math/interface/Point3D.h" also contains a competing definition of GlobalPoint. Oh well...
             ehit.position = GlobalVector(cell->getPosition().x(), cell->getPosition().y(), cell->getPosition().z());
             ehit.energy = et / sin(ehit.position.theta());
+            if ( debug ) std::cout << " -- ECAL TP encoded ET: " << hit.encodedEt() << std::endl;
             //std::cout << " -- ECAL TP Et: " << ehit.energy << std::endl;
-            //std::cout << " -- ECAL TP encoded ET: " << hit.encodedEt() << std::endl;
             //std::cout << totNumHits << " -- ehit iPhi: " << ehit.id.iphi() << " -- tp iPhi: " << hit.id().iphi() << std::endl;
             //std::cout << " -- iEta: " << ehit.id.ieta() << std::endl;
             ecalhits.push_back(ehit);
             totNumHits++;
          }
-         else {totNumHitsZero++;}
       }
-      //std::cout << "TOTAL HITS: " << totNumHits << "   ZERO: " << totNumHitsZero << std::endl;
    } // Done loading ECAL TPs
 
    if (useRecHits) {
@@ -257,34 +267,51 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
 
          // SOI_compressedEt() Compressed ET, integer representing increments of 500 MeV
          // Cut requires 500 MeV TP
-         if ( hit.SOI_compressedEt() > 0 ) // SOI_compressedEt() Compressed ET for the "Sample of Interest"
-           // Need to use proper decompression here https://github.com/cms-sw/cmssw/blob/CMSSW_9_0_X/L1Trigger/L1TCaloLayer1/src/L1TCaloLayer1FetchLUTs.cc#L97-L114
-         {
-            //std::cout << "  -- HCAL TP: " << hit.SOI_compressedEt() << std::endl;
-            //auto cell = geometryHelper.getHcalGeometry()->getGeometry(hit.id());
-            //std::cout << "Hit ID: " << hit.id() << std::endl;
+         if ( hit.SOI_compressedEt() == 0 ) continue; // SOI_compressedEt() Compressed ET for the "Sample of Interest"
+         // Need to use proper decompression here https://github.com/cms-sw/cmssw/blob/CMSSW_9_0_X/L1Trigger/L1TCaloLayer1/src/L1TCaloLayer1FetchLUTs.cc#L97-L114
 
-            // Check if the detId is in the current geometry setup
-            // so that L1EG doesn't crash
-            if (!hbGeometry->present( hit.id()) ) {
-              std::cout << " -- Hcal hit DetID not present in HCAL Geom: " << hit.id() << std::endl;
-              continue;
-            }
-            else {
-              std::cout << " -- YES: Hcal hit DetID is present in HCAL Geom: " << hit.id() << std::endl;
-            }
+         //std::cout << "  -- HCAL TP: " << hit.SOI_compressedEt() << std::endl;
+         //auto cell = geometryHelper.getHcalGeometry()->getGeometry(hit.id());
+         //std::cout << "Hit ID: " << hit.id() << std::endl;
 
-            auto cell = hbGeometry->getGeometry(hit.id());
-            //std::cout << "HCAL Geo: " << hbGeometry << std::endl;
-            //std::cout << "Hit x, y, z: " << cell->getPosition().x() << ", " << cell->getPosition().y() << ", " << cell->getPosition().z() << std::endl;
-            SimpleCaloHit hhit;
-            hhit.id = hit.id();
-            hhit.position = GlobalVector(cell->getPosition().x(), cell->getPosition().y(), cell->getPosition().z());
-            float et = hit.SOI_compressedEt() / 2.;
-            hhit.energy = et / sin(hhit.position.theta());
-            //std::cout << "  -- HCAL TP ET : " << hhit.energy << std::endl;
-            hcalhits.push_back(hhit);
+         // Check if the detId is in the current geometry setup
+         // so that L1EG doesn't crash
+         if (!(hcTopology_->validHT(hit.id()))) {
+           std::cout << " -- Hcal hit DetID not present in HCAL Geom: " << hit.id() << std::endl;
+           continue;
          }
+
+         // Get the detId associated with the HCAL TP
+         // if no detIds associated, skip
+         std::vector<HcalDetId> hcId = theTrigTowerGeometry.detIds(hit.id());
+         if (hcId.size() == 0) {
+           std::cout << "Cannot find any HCalDetId corresponding to " << hit.id() << std::endl;
+           continue;
+         }
+
+         // Skip HCAL TPs which don't have HB detIds
+         if (hcId[0].subdetId() > 1) continue;
+
+         // Find the average position of all HB detIds
+         GlobalVector hcal_tp_position = GlobalVector(0., 0., 0.);
+         for (auto &hcId_i : hcId) {
+           if (hcId_i.subdetId() > 1) continue;
+           auto cell = hbGeometry->getGeometry(hcId_i);
+           if (cell == 0) continue;
+           GlobalVector tmpVector = GlobalVector(cell->getPosition().x(), cell->getPosition().y(), cell->getPosition().z());
+           if ( debug ) std::cout << " ---- " << hcId_i << "  subD: " << hcId_i.subdetId() << " : (eta,phi,z), (" << tmpVector.eta() << ", " << tmpVector.phi() << ", " << tmpVector.z() << ")" << std::endl;
+           hcal_tp_position = tmpVector;
+           break;
+         }
+
+         SimpleCaloHit hhit;
+         hhit.id = hit.id();
+         hhit.position = hcal_tp_position;
+         float et = hit.SOI_compressedEt() / 2.;
+         hhit.energy = et / sin(hhit.position.theta());
+         hcalhits.push_back(hhit);
+
+         if ( debug ) std::cout << "HCAL TP Position (x,y,z): " << hcal_tp_position << ", TP ET : " << hhit.energy << std::endl;
       }
    }
 
@@ -317,8 +344,9 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
    }
 
    // Cluster containters
-   std::unique_ptr<l1slhc::L1EGCrystalClusterCollection> trigCrystalClusters (new l1slhc::L1EGCrystalClusterCollection );
-   std::unique_ptr<l1extra::L1EmParticleCollection> l1EGammaCrystal( new l1extra::L1EmParticleCollection );
+   std::unique_ptr<l1slhc::L1EGCrystalClusterCollection> L1EGXtalClusterNoCuts (new l1slhc::L1EGCrystalClusterCollection );
+   std::unique_ptr<l1slhc::L1EGCrystalClusterCollection> L1EGXtalClusterWithCuts( new l1slhc::L1EGCrystalClusterCollection );
+   std::unique_ptr<l1extra::L1EmParticleCollection> L1EGCollectionWithCuts( new l1extra::L1EmParticleCollection );
    
    // Clustering algorithm
    while(true)
@@ -332,8 +360,9 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
             centerhit = hit;
          }
       }
-      // If we are less than 1GeV or out of hits (i.e. when centerhit is default constructed) we stop
-      if ( centerhit.pt() <= 1. ) break;
+      // If we are less than 1GeV (configurable with EtMinForSeedHit) 
+      // or out of hits (i.e. when centerhit is default constructed) we stop
+      if ( centerhit.pt() < EtMinForSeedHit ) break;
       if ( debug ) std::cout << "-------------------------------------" << std::endl;
       if ( debug ) std::cout << "New cluster: center crystal pt = " << centerhit.pt() << std::endl;
 
@@ -362,7 +391,7 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
       float e5x5 = 0.;
       float e3x5 = 0.;
       bool electronWP98;
-      bool photonWP90;
+      bool photonWP80;
       std::vector<float> crystalPt;
       std::map<int, float> phiStrip;
       //std::cout << " -- iPhi: " << ehit.id.iphi() << std::endl;
@@ -543,39 +572,44 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
       params["phiStripContiguous3p"] = threepair.first;
       params["phiStripOneHole3p"] = threepair.second;
 
-      // Check if sidelobes should be included in sum
-      if ( upperSideLobePt/params["uncorrectedPt"] > 0.1 )
+      // Check if brem clustering is desired
+      if (doBremClustering)
       {
-         for(auto& hit : ecalhits)
+         // Check if sidelobes should be included in sum
+         if ( upperSideLobePt/params["uncorrectedPt"] > 0.1 )
          {
-            if ( !hit.stale &&
-                 (  (!centerhit.isEndcapHit && abs(hit.dieta(centerhit)) < 2 && hit.diphi(centerhit) >= 3 && hit.diphi(centerhit) < 8)
-                   || (centerhit.isEndcapHit && fabs(hit.deta(centerhit)) < 0.02 && hit.dphi(centerhit) >= 0.0173*3 && hit.dphi(centerhit) < 0.0173*8 )
-                 ) )
+            for(auto& hit : ecalhits)
             {
-               weightedPosition += hit.position*hit.energy;
-               totalEnergy += hit.energy;
-               hit.stale = true;
-               crystalPt.push_back(hit.pt());
+               if ( !hit.stale &&
+                    (  (!centerhit.isEndcapHit && abs(hit.dieta(centerhit)) < 2 && hit.diphi(centerhit) >= 3 && hit.diphi(centerhit) < 8)
+                      || (centerhit.isEndcapHit && fabs(hit.deta(centerhit)) < 0.02 && hit.dphi(centerhit) >= 0.0173*3 && hit.dphi(centerhit) < 0.0173*8 )
+                    ) )
+               {
+                  weightedPosition += hit.position*hit.energy;
+                  totalEnergy += hit.energy;
+                  hit.stale = true;
+                  crystalPt.push_back(hit.pt());
+               }
             }
          }
-      }
-      if ( lowerSideLobePt/params["uncorrectedPt"] > 0.1 )
-      {
-         for(auto& hit : ecalhits)
+         if ( lowerSideLobePt/params["uncorrectedPt"] > 0.1 )
          {
-            if ( !hit.stale &&
-                 (  (!centerhit.isEndcapHit && abs(hit.dieta(centerhit)) < 2 && hit.diphi(centerhit) > -8 && hit.diphi(centerhit) <= -3)
-                   || (centerhit.isEndcapHit && fabs(hit.deta(centerhit)) < 0.02 && hit.dphi(centerhit)*-1 >= 0.0173*3 && hit.dphi(centerhit)*-1 < 0.0173*8 )
-                 ) )
+            for(auto& hit : ecalhits)
             {
-               weightedPosition += hit.position*hit.energy;
-               totalEnergy += hit.energy;
-               hit.stale = true;
-               crystalPt.push_back(hit.pt());
+               if ( !hit.stale &&
+                    (  (!centerhit.isEndcapHit && abs(hit.dieta(centerhit)) < 2 && hit.diphi(centerhit) > -8 && hit.diphi(centerhit) <= -3)
+                      || (centerhit.isEndcapHit && fabs(hit.deta(centerhit)) < 0.02 && hit.dphi(centerhit)*-1 >= 0.0173*3 && hit.dphi(centerhit)*-1 < 0.0173*8 )
+                    ) )
+               {
+                  weightedPosition += hit.position*hit.energy;
+                  totalEnergy += hit.energy;
+                  hit.stale = true;
+                  crystalPt.push_back(hit.pt());
+               }
             }
          }
-      }
+      } // Brem section finished
+
       // no need to rescale weightedPosition if we only use theta
       float correctedTotalPt = totalEnergy*sin(weightedPosition.theta());
       params["avgIsoCrystalE"] = (params["nIsoCrystals1"] > 0.) ? ECalIsolation/params["nIsoCrystals1"] : 0.;
@@ -612,79 +646,82 @@ void L1EGCrystalClusterProducer::produce(edm::Event& iEvent, const edm::EventSet
 
 
       // Check if cluster passes electron or photon WPs
-      electronWP98 = cluster_passes_electronWP98( correctedTotalPt, ECalIsolation, e2x5, e5x5);
-      photonWP90 = cluster_passes_photonWP90( correctedTotalPt, ECalIsolation, e2x5, e5x5, e2x2);
-
+      float cluster_eta = weightedPosition.eta();
+      electronWP98 = cluster_passes_electronWP98( correctedTotalPt, cluster_eta, ECalIsolation, e2x5, e5x5);
+      photonWP80 = cluster_passes_photonWP80( correctedTotalPt, cluster_eta, ECalIsolation, e2x5, e5x5, e2x2);
 
       
       // Form a l1slhc::L1EGCrystalCluster
       reco::Candidate::PolarLorentzVector p4(correctedTotalPt, weightedPosition.eta(), weightedPosition.phi(), 0.);
       l1slhc::L1EGCrystalCluster cluster(p4, hovere, ECalIsolation, centerhit.id, totalPtPUcorr, bremStrength,
-            e2x2, e2x5, e3x5, e5x5, electronWP98, photonWP90);
+            e2x2, e2x5, e3x5, e5x5, electronWP98, photonWP80);
       // Save pt array
       cluster.SetCrystalPtInfo(crystalPt);
       params["crystalCount"] = crystalPt.size();
       cluster.SetExperimentalParams(params);
-      trigCrystalClusters->push_back(cluster);
+      L1EGXtalClusterNoCuts->push_back(cluster);
 
 
       // Save clusters with some cuts
-      if ( cluster_passes_cuts(cluster) )
+      if ( cluster_passes_base_cuts(cluster) )
       {
          // Optional min. Et cut
          if ( cluster.pt() >= EtminForStore ) {
-            l1EGammaCrystal->push_back(l1extra::L1EmParticle(p4, edm::Ref<L1GctEmCandCollection>(), 0));
+            L1EGXtalClusterWithCuts->push_back(cluster);
+            L1EGCollectionWithCuts->push_back(l1extra::L1EmParticle(p4, edm::Ref<L1GctEmCandCollection>(), 0));
          }
       }
    }
 
-   iEvent.put(std::move(trigCrystalClusters),"EGCrystalCluster");
-   iEvent.put(std::move(l1EGammaCrystal), "EGammaCrystal" );
-}
-
-bool
-L1EGCrystalClusterProducer::cluster_passes_electronWP98(float &cluster_pt, float &iso, float &e2x5, float &e5x5) const {
-   // These cuts have been optimized based on SLHC 62X
-   // They will be re-optimized once there are suitable
-   // MC samples available in 90X Phase-2 campaign
-   //
-   // This cut reaches a 98% efficiency for electrons
-   // for offline pt > 35 GeV
-
-   if ( ( -0.92 + 0.18 * TMath::Exp( -0.04  * cluster_pt )) > (e2x5 / e5x5) ) return false;
-   if ( (  0.99 + 5.6  * TMath::Exp( -0.061 * cluster_pt )) < iso ) return false;
-
-   // Passes cuts
-   return true;
-}
-
-bool
-L1EGCrystalClusterProducer::cluster_passes_photonWP90(float &cluster_pt, float &iso, float &e2x5, float &e5x5, float &e2x2) const {
-   // These cuts have been optimized based on SLHC 62X
-   // They will be re-optimized once there are suitable
-   // MC samples available in 90X Phase-2 campaign
-   //
-   // This cut reaches a 90% efficiency for photons
-   // for offline pt > 35 GeV
-
-   if ( ( -0.92 + 0.18 * TMath::Exp( -0.04  * cluster_pt )) > (e2x5 / e5x5) ) return false;
-   if ( (  0.99 + 5.6  * TMath::Exp( -0.061 * cluster_pt )) < iso ) return false;
-   if ( ( e2x2 / e2x5) < 0.9 ) return false;
-
-   // Passes cuts
-   return true;
+   iEvent.put(std::move(L1EGXtalClusterNoCuts),"L1EGXtalClusterNoCuts");
+   iEvent.put(std::move(L1EGXtalClusterWithCuts), "L1EGXtalClusterWithCuts" );
+   iEvent.put(std::move(L1EGCollectionWithCuts), "L1EGCollectionWithCuts" );
 }
 
 
 bool
-L1EGCrystalClusterProducer::cluster_passes_cuts(const l1slhc::L1EGCrystalCluster& cluster) const {
+L1EGCrystalClusterProducer::cluster_passes_photonWP80(float &cluster_pt, float &cluster_eta, float &iso, float &e2x5, float &e5x5, float &e2x2) const {
+   // These cuts have been optimized based on 92X
+   // This cut reaches an 80% efficiency for photons
+   // for offline pt > 30 GeV
+
+   if ( fabs(cluster_eta) < 1.479 )
+   {
+      if ( !( 0.94 + 0.052 * TMath::Exp( -0.044 * cluster_pt ) < (e2x5 / e5x5)) ) return false;
+      if ( !(( 0.85 + -0.0080 * cluster_pt ) > iso ) ) return false;
+      if ( ( e2x2 / e2x5) < 0.95 ) return false;
+
+      // Passes cuts
+      return true;
+   }
+   return false; // out of eta range
+}
+
+
+bool
+L1EGCrystalClusterProducer::cluster_passes_electronWP98(float &cluster_pt, float &cluster_eta, float &iso, float &e2x5, float &e5x5) const {
+   // Replica of below just passed arguments differently
+   if ( fabs(cluster_eta) < 1.479 )
+   {
+      if ( !( 0.94 + 0.052 * TMath::Exp( -0.044 * cluster_pt ) < (e2x5 / e5x5)) ) return false;
+      if ( !(( 0.85 + -0.0080 * cluster_pt ) > iso ) ) return false;
+
+      // Passes cuts
+      return true;
+   }
+   return false; // out of eta range
+}
+
+
+bool
+L1EGCrystalClusterProducer::cluster_passes_base_cuts(const l1slhc::L1EGCrystalCluster& cluster) const {
    //return true;
    
    // Currently this producer is optimized based on cluster isolation and shower shape
-   // the previous H/E cut has been removed for the moment.
    // The following cut is based off of what was shown in the Phase-2 meeting
-   // 23 June 2016.  Only the barrel is considered.  And track isolation
-   // is not included.
+   // 23 May 2017 from CMSSW 92X
+   // Optimization based on min ECAL TP ET = 500 MeV for inclusion
+   // Only the barrel is considered
    if ( fabs(cluster.eta()) < 1.479 )
    {
       //std::cout << "Starting passing check" << std::endl;
@@ -692,18 +729,14 @@ L1EGCrystalClusterProducer::cluster_passes_cuts(const l1slhc::L1EGCrystalCluster
       float clusterE2x5 = cluster.GetExperimentalParam("E2x5");
       float clusterE5x5 = cluster.GetExperimentalParam("E5x5");
       float cluster_iso = cluster.isolation();
-      bool passIso = false;
-      bool passShowerShape = false;
-      
-      if ( ( -0.92 + 0.18 * TMath::Exp( -0.04 * cluster_pt ) < (clusterE2x5 / clusterE5x5)) ) {
-      passShowerShape = true; }
-      if ( (( 0.99 + 5.6 * TMath::Exp( -0.061 * cluster_pt )) > cluster_iso ) ) {
-          passIso = true; }
-      if ( passShowerShape && passIso ) {
-          //std::cout << " --- Passed!" << std::endl;
-      return true; }
+     
+      if ( !( 0.94 + 0.052 * TMath::Exp( -0.044 * cluster_pt ) < (clusterE2x5 / clusterE5x5)) )
+         return false;
+      if ( !(( 0.85 + -0.0080 * cluster_pt ) > cluster_iso ) )
+         return false;
+      return true; // cluster passes all cuts
    }
-   return false;
+   return false; // out of eta range
 }
 
 DEFINE_FWK_MODULE(L1EGCrystalClusterProducer);
