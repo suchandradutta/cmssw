@@ -47,7 +47,6 @@ public:
 
   void write(ofstream& out){
     
-    if (pt_ > 2) {
     out << "SimTrack: " 
 	<< id_ << "\t" 
 	<< type_ << "\t" 
@@ -57,12 +56,10 @@ public:
 	<< vx_ << "\t" 
 	<< vy_ << "\t" 
 	<< vz_ << "\t" << endl; 
-    }
 	
   }
   void write(ostream& out){
     
-    if (pt_ > 2) {
     out << "SimTrack: " 
 	<< id_ << "\t" 
 	<< type_ << "\t" 
@@ -72,8 +69,7 @@ public:
 	<< vx_ << "\t" 
 	<< vy_ << "\t" 
 	<< vz_ << "\t" << endl; 
-    }
-
+	
   }
   
   int id() const { return id_; }
@@ -271,9 +267,7 @@ public:
 	   vector<int> irphi,
 	   vector<int> iz,
 	   vector<int> iladder,
-	   vector<int> imodule,
-	   int isPSmodule,
-	   int isFlipped){
+	   vector<int> imodule){
 
     
     if (layer>999&&layer<1999&& z<0.0) {
@@ -286,7 +280,7 @@ public:
     y-=y_offset;
 
     L1TStub stub(-1,-1,-1,layer, ladder, module, strip, 
-		 x, y, z, -1.0, -1.0, pt, bend, isPSmodule, isFlipped);
+		 x, y, z, -1.0, -1.0, pt, bend);
 
     for(unsigned int i=0;i<innerStack.size();i++){
       if (innerStack[i]) {
@@ -442,10 +436,8 @@ public:
       double y;
       double z;
       double bend;
-      int isPSmodule;
-      int isFlipped;
 
-      in >> layer >> ladder >> module >> strip >> simtrk >> pt >> x >> y >> z >> bend >> isPSmodule >> isFlipped;
+      in >> layer >> ladder >> module >> strip >> simtrk >> pt >> x >> y >> z >> bend;
 
       if (layer>999&&layer<1999&& z<0.0) {
 	//cout << "Will change layer by addding 1000, before layer = " << layer <<endl;
@@ -458,7 +450,7 @@ public:
 
       if (layer < 10) nlayer[layer]++;
 
-      L1TStub stub(-1,-1,-1,layer, ladder, module, strip, x, y, z, -1.0, -1.0, pt, bend, isPSmodule, isFlipped);
+      L1TStub stub(-1,-1,-1,layer, ladder, module, strip, x, y, z, -1.0, -1.0, pt, bend);
 
       in >> tmp;
 

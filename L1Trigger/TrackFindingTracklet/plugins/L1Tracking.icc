@@ -45,27 +45,12 @@
       int ladder=stub.ladder();
       int module=stub.module();
 
-      unsigned int isPSmodule = stub.isPSmodule();
-      /*
       double sigmax=0.0029;
       double sigmaz=0.0433;
+      
       if (hypot(stub.x(),stub.y())>60) sigmaz=1.44;  //HACK!!!
-      */
-
-      double sigmax=0.0;
-      double sigmaz=0.0;
-      if (isPSmodule) {
-      	 sigmax = 0.01/sqrt(12);
-	 sigmaz = 0.1467/sqrt(12);
-      }
-      else {
-      	 sigmax = 0.009/sqrt(12);
-	 sigmaz = 5.0/sqrt(12);
-      }
-
-      unsigned int isFlipped = stub.isFlipped();
-
-      L1TStub aStub(simtrackid,stub.diphi(),stub.diz(),layer,ladder,module,stub.strip(),stub.x(),stub.y(),stub.z(),sigmax,sigmaz,stub.pt(),stub.bend(),isPSmodule,isFlipped);
+      
+      L1TStub aStub(simtrackid,stub.diphi(),stub.diz(),layer,ladder,module,stub.strip(),stub.x(),stub.y(),stub.z(),sigmax,sigmaz,stub.pt(),stub.bend());      
 
       int count_match=0;
       for (int ilayer=0;ilayer<NBarrel;ilayer++){

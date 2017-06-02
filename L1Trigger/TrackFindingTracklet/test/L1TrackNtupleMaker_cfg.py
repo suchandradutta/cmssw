@@ -5,9 +5,7 @@
 import FWCore.ParameterSet.Config as cms
 import os
 process = cms.Process("L1TrackNtuple")
-
-GEOMETRY = "D13"
-
+ 
  
 ############################################################
 # import standard configurations
@@ -17,17 +15,8 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_PostLS1_cff')
-
-if GEOMETRY == "D10": 
-    print "using geometry " + GEOMETRY + " (flat)"
-    process.load('Configuration.Geometry.GeometryExtended2023D10Reco_cff')
-    process.load('Configuration.Geometry.GeometryExtended2023D10_cff')
-elif GEOMETRY == "D13":
-    print "using geometry " + GEOMETRY + " (tilted)"
-    process.load('Configuration.Geometry.GeometryExtended2023D13Reco_cff')
-    process.load('Configuration.Geometry.GeometryExtended2023D13_cff')
-else:
-    print "this is not a valid geometry!!!"
+process.load('Configuration.Geometry.GeometryExtended2023D13Reco_cff')
+process.load('Configuration.Geometry.GeometryExtended2023D13_cff')
 
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
@@ -40,55 +29,20 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 # input and output
 ############################################################
 
-process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(100))
-
-if GEOMETRY == "D10": 
-    #D10 (flat barrel)
-    Source_Files = cms.untracked.vstring(
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/044925F3-5F2E-E711-A92B-0CC47A7AB7A0.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/42543260-602E-E711-A41C-0025905A48C0.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/72D6B8B7-612E-E711-A727-0CC47A4D7692.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/786DD1A7-612E-E711-84EB-0025905B855E.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/9255C706-602E-E711-BDE0-0025905A609A.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/BE75B044-602E-E711-8DC3-0CC47A4D7692.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D10-v1/10000/EA054BA3-5F2E-E711-B7F4-0025905A6084.root",
-)
-elif GEOMETRY == "D13":
-    #D13 (tilted barrel)
-    Source_Files = cms.untracked.vstring(
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/003A8F87-6A2E-E711-AFAC-003048FFCC16.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/20F6CC9B-692E-E711-B7B6-0CC47A4D76C6.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/308255CD-682E-E711-89BE-0025905B85CA.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/44734904-6B2E-E711-82BB-0025905B85B2.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/620FE305-6B2E-E711-A312-0025905A60BE.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/6CD6D66E-6A2E-E711-8F75-0025905A6136.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/888282CA-682E-E711-8DB0-0025905A4964.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/8A1BD86E-6A2E-E711-8DB6-0025905A4964.root",
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/BCB8C8A5-692E-E711-BA94-0025905A612E.root",
+process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
+Source_Files = cms.untracked.vstring(
+"/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/003A8F87-6A2E-E711-AFAC-003048FFCC16.root",
     )
 process.source = cms.Source("PoolSource", fileNames = Source_Files)
 
-process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_'+GEOMETRY+'_PU0.root'), closeFileFast = cms.untracked.bool(True))
+process.TFileService = cms.Service("TFileService", fileName = cms.string('Muon10_D13_PU0.root'), closeFileFast = cms.untracked.bool(True))
 
 
 ############################################################
 # L1 tracking
 ############################################################
 
-# remake stubs 
-process.load('L1Trigger.TrackTrigger.TrackTrigger_cff')
-from L1Trigger.TrackTrigger.TTStubAlgorithmRegister_cfi import *
-
-if GEOMETRY == "D10": 
-    TTStubAlgorithm_official_Phase2TrackerDigi_.zMatchingPS = cms.bool(False)
-process.TTClusterStub = cms.Path(process.TrackTriggerClustersStubs)
-
 process.load("L1Trigger.TrackFindingTracklet.L1TrackletTracks_cff")
-
-from L1Trigger.TrackFindingTracklet.Tracklet_cfi import *
-if GEOMETRY == "D10": 
-    TTTracksFromTracklet.trackerGeometry = cms.untracked.string("flat")
-#TTTracksFromTracklet.asciiFileName = cms.untracked.string("evlist.txt")
 
 # run only the tracking (no MC truth associators)
 process.TTTracks = cms.Path(process.L1TrackletTracks)
@@ -130,8 +84,5 @@ process.L1TrackNtuple = cms.EDAnalyzer('L1TrackNtupleMaker',
                                        )
 process.ana = cms.Path(process.L1TrackNtuple)
 
-if GEOMETRY == "D10": 
-    process.schedule = cms.Schedule(process.TTClusterStub,process.TTTracksWithTruth,process.ana)
-else:
-    process.schedule = cms.Schedule(process.TTTracksWithTruth,process.ana)
+process.schedule = cms.Schedule(process.TTTracksWithTruth,process.ana)
 

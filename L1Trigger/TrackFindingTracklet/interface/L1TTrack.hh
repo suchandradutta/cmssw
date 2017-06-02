@@ -4,6 +4,7 @@
 #include <iostream>
 #include <assert.h>
 
+
 using namespace std;
 
 class L1TTrack{
@@ -145,17 +146,13 @@ public:
 
 	double width=4.572; //4.608;
 	double nstrip=508.0;
-	//if (ri<60.0) {
-	unsigned int isPSmodule = stubs_[i].isPSmodule();
-	if ( isPSmodule ) {
+	if (ri<60.0) {
 	  width=4.8;
 	  nstrip=480;
 	}
 	double Deltai=width*(iphi-nstrip)/nstrip;  //A bit of a hack...
 
 	if (stubs_[i].z()>0.0) Deltai=-Deltai;
-	if (stubs_[i].isFlipped()==1) Deltai=-Deltai;
-
 	double theta0=asin(Deltai/ri);
 
 	double rmultiplier=-sin(theta0-(phi_track-phii));
@@ -243,7 +240,6 @@ public:
 
       int layer=stubs_[i].layer();
 
-
       if (layer<1000) {
         //we are dealing with a barrel stub
 
@@ -266,17 +262,13 @@ public:
 
 	double width=4.572; //4.608;
 	double nstrip=508.0;
-	//if (ri<60.0) {
-	unsigned int isPSmodule = stubs_[i].isPSmodule();
-	if ( isPSmodule ) {
+	if (ri<60.0) {
 	  width=4.8;
 	  nstrip=480;
 	}
-
 	double Deltai=width*(iphi-nstrip)/nstrip;  //A bit of a hack...
 
 	if (stubs_[i].z()>0.0) Deltai=-Deltai;
-	if (stubs_[i].isFlipped()==1) Deltai=-Deltai;
 
 	double theta0=asin(Deltai/ri);
 
@@ -284,11 +276,6 @@ public:
 
 	delta[j++]=(r_track-ri)/sigmaz;
 	delta[j++]=Delta/sigmax;
-	
-	if (print) {
-	  if (isPSmodule) cout << "PS: Delta r phi : "<< delta[j-2]<<" "<<delta[j-1]<<" "<<delta[j-1]*sigmax*10000<<" " << Deltai <<endl;
-	  else cout << "2S: Delta r phi : "<< delta[j-2]<<" "<<delta[j-1]<<" "<<delta[j-1]*sigmax*10000<<" " << Deltai <<endl;
-	}
       }
 
       if (fabs(delta[j-2])>largestresid) {
@@ -301,7 +288,6 @@ public:
 	ilargestresid=i;
       }
       
-
       if (print) cout << delta[j-2]<<" "<<delta[j-1]<<" ";
 
       chisq+=delta[j-2]*delta[j-2]+delta[j-1]*delta[j-1];
@@ -398,16 +384,13 @@ public:
 
 	double width=4.572; //4.608;
 	double nstrip=508.0;
-	//if (ri<60.0) {
-	unsigned int isPSmodule = stubs_[i].isPSmodule();
-	if ( isPSmodule ) {
+	if (ri<60.0) {
 	  width=4.8;
 	  nstrip=480;
 	}
 	double Deltai=width*(iphi-nstrip)/nstrip;  //A bit of a hack...
 
 	if (stubs_[i].z()>0.0) Deltai=-Deltai;
-	if (stubs_[i].isFlipped()==1) Deltai=-Deltai;
 
 	double theta0=asin(Deltai/ri);
 
@@ -417,6 +400,7 @@ public:
 	delta[j++]=Delta/sigmax;
 
 	//numerical derivative check
+
 	for (int iii=0;iii<0;iii++){
 
 	  double drinv=0.0;
@@ -436,17 +420,13 @@ public:
 
 	  double width=4.572; //4.608;
 	  double nstrip=508.0;
-	  //if (ri<60.0) {
-	  unsigned int isPSmodule = stubs_[i].isPSmodule();
-	  if ( isPSmodule ) {
+	  if (ri<60.0) {
 	    width=4.8;
 	    nstrip=480;
 	  }
 	  Deltai=width*(iphi-nstrip)/nstrip;  //A bit of a hack...
 
 	  if (stubs_[i].z()>0.0) Deltai=-Deltai;
-	  if (stubs_[i].isFlipped()==1) Deltai=-Deltai;
-
 	  theta0=asin(Deltai/ri);
 	  
 	  Delta=Deltai-r_track*sin(theta0-(phi_track-phii));
@@ -504,7 +484,7 @@ public:
     }
     
 
-    double deltaChisq=drinv*drinv_cov+dphi0*dphi0_cov+dt*dt_cov+dz0*dz0_cov;    
+    double deltaChisq=drinv*drinv_cov+dphi0*dphi0_cov+dt*dt_cov+dz0*dz0_cov;
     if (withd0) deltaChisq+=dd0*dd0_cov;
 
     if (withd0) {

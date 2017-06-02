@@ -9,10 +9,8 @@
 using namespace std;
 
 #include "L1TStub.hh"
-#include "L1TTrack.hh"
 #include "L1TTracklet.hh"
 #include "L1TGeomBase.hh"
-
 
 class L1TDisk: public L1TGeomBase{
 
@@ -71,12 +69,8 @@ public:
 
 	    double phi2=D->stubs_[jSector][j].phi();
 	    
-	    unsigned int isPSmodule1 = stubs_[iSector][i].isPSmodule();
-	    unsigned int isPSmodule2 = stubs_[iSector][j].isPSmodule();
+	    if (r1>60.0||r2>60.0) continue; //we only form tracklets from disk stubs in PS modules
 
-	    //if (r1>60.0||r2>60.0) continue; //we only form tracklets from disk stubs in PS modules
-	    if ( !isPSmodule1 && !isPSmodule2 ) continue;
-	    
 	    double deltaphi=phi1-phi2;
 
 	    if (deltaphi>0.5*two_pi) deltaphi-=two_pi;
@@ -172,9 +166,7 @@ public:
 	    int iphi=D->stubs_[jSector][j].iphi();
 	    double width=4.572; //4.608;
 	    double nstrip=508.0;
-	    //if (r<60.0) {
-	    unsigned int isPSmodule = D->stubs_[jSector][j].isPSmodule();
-	    if (isPSmodule) {
+	    if (r<60.0) {
 	      width=4.8;
 	      nstrip=480;
 	    }
@@ -212,8 +204,7 @@ public:
 
 	    double dist=0.0;
 
-	    //if (r<60) {
-	    if ( isPSmodule ) {
+	    if (r<60) {
 	      if (fabs(rdeltaphi)>rphicut1*phiSF) continue;
 	      if (fabs(deltar)>rcut1) continue;
 	      dist=hypot(rdeltaphi/(rphicut1*phiSF),deltar/rcut1);

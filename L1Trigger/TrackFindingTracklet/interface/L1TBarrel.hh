@@ -15,7 +15,6 @@ using namespace std;
 #include "L1TGeomBase.hh"
 #include "L1TDisk.hh"
 
-
 class L1TBarrel:public L1TGeomBase {
 
 private:
@@ -352,9 +351,7 @@ public:
 	    int iphi=D->stubs_[jSector][j].iphi();
 	    double width=4.572; //4.608;
 	    double nstrip=508.0;
-	    //if (r<60.0) {
-	    int isPSmodule = D->stubs_[jSector][j].isPSmodule();
-	    if (isPSmodule){
+	    if (r<60.0) {
 	      width=4.8;
 	      nstrip=480;
 	    }
