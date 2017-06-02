@@ -14,7 +14,7 @@ public:
   }
 
   L1TStub(int simtrackid, int iphi, int iz, int layer, int ladder, int module, int strip,
-	  double x, double y, double z, double sigmax, double sigmaz, double pt, double bend, int isPSmodule){
+	  double x, double y, double z, double sigmax, double sigmaz, double pt, double bend, int isPSmodule, int isFlipped){
     simtrackid_=simtrackid;
     iphi_=iphi;
     iz_=iz;
@@ -30,6 +30,7 @@ public:
     pt_=pt;
     bend_ = bend;
     isPSmodule_ = isPSmodule;
+    isFlipped_ = isFlipped;
 
     allstubindex_=999;
 
@@ -214,6 +215,7 @@ public:
   }
 
   unsigned int isPSmodule() const { return isPSmodule_; }
+  unsigned int isFlipped() const { return isFlipped_; }
 
 private:
 
@@ -239,6 +241,7 @@ private:
   vector<pair<int,int> > outerdigisladdermodule_;
 
   unsigned int isPSmodule_;
+  unsigned int isFlipped_;
 
 };
 

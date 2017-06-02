@@ -63,7 +63,9 @@
 	 sigmaz = 5.0/sqrt(12);
       }
 
-      L1TStub aStub(simtrackid,stub.diphi(),stub.diz(),layer,ladder,module,stub.strip(),stub.x(),stub.y(),stub.z(),sigmax,sigmaz,stub.pt(),stub.bend(),isPSmodule);      
+      unsigned int isFlipped = stub.isFlipped();
+
+      L1TStub aStub(simtrackid,stub.diphi(),stub.diz(),layer,ladder,module,stub.strip(),stub.x(),stub.y(),stub.z(),sigmax,sigmaz,stub.pt(),stub.bend(),isPSmodule,isFlipped);
 
       int count_match=0;
       for (int ilayer=0;ilayer<NBarrel;ilayer++){
