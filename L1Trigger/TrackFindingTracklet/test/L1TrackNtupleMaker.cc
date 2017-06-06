@@ -173,6 +173,7 @@ private:
   std::vector<int>*   m_tp_nmatch;
   std::vector<int>*   m_tp_nstub;
   std::vector<int>*   m_tp_eventid;
+  std::vector<int>*   m_tp_charge;
 
   // *L1 track* properties if m_tp_nmatch > 0
   std::vector<float>* m_matchtrk_pt;
@@ -187,11 +188,21 @@ private:
   std::vector<float>* m_allstub_x;
   std::vector<float>* m_allstub_y;
   std::vector<float>* m_allstub_z;
+
+  std::vector<int>*   m_allstub_isBarrel; // stub is in barrel (1) or in disk (0)
   std::vector<int>*   m_allstub_layer;
+  std::vector<int>*   m_allstub_isPSmodule;
+
   std::vector<float>* m_allstub_trigDisplace;
   std::vector<float>* m_allstub_trigOffset;
   std::vector<float>* m_allstub_trigPos;
   std::vector<float>* m_allstub_trigBend;
+
+  // stub associated with tracking particle ?
+  std::vector<int>*   m_allstub_matchTP_pdgid; // -999 if not matched
+  std::vector<float>* m_allstub_matchTP_pt;    // -999 if not matched
+  std::vector<float>* m_allstub_matchTP_eta;   // -999 if not matched
+  std::vector<float>* m_allstub_matchTP_phi;   // -999 if not matched
 
 };
 
@@ -300,6 +311,7 @@ void L1TrackNtupleMaker::beginJob()
   m_tp_nmatch = new std::vector<int>;
   m_tp_nstub  = new std::vector<int>;
   m_tp_eventid = new std::vector<int>;
+  m_tp_charge = new std::vector<int>;
 
   m_matchtrk_pt    = new std::vector<float>;
   m_matchtrk_eta   = new std::vector<float>;
@@ -312,12 +324,19 @@ void L1TrackNtupleMaker::beginJob()
   m_allstub_x = new std::vector<float>;
   m_allstub_y = new std::vector<float>;
   m_allstub_z = new std::vector<float>;
+
+  m_allstub_isBarrel = new std::vector<int>;
   m_allstub_layer    = new std::vector<int>;
+  m_allstub_isPSmodule = new std::vector<int>;
   m_allstub_trigDisplace = new std::vector<float>;
   m_allstub_trigOffset   = new std::vector<float>;
   m_allstub_trigPos      = new std::vector<float>;
   m_allstub_trigBend     = new std::vector<float>;
 
+  m_allstub_matchTP_pdgid = new std::vector<int>;
+  m_allstub_matchTP_pt    = new std::vector<float>;
+  m_allstub_matchTP_eta   = new std::vector<float>;
+  m_allstub_matchTP_phi   = new std::vector<float>;
 
   // ntuple
   eventTree = fs->make<TTree>("eventTree", "Event tree");
@@ -356,6 +375,7 @@ void L1TrackNtupleMaker::beginJob()
   eventTree->Branch("tp_nmatch", &m_tp_nmatch);
   eventTree->Branch("tp_nstub", &m_tp_nstub);
   eventTree->Branch("tp_eventid",&m_tp_eventid);
+  eventTree->Branch("tp_charge",&m_tp_charge);
 
   eventTree->Branch("matchtrk_pt",      &m_matchtrk_pt);
   eventTree->Branch("matchtrk_eta",     &m_matchtrk_eta);
@@ -369,11 +389,20 @@ void L1TrackNtupleMaker::beginJob()
     eventTree->Branch("allstub_x", &m_allstub_x);
     eventTree->Branch("allstub_y", &m_allstub_y);
     eventTree->Branch("allstub_z", &m_allstub_z);
+
+    eventTree->Branch("allstub_isBarrel", &m_allstub_isBarrel);
     eventTree->Branch("allstub_layer", &m_allstub_layer);
+    eventTree->Branch("allstub_isPSmodule", &m_allstub_isPSmodule);
+    
     eventTree->Branch("allstub_trigDisplace", &m_allstub_trigDisplace);
     eventTree->Branch("allstub_trigOffset", &m_allstub_trigOffset);
     eventTree->Branch("allstub_trigPos", &m_allstub_trigPos);
     eventTree->Branch("allstub_trigBend", &m_allstub_trigBend);
+
+    eventTree->Branch("allstub_matchTP_pdgid", &m_allstub_matchTP_pdgid);
+    eventTree->Branch("allstub_matchTP_pt", &m_allstub_matchTP_pt);
+    eventTree->Branch("allstub_matchTP_eta", &m_allstub_matchTP_eta);
+    eventTree->Branch("allstub_matchTP_phi", &m_allstub_matchTP_phi);
   }
 
 }
@@ -428,6 +457,7 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
   m_tp_nmatch->clear();
   m_tp_nstub->clear();
   m_tp_eventid->clear();
+  m_tp_charge->clear();
 
   m_matchtrk_pt->clear();
   m_matchtrk_eta->clear();
@@ -441,11 +471,20 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
     m_allstub_x->clear();
     m_allstub_y->clear();
     m_allstub_z->clear();
+
+    m_allstub_isBarrel->clear();
     m_allstub_layer->clear();
+    m_allstub_isPSmodule->clear();
+
     m_allstub_trigDisplace->clear();
     m_allstub_trigOffset->clear();
     m_allstub_trigPos->clear();
     m_allstub_trigBend->clear();
+
+    m_allstub_matchTP_pdgid->clear();
+    m_allstub_matchTP_pt->clear();
+    m_allstub_matchTP_eta->clear();
+    m_allstub_matchTP_phi->clear();
   }
 
 
@@ -518,20 +557,14 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
 	edm::Ref< edmNew::DetSetVector< TTStub< Ref_Phase2TrackerDigi_  > >, TTStub< Ref_Phase2TrackerDigi_  > >
 	  tempStubPtr = edmNew::makeRefTo( TTStubHandle, stubIter );
 	
-	MeasurementPoint coords = tempStubPtr->getClusterRef(0)->findAverageLocalCoordinatesCentered();      
-	LocalPoint clustlp = topol->localPosition(coords);
-	
-	GlobalPoint posStub  =  theGeomDet->surface().toGlobal(clustlp);
-
-	double tmp_stub_x=posStub.x();
-	double tmp_stub_y=posStub.y();
-	double tmp_stub_z=posStub.z();
-	
+	int isBarrel = 0;
 	int layer=-999999;
 	if ( detid.subdetId()==StripSubdetector::TOB ) {
+	  isBarrel = 1;
 	  layer  = static_cast<int>(tTopo->layer(detid));
 	}
 	else if ( detid.subdetId()==StripSubdetector::TID ) {
+	  isBarrel = 0;
 	  layer  = static_cast<int>(tTopo->layer(detid));
 	}
 	else {
@@ -539,6 +572,16 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
 	  layer = -1;
 	}
 
+	int isPSmodule=0;
+	if (topol->nrows() == 960) isPSmodule=1;
+
+	MeasurementPoint coords = tempStubPtr->getClusterRef(0)->findAverageLocalCoordinatesCentered();      
+	LocalPoint clustlp = topol->localPosition(coords);
+	GlobalPoint posStub  =  theGeomDet->surface().toGlobal(clustlp);
+
+	double tmp_stub_x=posStub.x();
+	double tmp_stub_y=posStub.y();
+	double tmp_stub_z=posStub.z();
 
 	float trigDisplace = tempStubPtr->getTriggerDisplacement();
 	float trigOffset = tempStubPtr->getTriggerOffset();
@@ -548,14 +591,42 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
 	m_allstub_x->push_back(tmp_stub_x);
 	m_allstub_y->push_back(tmp_stub_y);
 	m_allstub_z->push_back(tmp_stub_z);
+
+	m_allstub_isBarrel->push_back(isBarrel);
 	m_allstub_layer->push_back(layer);
+	m_allstub_isPSmodule->push_back(isPSmodule);
 
 	m_allstub_trigDisplace->push_back(trigDisplace);
 	m_allstub_trigOffset->push_back(trigOffset);
 	m_allstub_trigPos->push_back(trigPos);
 	m_allstub_trigBend->push_back(trigBend);
 
+	// matched to tracking particle? 
+	edm::Ptr< TrackingParticle > my_tp = MCTruthTTStubHandle->findTrackingParticlePtr(tempStubPtr);
+
+	int myTP_pdgid = -999;
+	float myTP_pt  = -999;
+	float myTP_eta = -999;
+	float myTP_phi = -999;
+
+	if (my_tp.isNull() == false) {
+	  int tmp_eventid = my_tp->eventId().event();
+
+	  if (tmp_eventid > 0) continue; // this means stub from pileup track
+	  
+	  myTP_pdgid = my_tp->pdgId();
+	  myTP_pt = my_tp->p4().pt();
+	  myTP_eta = my_tp->p4().eta();
+	  myTP_phi = my_tp->p4().phi();
+	}
+
+	m_allstub_matchTP_pdgid->push_back(myTP_pdgid);
+	m_allstub_matchTP_pt->push_back(myTP_pt);
+	m_allstub_matchTP_eta->push_back(myTP_eta);
+	m_allstub_matchTP_phi->push_back(myTP_phi);
+	
       }
+      
     }
 
   }
@@ -939,6 +1010,7 @@ void L1TrackNtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup
     m_tp_nmatch->push_back(nMatch);
     m_tp_nstub->push_back(nStubTP);
     m_tp_eventid->push_back(tmp_eventid);
+    m_tp_charge->push_back(tmp_tp_charge);
 
     m_matchtrk_pt ->push_back(tmp_matchtrk_pt);
     m_matchtrk_eta->push_back(tmp_matchtrk_eta);
