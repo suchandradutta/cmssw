@@ -450,23 +450,12 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector< int > innerrows= innerCluster->getRows();
       std::vector< int > innercols= innerCluster->getCols();
 
-
       for (unsigned int ihit=0;ihit<innerrows.size();ihit++){
-
-	if (layer<1000) {
-	  innerStack.push_back(true);
-	  irphi.push_back(innerrows[ihit]);
-	  iz.push_back(innercols[ihit]);
-	  iladder.push_back(ladder);
-	  imodule.push_back(module);
-	}
-	else {
-	  innerStack.push_back(true);
-	  irphi.push_back(innerrows[ihit]);
-	  iz.push_back(innercols[ihit]);
-	  iladder.push_back(ladder);
-	  imodule.push_back(module);
-	}    
+	innerStack.push_back(true);
+	irphi.push_back(innerrows[ihit]);
+	iz.push_back(innercols[ihit]);
+	iladder.push_back(ladder);
+	imodule.push_back(module);
       }
 
 
@@ -476,21 +465,11 @@ void L1TrackProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
       std::vector< int > outercols= outerCluster->getCols();
 
       for (unsigned int ihit=0;ihit<outerrows.size();ihit++){
-
-	if (layer<1000) {
-	  innerStack.push_back(false);
-	  irphi.push_back(outerrows[ihit]);
-	  iz.push_back(outercols[ihit]);
-	  iladder.push_back(ladder);
-	  imodule.push_back(module);
-	}
-	else {
-	  innerStack.push_back(false);
-	  irphi.push_back(outerrows[ihit]);
-	  iz.push_back(outercols[ihit]);
-	  iladder.push_back(ladder);
-	  imodule.push_back(module);
-	}    
+	innerStack.push_back(false);
+	irphi.push_back(outerrows[ihit]);
+	iz.push_back(outercols[ihit]);
+	iladder.push_back(ladder);
+	imodule.push_back(module);
       }
 
 
