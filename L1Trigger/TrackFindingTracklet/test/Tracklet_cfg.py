@@ -22,9 +22,16 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:upgradePLS3', '')
 # input
 process.maxEvents = cms.untracked.PSet(input = cms.untracked.int32(10))
 Source_Files = cms.untracked.vstring(
-    "/store/relval/CMSSW_9_1_0_pre3/RelValSingleMuPt10Extended/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v1/10000/44734904-6B2E-E711-82BB-0025905B85B2.root",
+"/store/relval/CMSSW_9_1_0_pre3/RelValTTbar_14TeV/GEN-SIM-DIGI-RAW/91X_upgrade2023_realistic_v1_D13-v2/10000/0E9A4F45-602E-E711-916C-0CC47A7C3430.root"
     )
 process.source = cms.Source("PoolSource", fileNames = Source_Files)
+
+
+# remake stubs 
+# ===> IMPORTANT !!! stub window tuning as is by default in CMSSW is incorrect !!! <===
+process.load('L1Trigger.TrackTrigger.TrackTrigger_cff')
+from L1Trigger.TrackTrigger.TTStubAlgorithmRegister_cfi import *
+process.TTClusterStub = cms.Path(process.TrackTriggerClustersStubs)
 
 
 # L1 tracking
@@ -45,5 +52,5 @@ process.out = cms.OutputModule( "PoolOutputModule",
 )
 process.FEVToutput_step = cms.EndPath(process.out)
 
-process.schedule = cms.Schedule(process.TTTracksWithTruth,process.FEVToutput_step)
+process.schedule = cms.Schedule(process.TTClusterStub,process.TTTracksWithTruth,process.FEVToutput_step)
 
