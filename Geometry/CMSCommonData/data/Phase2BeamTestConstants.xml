@@ -14,6 +14,8 @@
 <Constant name="PlaneSkewAngle" value="20.0*deg"/>
 
 <Constant name="Phase1BPIXModuleWidth" value="125*mm"/>  <!-- Should be 16.2 mm for Phase1 -->
+<Constant name="Phase1BPIXModuleLength" value="144.0*mm"/>  <!-- Should be 64.8 mm for Phase1 -->
+<Constant name="Phase1BPIXModuleThickness" value="2.2*mm"/>  <!-- Should be * mm for Phase1 -->
 </ConstantsSection>
 
 

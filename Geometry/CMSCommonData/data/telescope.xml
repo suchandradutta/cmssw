@@ -24,7 +24,7 @@
 
 <SolidSection label="telescope.xml">
 <Box name="Arm" dx="160.0*mm" dy="260.0*mm" dz="85.0*mm"/>
-<Box name="Plane" dx="125.0*mm" dy="72.0*mm" dz="10.0*mm"/>
+<Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0" dz="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]/2.0"/>
 </SolidSection>
 
 
