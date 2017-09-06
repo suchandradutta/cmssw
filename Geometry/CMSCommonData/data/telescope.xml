@@ -24,7 +24,7 @@
 
 <SolidSection label="telescope.xml">
 <Box name="Arm" dx="160.0*mm" dy="260.0*mm" dz="85.0*mm"/>
-<Box name="Plane" dx="160.0*mm" dy="260.0*mm" dz="10.0*mm"/>
+<Box name="Plane" dx="125.0*mm" dy="72.0*mm" dz="10.0*mm"/>
 </SolidSection>
 
 
@@ -34,13 +34,11 @@
 <PosPart copyNumber="1">
 <rParent name="cms:OCMS"/>
 <rChild name="telescope:Arm"/>
-<rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="[Phase2BeamTestConstants:InterArmDeltaZ]/2.0"/>
 </PosPart>
 <PosPart copyNumber="2">
 <rParent name="cms:OCMS"/>
 <rChild name="telescope:Arm"/>
-<rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="-[Phase2BeamTestConstants:InterArmDeltaZ]/2.0"/>
 </PosPart>
 
@@ -48,21 +46,25 @@
 <PosPart copyNumber="1">
 <rParent name="telescope:Arm"/>
 <rChild name="telescope:Plane"/>
+<rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="-3.0*[Phase2BeamTestConstants:InterPlaneDeltaZ]/2.0"/>
 </PosPart>
 <PosPart copyNumber="2">
 <rParent name="telescope:Arm"/>
 <rChild name="telescope:Plane"/>
+<rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="-1.0*[Phase2BeamTestConstants:InterPlaneDeltaZ]/2.0"/>
 </PosPart>
 <PosPart copyNumber="3">
 <rParent name="telescope:Arm"/>
 <rChild name="telescope:Plane"/>
+<rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="1.0*[Phase2BeamTestConstants:InterPlaneDeltaZ]/2.0"/>
 </PosPart>
 <PosPart copyNumber="4">
 <rParent name="telescope:Arm"/>
 <rChild name="telescope:Plane"/>
+<rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="3.0*[Phase2BeamTestConstants:InterPlaneDeltaZ]/2.0"/>
 </PosPart>
 
