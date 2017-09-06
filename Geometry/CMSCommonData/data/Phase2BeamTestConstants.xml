@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.cern.ch/www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
+
+
+<ConstantsSection label="Phase2BeamTestConstants.xml" eval="true">
+<Constant name="DUTTransX" value="0.0*mm"/>
+<Constant name="DUTTransY" value="0.0*mm"/>
+<Constant name="DUTTransZ" value="0.0*mm"/>
+<Constant name="DUTSkewAngle" value="30.0*deg"/>
+</ConstantsSection>
+
+
+<RotationSection label="Phase2BeamTestConstants.xml">
+<Rotation name="DUTSkew" thetaX="90*deg+[DUTSkewAngle]" phiX="0*deg" thetaY="90*deg" phiY="90*deg" thetaZ="[DUTSkewAngle]" phiZ="0*deg"/>
+</RotationSection>
+
+
+</DDDefinition>
+
+
+

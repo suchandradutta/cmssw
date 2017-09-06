@@ -53,7 +53,7 @@ def simGeoLoad(score):
        process.load("Geometry.CMSCommonData.cmsExtendedGeometry2023" + options.version + "XML_cfi")
        
     elif score == "Telescope":
-       process.load("Geometry.CMSCommonData.telescopeXML_cfi")
+       process.load("Geometry.CMSCommonData.Phase2BeamTestXML_cfi")
  
     else:
       help()

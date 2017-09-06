@@ -11,7 +11,9 @@ XMLIdealGeometryESSource = cms.ESSource("XMLIdealGeometryESSource",
         'Geometry/CMSCommonData/data/cms.xml',
         'Geometry/CMSCommonData/data/cmsMother.xml',
         
-        'Geometry/CMSCommonData/data/telescope.xml'
+        'Geometry/CMSCommonData/data/Phase2BeamTestConstants.xml',
+        'Geometry/CMSCommonData/data/DUT.xml'
+        #'Geometry/CMSCommonData/data/telescope.xml'
       
     ),
     rootNodeName = cms.string('cms:OCMS')
