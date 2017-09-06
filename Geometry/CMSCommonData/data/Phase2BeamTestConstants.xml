@@ -12,9 +12,10 @@
 <Constant name="InterArmDeltaZ" value="350.0*mm"/>
 <Constant name="InterPlaneDeltaZ" value="50.0*mm"/>
 <Constant name="PlaneSkewAngle" value="20.0*deg"/>
+<Constant name="PlaneTiltAngle" value="75.0*deg"/>
 
-<Constant name="Phase1BPIXModuleWidth" value="125*mm"/>  <!-- Should be 16.2 mm for Phase1 -->
-<Constant name="Phase1BPIXModuleLength" value="144.0*mm"/>  <!-- Should be 64.8 mm for Phase1 -->
+<Constant name="Phase1BPIXModuleWidth" value="24.5*mm"/>  <!-- Should be 16.2 mm for Phase1 -->   <!-- Should be 125.0 mm for Phase2 -->
+<Constant name="Phase1BPIXModuleLength" value="67.0*mm"/>  <!-- Should be 64.8 mm for Phase1 -->  <!-- Should be 144.0 mm for Phase2 -->
 <Constant name="Phase1BPIXModuleThickness" value="2.2*mm"/>  <!-- Should be * mm for Phase1 -->
 </ConstantsSection>
 
@@ -22,6 +23,7 @@
 <RotationSection label="Phase2BeamTestConstants.xml">
 <Rotation name="DUTSkew" thetaX="90*deg+[DUTSkewAngle]" phiX="0*deg" thetaY="90*deg" phiY="90*deg" thetaZ="[DUTSkewAngle]" phiZ="0*deg"/>
 <Rotation name="PlaneSkew" thetaX="90*deg+[PlaneSkewAngle]" phiX="0*deg" thetaY="90*deg" phiY="90*deg" thetaZ="[PlaneSkewAngle]" phiZ="0*deg"/>
+<Rotation name="PlaneTilt" thetaX="90*deg" phiX="0*deg" thetaY="90*deg-[PlaneTiltAngle]" phiY="90*deg" thetaZ="[PlaneTiltAngle]" phiZ="270*deg"/>
 </RotationSection>
 
 

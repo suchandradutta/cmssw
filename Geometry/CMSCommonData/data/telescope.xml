@@ -24,7 +24,7 @@
 
 <SolidSection label="telescope.xml">
 <Box name="Arm" dx="160.0*mm" dy="260.0*mm" dz="85.0*mm"/>
-<Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0" dz="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]/2.0"/>
+<Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]/2.0" dz="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0"/>
 </SolidSection>
 
 
@@ -41,6 +41,7 @@
 <rChild name="telescope:Arm"/>
 <Translation x="0.0*mm" y="0.0*mm" z="-[Phase2BeamTestConstants:InterArmDeltaZ]/2.0"/>
 </PosPart>
+
 
 
 <PosPart copyNumber="1">
@@ -71,12 +72,14 @@
 
 <PosPart copyNumber="1">
 <rParent name="telescope:Plane"/>
-<rChild name="DUT:BModule1Layer6"/>
+<rChild name="2017BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<rRotation name="Phase2BeamTestConstants:PlaneTilt"/>
 <Translation x="-[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
 </PosPart>
 <PosPart copyNumber="2">
 <rParent name="telescope:Plane"/>
-<rChild name="DUT:BModule1Layer6"/>
+<rChild name="2017BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<rRotation name="Phase2BeamTestConstants:PlaneTilt"/>
 <Translation x="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
 </PosPart>
 
