@@ -4,7 +4,7 @@
 
 
 
-<ConstantsSection label="coucou.xml">
+<ConstantsSection label="Phase1BPIXLayer4Module.xml">
  <Constant name="zero"              value="0.0*fm"/>
  
  <Constant name="Length"            value="53.6*cm"/> 
@@ -110,7 +110,7 @@
 
 
 
-<RotationSection label="coucou.xml">
+<RotationSection label="Phase1BPIXLayer4Module.xml">
   <Rotation name="Z2XY" thetaX="90*deg" phiX="0*deg"     thetaY="180*deg" 
                         phiY="0*deg"    thetaZ="90*deg"  phiZ="90*deg" />
   <Rotation name="Y180D" thetaX="90*deg" phiX="180*deg"   thetaY="90*deg" 
@@ -120,12 +120,12 @@
 
 
 <!--
-<MaterialSection label="coucou.xml">
+<MaterialSection label="Phase1BPIXLayer4Module.xml">
 </MaterialSection>
 -->
 
 
-<LogicalPartSection label="coucou.xml">
+<LogicalPartSection label="Phase1BPIXLayer4Module.xml">
 
 <LogicalPart name="PixelBarrelModuleFullPlus" category="unspecified">
   <rSolid name="PixelBarrelModuleFull"/>
@@ -176,7 +176,7 @@
 
 
 
-<SolidSection label="coucou.xml">
+<SolidSection label="Phase1BPIXLayer4Module.xml">
 <Box name="PixelBarrelModuleFull"       dx="[LadderWidth]/2.0"
       dy="[Module23Thick]/2.0"     dz="[ModuleDz]/2.0"/>
 <Box name="PixelBarrelBaseFull"         dx="[BaseWidth]/2.0"
@@ -200,7 +200,7 @@
 
 
 
-<PosPartSection label="coucou.xml">
+<PosPartSection label="Phase1BPIXLayer4Module.xml">
 
 <PosPart copyNumber="1">
    <rParent name="PixelBarrelModuleFullPlus"/>

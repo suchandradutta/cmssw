@@ -14,8 +14,7 @@ XMLIdealGeometryESSource = cms.ESSource("XMLIdealGeometryESSource",
         'Geometry/TrackerCommonData/data/PhaseI/pixbarmaterial.xml',
         'Geometry/TrackerCommonData/data/Run2/trackermaterial.xml',   #sometimes included via Run2, sometimes via PhaseI, which one to choose?
         'Geometry/TrackerCommonData/data/PhaseI/pixfwdMaterials.xml',
-        'Geometry/CMSCommonData/data/coucou.xml',
-        #'Geometry/CMSCommonData/data/2017BPIXLayer4Module.xml',
+        'Geometry/CMSCommonData/data/Phase1BPIXLayer4Module.xml',
         
         'Geometry/CMSCommonData/data/Phase2BeamTestConstants.xml',
         'Geometry/CMSCommonData/data/DUT.xml',
