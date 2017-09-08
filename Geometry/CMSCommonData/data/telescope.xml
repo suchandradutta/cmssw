@@ -72,13 +72,13 @@
 
 <PosPart copyNumber="1">
 <rParent name="telescope:Plane"/>
-<rChild name="2017BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<rChild name="coucou:PixelBarrelModuleFullPlus"/>
 <rRotation name="Phase2BeamTestConstants:PlaneTilt"/>
 <Translation x="-[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
 </PosPart>
 <PosPart copyNumber="2">
 <rParent name="telescope:Plane"/>
-<rChild name="2017BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<rChild name="coucou:PixelBarrelModuleFullPlus"/>
 <rRotation name="Phase2BeamTestConstants:PlaneTilt"/>
 <Translation x="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
 </PosPart>

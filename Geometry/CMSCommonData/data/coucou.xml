@@ -4,7 +4,7 @@
 
 
 
-<ConstantsSection label="2017BPIXLayer4Module.xml">
+<ConstantsSection label="coucou.xml">
  <Constant name="zero"              value="0.0*fm"/>
  
  <Constant name="Length"            value="53.6*cm"/> 
@@ -52,8 +52,8 @@
  <Constant name="Module23Thick"       value="([BaseThick]+[ROChipThick123]+
            [SensorThick]+[HybridThick]+[CapacitorStripThick]+[ModuleCapThick])"/> 
  
- <Constant name="ModuleDz"          value="[2017BPIXLayer4Module:Length]/[2017BPIXLayer4Module:Modules]"/>
- <Constant name="ModuleZ"           value="-([Length]-[2017BPIXLayer4Module:ModuleDz])/2"/>
+ <Constant name="ModuleDz"          value="[Length]/[Modules]"/>
+ <Constant name="ModuleZ"           value="-([Length]-[ModuleDz])/2"/>
  <Constant name="Cable1BoundleX"           value="-([CableBoundleDiameter]+[CableBoundleDiameter]/2)"/> 
  <Constant name="Cable2BoundleX"           value="-([CableBoundleDiameter]/2)"/> 
  <Constant name="Cable3BoundleX"           value="([CableBoundleDiameter]/2)"/> 
@@ -106,13 +106,11 @@
  <Constant name="ModuleCapY"   value="[CapacitorStripY]+
            ([CapacitorStripThick]+[ModuleCapThick])/2"/> 
  <Constant name="CFHoleZ"           value="-([CFHoles]-1)*[CFHoleStep]/2"/>
- 
- 
 </ConstantsSection>
 
 
 
-<RotationSection label="2017BPIXLayer4Module.xml">
+<RotationSection label="coucou.xml">
   <Rotation name="Z2XY" thetaX="90*deg" phiX="0*deg"     thetaY="180*deg" 
                         phiY="0*deg"    thetaZ="90*deg"  phiZ="90*deg" />
   <Rotation name="Y180D" thetaX="90*deg" phiX="180*deg"   thetaY="90*deg" 
@@ -122,12 +120,12 @@
 
 
 <!--
-<MaterialSection label="2017BPIXLayer4Module.xml">
+<MaterialSection label="coucou.xml">
 </MaterialSection>
 -->
 
 
-<LogicalPartSection label="2017BPIXLayer4Module.xml">
+<LogicalPartSection label="coucou.xml">
 
 <LogicalPart name="PixelBarrelModuleFullPlus" category="unspecified">
   <rSolid name="PixelBarrelModuleFull"/>
@@ -178,13 +176,9 @@
 
 
 
-<SolidSection label="2017BPIXLayer4Module.xml">
-<!--
+<SolidSection label="coucou.xml">
 <Box name="PixelBarrelModuleFull"       dx="[LadderWidth]/2.0"
-      dy="[Module23Thick]/2.0"     dz="[2017BPIXLayer4Module:ModuleDz]/2.0"/>
-      -->
-<Box name="PixelBarrelModuleFull"       dx="[LadderWidthHalf]"
-      dy="[Module23ThickHalf]"     dz="[zero]"/>     
+      dy="[Module23Thick]/2.0"     dz="[ModuleDz]/2.0"/>
 <Box name="PixelBarrelBaseFull"         dx="[BaseWidth]/2.0"
       dy="[BaseThick]/2.0"       dz="[SensorDz]/2.0"/>
 <Box name="PixelBarrelROChipFull"       dx="[ROChipWidth]/2.0"
@@ -206,7 +200,7 @@
 
 
 
-<PosPartSection label="2017BPIXLayer4Module.xml">
+<PosPartSection label="coucou.xml">
 
 <PosPart copyNumber="1">
    <rParent name="PixelBarrelModuleFullPlus"/>
