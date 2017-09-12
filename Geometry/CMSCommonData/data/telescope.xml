@@ -42,17 +42,27 @@
 <Translation x="0.0*mm" y="0.0*mm" z="-[Phase2BeamTestConstants:InterArmDeltaZ]/2.0"/>
 </PosPart>
 
-
-
-
 <Algorithm name="track:DDTelescopePhase1ModulesAlgo">
 <rParent name="telescope:Arm"/>
-<String name="ChildName" value="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<String name="ChildName" value="telescope:Plane"/>
 <Numeric name="N" value="4"/>
 <Numeric name="tiltAngle" value="[Phase2BeamTestConstants:PlaneTiltAngle]"/>
 <Numeric name="skewAngle" value="[Phase2BeamTestConstants:PlaneSkewAngle]"/>
 <Numeric name="deltaZ" value="[Phase2BeamTestConstants:InterPlaneDeltaZ]"/>
 </Algorithm>
+
+<PosPart copyNumber="1">
+<rParent name="telescope:Plane"/>
+<rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<Translation x="-[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
+</PosPart>
+<PosPart copyNumber="2">
+<rParent name="telescope:Plane"/>
+<rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<Translation x="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
+</PosPart>
+
+
 
 <!--
 <PosPart copyNumber="1">
