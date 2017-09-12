@@ -1,5 +1,5 @@
-#ifndef DD_TelescopePhase1ModulesAlgo_h
-#define DD_TelescopePhase1ModulesAlgo_h
+#ifndef DD_TelescopePlanesAlgo_h
+#define DD_TelescopePlanesAlgo_h
 
 /*
   
@@ -11,12 +11,12 @@
 #include "DetectorDescription/Core/interface/DDTypes.h"
 #include "DetectorDescription/Core/interface/DDAlgorithm.h"
 
-class DDTelescopePhase1ModulesAlgo : public DDAlgorithm {
+class DDTelescopePlanesAlgo : public DDAlgorithm {
  
 public:
   // Constructor and Destructor
-  DDTelescopePhase1ModulesAlgo(); 
-  ~DDTelescopePhase1ModulesAlgo() override;
+  DDTelescopePlanesAlgo(); 
+  ~DDTelescopePlanesAlgo() override;
   
   void initialize(const DDNumericArguments & nArgs,
 		  const DDVectorArguments & vArgs,

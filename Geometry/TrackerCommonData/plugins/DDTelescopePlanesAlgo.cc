@@ -1,5 +1,5 @@
 ///////////////////////////////////////////////////////////////////////////////
-// File: DDTelescopePhase1ModulesAlgo.cc
+// File: DDTelescopePlanesAlgo.cc
 // Description:  
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -10,22 +10,22 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "DetectorDescription/Core/interface/DDCurrentNamespace.h"
 #include "DetectorDescription/Core/interface/DDSplit.h"
-#include "Geometry/TrackerCommonData/plugins/DDTelescopePhase1ModulesAlgo.h"
+#include "Geometry/TrackerCommonData/plugins/DDTelescopePlanesAlgo.h"
 #include "DetectorDescription/Core/interface/DDRotationMatrix.h"
 #include "DetectorDescription/Core/interface/DDTransform.h"
 #include "CLHEP/Units/GlobalPhysicalConstants.h"
 #include "CLHEP/Units/GlobalSystemOfUnits.h"
 
 
-DDTelescopePhase1ModulesAlgo::DDTelescopePhase1ModulesAlgo() {
-  LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo info: Creating an instance";
+DDTelescopePlanesAlgo::DDTelescopePlanesAlgo() {
+  LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo info: Creating an instance";
 }
 
 
-DDTelescopePhase1ModulesAlgo::~DDTelescopePhase1ModulesAlgo() {}
+DDTelescopePlanesAlgo::~DDTelescopePlanesAlgo() {}
 
 
-void DDTelescopePhase1ModulesAlgo::initialize(const DDNumericArguments & nArgs,
+void DDTelescopePlanesAlgo::initialize(const DDNumericArguments & nArgs,
 				  const DDVectorArguments & vArgs,
 				  const DDMapArguments & ,
 				  const DDStringArguments & sArgs,
@@ -36,7 +36,7 @@ void DDTelescopePhase1ModulesAlgo::initialize(const DDNumericArguments & nArgs,
   skewAngle     = nArgs["skewAngle"];
   deltaZ        = nArgs["deltaZ"];
   
-  LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo debug: Parameters for position"
+  LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo debug: Parameters for position"
 			  << "ing:: n " << n << " Phase 1 modules with deltaZ "
 			  << deltaZ << ", tiltAngle "
 			  << tiltAngle/CLHEP::deg << ", skew angle " 
@@ -46,23 +46,23 @@ void DDTelescopePhase1ModulesAlgo::initialize(const DDNumericArguments & nArgs,
   childName   = sArgs["ChildName"];
 
   DDName parentName = parent().name();
-  LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo debug: Parent " << parentName
+  LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo debug: Parent " << parentName
 			  << "\tChild " << childName << " NameSpace "
 			  << idNameSpace;
 }
 
 
-void DDTelescopePhase1ModulesAlgo::execute(DDCompactView& cpv) {
+void DDTelescopePlanesAlgo::execute(DDCompactView& cpv) {
 
   DDRotation prepaRot, tiltRot, skewRot, globalRot; // Identity
   DDRotationMatrix prepaMatrix, tiltMatrix, skewMatrix, globalRotMatrix; // Identity matrix
-  std::string rotstr = "RTelescopePhase1ModulesAlgo";
+  std::string rotstr = "RTelescopePlanesAlgo";
 
   // prepaMatrix calculus
   std::string prepaRotstr = rotstr + "Prepa";
   prepaRot = DDRotation(DDName(prepaRotstr, idNameSpace));
   if (!prepaRot) {
-    LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo test: Creating a new rotation: " << prepaRotstr
+    LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo test: Creating a new rotation: " << prepaRotstr
 			    << "\t180., 0., "
 			    << "90., 90., "
 			    << "90., 0.";
@@ -75,7 +75,7 @@ void DDTelescopePhase1ModulesAlgo::execute(DDCompactView& cpv) {
   std::string tiltRotstr = rotstr + "Tilt" + std::to_string(tiltAngle/CLHEP::deg);
   tiltRot = DDRotation(DDName(tiltRotstr, idNameSpace));
   if (!tiltRot) {
-    LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo test: Creating a new rotation: " << tiltRotstr
+    LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo test: Creating a new rotation: " << tiltRotstr
 			    << "\t90., 0., "
 			    << 90. - tiltAngle/CLHEP::deg << ", 90., "
 			    << tiltAngle/CLHEP::deg << ", 270.";
@@ -89,7 +89,7 @@ void DDTelescopePhase1ModulesAlgo::execute(DDCompactView& cpv) {
   std::string skewRotstr = rotstr + "Skew" + std::to_string(skewAngle/CLHEP::deg);
   skewRot = DDRotation(DDName(skewRotstr, idNameSpace));
   if (!skewRot) {
-    LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo test: Creating a new rotation: " << skewRotstr
+    LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo test: Creating a new rotation: " << skewRotstr
 			    << "\t" << 90. + skewAngle/CLHEP::deg << ", 0., "
 			    << "90., 90., "
 			    << skewAngle/CLHEP::deg << ", 0.";
@@ -103,7 +103,7 @@ void DDTelescopePhase1ModulesAlgo::execute(DDCompactView& cpv) {
   std::string globalRotstr = rotstr + "Global";
   globalRot = DDRotation(DDName(globalRotstr, idNameSpace));
   if (!globalRot) {
-    LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo test: Creating a new "
+    LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo test: Creating a new "
 			    << "rotation: " << globalRotstr;
     globalRotMatrix = skewMatrix;
     globalRot = DDrot(DDName(globalRotstr, idNameSpace), new DDRotationMatrix(globalRotMatrix));
@@ -124,7 +124,7 @@ void DDTelescopePhase1ModulesAlgo::execute(DDCompactView& cpv) {
   
     // Positions child with respect to parent
     cpv.position(child, mother, copy, tran, globalRot);
-    LogDebug("TrackerGeom") << "DDTelescopePhase1ModulesAlgo test " << child << " number "
+    LogDebug("TrackerGeom") << "DDTelescopePlanesAlgo test " << child << " number "
 			    << copy << " positioned in " << mother << " at "
 			    << tran  << " with " << globalRot;
 

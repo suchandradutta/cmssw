@@ -42,7 +42,7 @@
 <Translation x="0.0*mm" y="0.0*mm" z="-[Phase2BeamTestConstants:InterArmDeltaZ]/2.0"/>
 </PosPart>
 
-<Algorithm name="track:DDTelescopePhase1ModulesAlgo">
+<Algorithm name="track:DDTelescopePlanesAlgo">
 <rParent name="telescope:Arm"/>
 <String name="ChildName" value="telescope:Plane"/>
 <Numeric name="N" value="4"/>
