@@ -3,12 +3,6 @@
 <DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.cern.ch/www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
 
 
-<!--
-<MaterialSection label="telescope.xml">
-</MaterialSection>
--->
-
-
 <LogicalPartSection label="telescope.xml">
 <LogicalPart name="Telescope" category="unspecified">
 <rSolid name="telescope:Telescope"/>
@@ -41,11 +35,14 @@
 
 <PosPartSection label="telescope.xml">
 
+<!-- TELESCOPE MOTHER VOLUME -->
 <PosPart copyNumber="1">
 <rParent name="cms:OCMS"/>
 <rChild name="telescope:Telescope"/>
 </PosPart>
 
+
+<!-- PLACE DUT WITHIN TELESCOPE -->
 <PosPart copyNumber="1">
 <rParent name="telescope:Telescope"/>
 <rChild name="telescope:DUTHolder"/>
@@ -60,7 +57,7 @@
 </PosPart>
 
 
-
+<!-- PLACE ARMS WITHIN TELESCOPE -->
 <PosPart copyNumber="1">
 <rParent name="telescope:Telescope"/>
 <rChild name="telescope:Arm"/>
@@ -72,6 +69,7 @@
 <Translation x="0.0*mm" y="0.0*mm" z="-[Phase2BeamTestConstants:InterArmDeltaZ]/2.0"/>
 </PosPart>
 
+<!-- PLACE PLANES WITHIN ARM -->
 <Algorithm name="track:DDTelescopePlanesAlgo">
 <rParent name="telescope:Arm"/>
 <String name="ChildName" value="telescope:Plane"/>
@@ -81,6 +79,7 @@
 <Numeric name="deltaZ" value="[Phase2BeamTestConstants:InterPlaneDeltaZ]"/>
 </Algorithm>
 
+<!-- PLACE PHASE1 MODULES WITHIN PLANE -->
 <PosPart copyNumber="1">
 <rParent name="telescope:Plane"/>
 <rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
