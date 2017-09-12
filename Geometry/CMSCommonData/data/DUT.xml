@@ -176,6 +176,7 @@
 <rRotation name="Phase2BeamTestConstants:DUTSkew"/>
 <Translation x="[Phase2BeamTestConstants:DUTTransX]" y="[Phase2BeamTestConstants:DUTTransY]" z="[Phase2BeamTestConstants:DUTTransZ]"/>
 </PosPart>
+
 <PosPart copyNumber="1">
 <rParent name="DUT:BModule1Layer6"/>
 <rChild name="DUT:BModule1Layer6Lowerwafer"/>

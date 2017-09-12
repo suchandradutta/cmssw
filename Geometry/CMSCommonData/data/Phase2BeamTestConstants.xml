@@ -11,8 +11,8 @@
 
 <Constant name="InterArmDeltaZ" value="350.0*mm"/>
 <Constant name="InterPlaneDeltaZ" value="50.0*mm"/>
-<Constant name="PlaneSkewAngle" value="20.0*deg"/>
-<Constant name="PlaneTiltAngle" value="75.0*deg"/>
+<Constant name="PlaneTiltAngle" value="70.0*deg"/>
+<Constant name="PlaneSkewAngle" value="30.0*deg"/>
 
 <Constant name="Phase1BPIXModuleWidth" value="[Phase1BPIXLayer4Module:LadderWidth]"/>  <!-- = 24.5 mm, sensor active is 16.2 mm for Phase1 -->   <!-- Should be 125.0 mm for Phase2 -->
 <Constant name="Phase1BPIXModuleLength" value="[Phase1BPIXLayer4Module:ModuleDz]"/>  <!-- = 67.0 mm, sensor active is 64.8 mm for Phase1 -->  <!-- Should be 144.0 mm for Phase2 -->

@@ -44,6 +44,17 @@
 
 
 
+
+<Algorithm name="track:DDTelescopePhase1ModulesAlgo">
+<rParent name="telescope:Arm"/>
+<String name="ChildName" value="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<Numeric name="N" value="4"/>
+<Numeric name="tiltAngle" value="[Phase2BeamTestConstants:PlaneTiltAngle]"/>
+<Numeric name="skewAngle" value="[Phase2BeamTestConstants:PlaneSkewAngle]"/>
+<Numeric name="deltaZ" value="[Phase2BeamTestConstants:InterPlaneDeltaZ]"/>
+</Algorithm>
+
+<!--
 <PosPart copyNumber="1">
 <rParent name="telescope:Arm"/>
 <rChild name="telescope:Plane"/>
@@ -68,21 +79,7 @@
 <rRotation name="Phase2BeamTestConstants:PlaneSkew"/>
 <Translation x="0.0*mm" y="0.0*mm" z="3.0*[Phase2BeamTestConstants:InterPlaneDeltaZ]/2.0"/>
 </PosPart>
-
-
-<PosPart copyNumber="1">
-<rParent name="telescope:Plane"/>
-<rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
-<rRotation name="Phase2BeamTestConstants:PlaneTilt"/>
-<Translation x="-[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
-</PosPart>
-<PosPart copyNumber="2">
-<rParent name="telescope:Plane"/>
-<rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
-<rRotation name="Phase2BeamTestConstants:PlaneTilt"/>
-<Translation x="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
-</PosPart>
-
+-->
 
 </PosPartSection>
 
