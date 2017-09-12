@@ -171,7 +171,7 @@
 <PosPartSection label="DUT.xml">
 
 <PosPart copyNumber="1">
-<rParent name="cms:OCMS"/>
+<rParent name="telescope:Telescope"/>
 <rChild name="DUT:BModule1Layer6"/>
 <rRotation name="Phase2BeamTestConstants:DUTSkew"/>
 <Translation x="[Phase2BeamTestConstants:DUTTransX]" y="[Phase2BeamTestConstants:DUTTransY]" z="[Phase2BeamTestConstants:DUTTransZ]"/>
