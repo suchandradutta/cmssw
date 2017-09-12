@@ -14,6 +14,10 @@
 <rSolid name="telescope:Telescope"/>
 <rMaterial name="materials:Air"/>
 </LogicalPart>
+<LogicalPart name="DUTHolder" category="unspecified">
+<rSolid name="telescope:DUTHolder"/>
+<rMaterial name="materials:Air"/>
+</LogicalPart>
 <LogicalPart name="Arm" category="unspecified">
 <rSolid name="telescope:Arm"/>
 <rMaterial name="materials:Air"/>
@@ -28,7 +32,8 @@
 
 <SolidSection label="telescope.xml">
 <Box name="Telescope" dx="500.0*mm" dy="300.0*mm" dz="1000.0*mm"/>
-<Box name="Arm" dx="160.0*mm" dy="260.0*mm" dz="120.0*mm"/>
+<Box name="DUTHolder" dx="260.0*mm" dy="160.0*mm" dz="20.0*mm"/>
+<Box name="Arm" dx="260.0*mm" dy="160.0*mm" dz="100.0*mm"/>
 <Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]/2.0" dz="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0"/>
 </SolidSection>
 
@@ -39,8 +44,21 @@
 <PosPart copyNumber="1">
 <rParent name="cms:OCMS"/>
 <rChild name="telescope:Telescope"/>
-<Translation x="0.0*mm" y="0.0*mm" z="0.0*mm"/>
 </PosPart>
+
+<PosPart copyNumber="1">
+<rParent name="telescope:Telescope"/>
+<rChild name="telescope:DUTHolder"/>
+<rRotation name="Phase2BeamTestConstants:DUTSkew"/>
+<Translation x="[Phase2BeamTestConstants:DUTTransX]" y="[Phase2BeamTestConstants:DUTTransY]" z="[Phase2BeamTestConstants:DUTTransZ]"/>
+</PosPart>
+
+<PosPart copyNumber="1">
+<rParent name="telescope:DUTHolder"/>
+<rChild name="DUT:BModule1Layer6"/>
+</PosPart>
+
+
 
 <PosPart copyNumber="1">
 <rParent name="telescope:Telescope"/>
