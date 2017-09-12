@@ -7,7 +7,7 @@
 <Constant name="DUTTransX" value="0.0*mm"/>
 <Constant name="DUTTransY" value="0.0*mm"/>
 <Constant name="DUTTransZ" value="0.0*mm"/>
-<Constant name="DUTTiltAngle" value="35.0*deg"/>   <!-- angle is in [0 35] deg. No negative value!! Please call DUTTiltPlus if angle > 0., or DUTTiltMinus if angle < 0. -->
+<Constant name="DUTTiltAngle" value="10.0*deg"/>   <!-- angle is in [0 35] deg. No negative value!! Please call DUTTiltPlus if angle > 0., or DUTTiltMinus if angle < 0. -->
 
 <Constant name="InterArmDeltaZ" value="350.0*mm"/>
 <Constant name="InterPlaneDeltaZ" value="50.0*mm"/>
