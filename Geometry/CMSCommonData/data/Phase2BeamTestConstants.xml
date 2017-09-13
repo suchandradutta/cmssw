@@ -12,12 +12,12 @@
 <Constant name="DUTTransY" value="0.0*mm"/>         <!-- Total DUT Holder translation along Y axis -->
 <Constant name="DUTTransZ" value="0.0*mm"/>         <!-- Total DUT Holder translation along Z axis -->
 <Constant name="DUTTiltAngle" value="10.0*deg"/>    <!-- Angle around X, counted from (XY) plane. -->
-                                                    <!-- Angle is in [0 35] deg. -->
+                                                    <!-- Angle is in [0 20] deg. -->
                                                     <!-- No negative value!! If angle >= 0, please use DUTTiltPlus in telescope.xml, if angle < 0 please use DUTTiltMinus in telescope.xml -->
 
 <!-- DEFINE TELESCOPE ARMS AND PLANES -->
-<Constant name="InterArmDeltaZ" value="350.0*mm"/>  <!-- Total distance in Z between the 2 arms -->
-<Constant name="InterPlaneDeltaZ" value="50.0*mm"/> <!-- Total distance in Z between 2 consecutive planes -->
+<Constant name="InterArmDeltaZ" value="350.0*mm"/>  <!-- Total distance in Z between the centres of the 2 arms -->
+<Constant name="InterPlaneDeltaZ" value="50.0*mm"/> <!-- Total distance in Z between the centres of 2 consecutive planes -->
 <Constant name="PlaneTiltAngle" value="70.0*deg"/>  <!-- Angle around X, counted from (XZ) plane. No negative value possible. -->
 <Constant name="PlaneSkewAngle" value="30.0*deg"/>  <!-- Angle around Y, counted from (YZ) plane. No negative value possible. -->
 
