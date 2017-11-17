@@ -10,7 +10,7 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "DetectorDescription/Core/interface/DDCurrentNamespace.h"
 #include "DetectorDescription/Core/interface/DDSplit.h"
-#include "Geometry/TrackerCommonData/plugins/DDTelescopePlanesAlgo.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DDTelescopePlanesAlgo.h"
 #include "DetectorDescription/Core/interface/DDRotationMatrix.h"
 #include "DetectorDescription/Core/interface/DDTransform.h"
 #include "CLHEP/Units/GlobalPhysicalConstants.h"
