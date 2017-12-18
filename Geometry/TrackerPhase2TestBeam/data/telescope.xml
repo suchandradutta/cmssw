@@ -70,7 +70,7 @@
 </PosPart>
 
 <!-- PLACE PLANES WITHIN ARM -->
-<Algorithm name="track:DDTelescopePlanesAlgo">
+<Algorithm name="phase2TestBeam:DDTelescopePlanesAlgo">
 <rParent name="telescope:Arm"/>
 <String name="ChildName" value="telescope:Plane"/>
 <Numeric name="N" value="4"/>
