@@ -7,24 +7,24 @@
 
 void CmsTrackerLevelBuilder::build (
 				    DDFilteredView& fv, 
-				    GeometricDet* tracker,
+				    GeometricDet* parent,
 				    std::string attribute){
 
   LogTrace("GeometricDetBuilding") << std::string(3*fv.history().size(),'-') 
 				   << "+ "
 				   << ExtractStringFromDDD::getString(attribute,&fv) << " " 
-				   << tracker->type() << " " 
-				   << tracker->name() 
+				   << parent->type() << " " 
+				   << parent->name() 
 				   << std::endl;
 
  bool doLayers = fv.firstChild(); // descend to the first Layer  
 
   while (doLayers) {
-    buildComponent(fv,tracker,attribute);      
+    buildComponent(fv,parent,attribute);      
     doLayers = fv.nextSibling(); // go to next layer
   }
 
   fv.parent();
 
- sortNS(fv,tracker);
+  sortNS(fv,parent);
 }

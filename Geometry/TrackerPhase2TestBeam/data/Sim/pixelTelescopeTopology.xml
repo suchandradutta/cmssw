@@ -20,12 +20,12 @@
 
 <SpecPar name="OuterTrackerLowerDetectorsPar">
 <PartSelector path="//DUT:BModule1Layer6Lower2Sactive"/>
-<Parameter name="TrackerLowerDetectors" value="true"/>  <!-- TO DO : use equivalent of Geometry/TrackerNumberingBuilder/plugins/CmsDetConstruction.cc for telescope & rename the strings -->
+<Parameter name="DUTInnerSensor" value="true"/>  <!-- TO DO : use equivalent of Geometry/TrackerNumberingBuilder/plugins/CmsDetConstruction.cc for telescope & rename the strings -->
 </SpecPar>
 
 <SpecPar name="OuterTrackerUpperDetectorsPar">
 <PartSelector path="//DUT:BModule1Layer6Upper2Sactive"/>
-<Parameter name="TrackerUpperDetectors" value="true"/>
+<Parameter name="DUTOuterSensor" value="true"/>
 </SpecPar>
 
 <SpecPar name="InnerSensor2SActivePar">

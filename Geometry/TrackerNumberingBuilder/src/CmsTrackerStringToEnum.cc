@@ -61,6 +61,10 @@ CmsTrackerStringToEnum::Impl::Impl(){
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("TECRing",GeometricDet::ring));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("TECGluedDet",GeometricDet::mergedDet));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("TECDet",GeometricDet::DetUnit));
+  
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Telescope",GeometricDet::Telescope));
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUTHolder",GeometricDet::DUTHolder));
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUT",GeometricDet::DUT));
 
 
   //
@@ -98,6 +102,10 @@ CmsTrackerStringToEnum::Impl::Impl(){
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::PixelPhase2ReducedDisk,"Disk")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::PixelPhase2TDRDisk,"Disk")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::panel,"Panel")); 
+  
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Telescope,"Telescope")); 
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUTHolder,"DUTHolder")); 
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUT,"DUT")); 
   //
   // done
   //

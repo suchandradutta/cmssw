@@ -24,9 +24,7 @@ TrackerGeometricDetESModule::TrackerGeometricDetESModule( const edm::ParameterSe
 
 TrackerGeometricDetESModule::~TrackerGeometricDetESModule( void ) {}
 
-void
-TrackerGeometricDetESModule::fillDescriptions( edm::ConfigurationDescriptions & descriptions )
-{
+void TrackerGeometricDetESModule::fillDescriptions( edm::ConfigurationDescriptions & descriptions ) {
   edm::ParameterSetDescription descDB;
   descDB.add<bool>( "fromDDD", false );
   descriptions.add( "trackerNumberingGeometryDB", descDB );
@@ -36,25 +34,29 @@ TrackerGeometricDetESModule::fillDescriptions( edm::ConfigurationDescriptions & 
   descriptions.add( "trackerNumberingGeometry", desc );
 }
 
-std::unique_ptr<GeometricDet> 
-TrackerGeometricDetESModule::produce( const IdealGeometryRecord & iRecord )
-{ 
-  if( fromDDD_ )
-  {
-    edm::ESTransientHandle<DDCompactView> cpv;
-    iRecord.get( cpv );
+std::unique_ptr<GeometricDet> TrackerGeometricDetESModule::produce( const IdealGeometryRecord & iRecord ) { 
 
-    DDDCmsTrackerContruction theDDDCmsTrackerContruction;
-    return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv), dbl_to_int( DDVectorGetter::get( "detIdShifts" )))));
-  }
-  else
-  {
+  std::cout << "TrackerGeometricDetESModule::produce  fromDDD_ = " << fromDDD_ << std::endl;
+
+  //if (fromDDD_) {
+  edm::ESTransientHandle<DDCompactView> cpv;
+  iRecord.get( cpv );
+
+  DDDCmsTrackerContruction theDDDCmsTrackerContruction;
+  //return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv), dbl_to_int( DDVectorGetter::get( "detIdShifts" )))));
+  return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv)) ));
+  //}
+
+
+
+  /*else {
     edm::ESHandle<PGeometricDet> pgd;
     iRecord.get( pgd );
     
     CondDBCmsTrackerConstruction cdbtc;
     return std::unique_ptr<GeometricDet> ( const_cast<GeometricDet*>( cdbtc.construct( *pgd )));
-  }
+    }*/
+
 }
 
 DEFINE_FWK_EVENTSETUP_MODULE( TrackerGeometricDetESModule );
