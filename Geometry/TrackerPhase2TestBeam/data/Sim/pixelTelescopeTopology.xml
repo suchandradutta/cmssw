@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+
+<DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
+<SpecParSection label="pixelTelescopeTopology.xml">
+
+<SpecPar name="TelescopePar">
+<PartSelector path="//telescope:Telescope" />
+<Parameter name="TelescopeDDDStructure" value="Telescope"/>
+</SpecPar>
+
+<SpecPar name="DUTHolderPar">
+<PartSelector path="//telescope:DUTHolder"/>
+<Parameter name="TelescopeDDDStructure" value="DUTHolder"/>
+</SpecPar>
+
+<SpecPar name="DUTPar">
+<PartSelector path="//DUT:BModule1Layer6"/>
+<Parameter name="TelescopeDDDStructure" value="DUT"/>
+</SpecPar>
+
+<SpecPar name="OuterTrackerLowerDetectorsPar">
+<PartSelector path="//DUT:BModule1Layer6Lower2Sactive"/>
+<Parameter name="TrackerLowerDetectors" value="true"/>  <!-- TO DO : use equivalent of Geometry/TrackerNumberingBuilder/plugins/CmsDetConstruction.cc for telescope & rename the strings -->
+</SpecPar>
+
+<SpecPar name="OuterTrackerUpperDetectorsPar">
+<PartSelector path="//DUT:BModule1Layer6Upper2Sactive"/>
+<Parameter name="TrackerUpperDetectors" value="true"/>
+</SpecPar>
+
+<SpecPar name="InnerSensor2SActivePar">
+<PartSelector path="//DUT:BModule1Layer6Lower2Sactive"/>
+<Parameter name="TelescopeDDDStructure" value="PixelBarrelDet"/> <!-- TO DO : Renaming and associated work here as well -->
+<Parameter name="PixelROCRows" value="127"/>
+<Parameter name="PixelROCCols" value="1"/>
+<Parameter name="PixelROC_X" value="8"/>
+<Parameter name="PixelROC_Y" value="2"/>
+</SpecPar>
+
+<SpecPar name="OuterSensor2SActivePar">
+<PartSelector path="//DUT:BModule1Layer6Upper2Sactive"/>
+<Parameter name="TelescopeDDDStructure" value="PixelBarrelDet"/>
+<Parameter name="PixelROCRows" value="127"/>
+<Parameter name="PixelROCCols" value="1"/>
+<Parameter name="PixelROC_X" value="8"/>
+<Parameter name="PixelROC_Y" value="2"/>
+</SpecPar>
+
+</SpecParSection>
+</DDDefinition>
+

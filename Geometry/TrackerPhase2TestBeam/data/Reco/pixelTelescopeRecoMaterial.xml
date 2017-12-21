@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<DDDefinition xmlns="http://www.cern.ch/cms/DDL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.cern.ch/cms/DDL ../../../DetectorDescription/Schema/DDLSchema.xsd">
+<SpecParSection label="pixelTelescopeRecoMaterial.xml">
+
+<!-- DUT -->
+<SpecPar name="pixelTelescopeRecoMaterialDUT" eval="true">
+<PartSelector path="//telescope:Telescope/telescope:DUTHolder/DUT:BModule1Layer6/DUT:BModule1Layer6Lowerwafer/DUT:BModule1Layer6Lower2Sactive"/>
+<PartSelector path="//telescope:Telescope/telescope:DUTHolder/DUT:BModule1Layer6/DUT:BModule1Layer6Upperwafer/DUT:BModule1Layer6Upper2Sactive"/>
+<Parameter name="TrackerRadLength" value="0.0161855"/>      <!-- TO DO : renaming! -->
+<Parameter name="TrackerXi" value="3.2371e-05"/>
+</SpecPar>
+
+<!-- Add Phase 1 pixels -->
+
+</SpecParSection>
+</DDDefinition>
