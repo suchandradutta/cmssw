@@ -14,6 +14,7 @@ void ActiveSensorBuilder::buildComponent( DDFilteredView& fv, GeometricDet* pare
   GeometricDet* activeSensor  = new GeometricDet(&fv, theCmsTrackerStringToEnum.type(ExtractStringFromDDD::getString(attribute,&fv)));
   static const std::string isLower = "DUTInnerSensor";
   static const std::string isUpper = "DUTOuterSensor";
+  //static const std::string isPixel = "DUTOuterSensor";
 
   if (ExtractStringFromDDD::getString(isLower, &fv) == "true"){
     uint32_t temp = 1;

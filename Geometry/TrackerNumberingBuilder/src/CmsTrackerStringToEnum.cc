@@ -66,6 +66,9 @@ CmsTrackerStringToEnum::Impl::Impl(){
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Telescope",GeometricDet::Telescope));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUTHolder",GeometricDet::DUTHolder));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUT",GeometricDet::DUT));
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Arm",GeometricDet::Arm));
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Plane",GeometricDet::Plane));
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Phase1PixelModule",GeometricDet::Phase1PixelModule));
 
 
   //
@@ -108,6 +111,9 @@ CmsTrackerStringToEnum::Impl::Impl(){
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Telescope,"Telescope")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUTHolder,"DUTHolder")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUT,"DUT")); 
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Arm,"Arm")); 
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Plane,"Plane")); 
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Phase1PixelModule,"Phase1PixelModule")); 
   //
   // done
   //
