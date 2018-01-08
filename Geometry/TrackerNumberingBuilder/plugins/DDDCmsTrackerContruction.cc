@@ -8,7 +8,7 @@
 #include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerDetIdBuilder.h"
 
 #include "Geometry/TrackerNumberingBuilder/plugins/DUTBuilder.h"
-//#include "Geometry/TrackerNumberingBuilder/plugins/ArmBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/PlaneBuilder.h"
 
 using namespace cms;
 
@@ -42,18 +42,21 @@ DDDCmsTrackerContruction::construct( const DDCompactView* cpv)
   while (doLayers) {
     //buildComponent(fv,telescope,attribute);      
 
-    DUTBuilder myDUTBuilder;
+    DUTBuilder myDUTBuilder; // TO DO: why not having the build directly at construction time?
+    PlaneBuilder myPlaneBuilder;
     GeometricDet* dutHolderOrArm = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
     switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
-      case GeometricDet::DUTHolder:
-	myDUTBuilder.build(fv, dutHolderOrArm, attribute);      
-	break;
-	/*case GeometricDet::Arm:
-	ArmBuilder.build( fv, dutHolderOrArm, attribute);      
-	break;*/
-      default:
-	edm::LogError( "DDDCmsTrackerContruction" ) << " ERROR - I was expecting a DUTHolder or an Arm, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
-      }
+      // DUT holder
+    case GeometricDet::DUTHolder:
+      myDUTBuilder.build(fv, dutHolderOrArm, attribute);      
+      break;
+      // Telescope arm
+    case GeometricDet::Arm:
+      myPlaneBuilder.build( fv, dutHolderOrArm, attribute);      
+      break;
+    default:
+      edm::LogError( "DDDCmsTrackerContruction" ) << " ERROR - I was expecting a DUTHolder or an Arm, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
+    }
   
     telescope->addComponent(dutHolderOrArm);
 

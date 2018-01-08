@@ -14,7 +14,7 @@ void ActiveSensorBuilder::buildComponent( DDFilteredView& fv, GeometricDet* pare
   GeometricDet* activeSensor  = new GeometricDet(&fv, theCmsTrackerStringToEnum.type(ExtractStringFromDDD::getString(attribute,&fv)));
   static const std::string isLower = "DUTInnerSensor";
   static const std::string isUpper = "DUTOuterSensor";
-  //static const std::string isPixel = "DUTOuterSensor";
+  static const std::string isPixel = "Phase1PixelSensor";
 
   if (ExtractStringFromDDD::getString(isLower, &fv) == "true"){
     uint32_t temp = 1;
@@ -22,8 +22,12 @@ void ActiveSensorBuilder::buildComponent( DDFilteredView& fv, GeometricDet* pare
   } else if (ExtractStringFromDDD::getString(isUpper,&fv) == "true"){
     uint32_t temp = 2;
     activeSensor->setGeographicalID(DetId(temp));
-  } else {
-    edm::LogError("ActiveSensorBuilder") << "DUT Sensors are not inner nor outer.";
+  } else if (ExtractStringFromDDD::getString(isPixel,&fv) == "true"){
+    uint32_t temp = 1;
+    activeSensor->setGeographicalID(DetId(temp));
+  }
+  else {
+    edm::LogError("ActiveSensorBuilder") << "Child is nor DUTInnerSensor nor DUTOuterSensor nor Phase1PixelSensor.";
   }
   parent->addComponent(activeSensor);
 }
