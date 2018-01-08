@@ -88,6 +88,7 @@
 <PosPart copyNumber="2">
 <rParent name="telescope:Plane"/>
 <rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
+<rRotation name="Phase2BeamTestConstants:Z180"/>                 <!-- TO DO: Within each telescope plane, the module with the highest CMS_Y is flipped. Should it be the module with the lowest CMS_Y ? -->
 <Translation x="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
 </PosPart>
 

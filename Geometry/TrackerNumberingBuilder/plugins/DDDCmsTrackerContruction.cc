@@ -52,6 +52,13 @@ DDDCmsTrackerContruction::construct( const DDCompactView* cpv)
       break;
       // Telescope arm
     case GeometricDet::Arm:
+      // TEST        
+      std::cout << "arm DetId = " << dutHolderOrArm->geographicalID().rawId() 
+		<< ", x = " << dutHolderOrArm->translation().X() 
+		<< ", y = " << dutHolderOrArm->translation().Y()
+		<< ", z = " << dutHolderOrArm->translation().Z()
+		<< ", phi = "  << dutHolderOrArm->phi() * 180. / M_PI << std::endl;
+      // END TEST
       myPlaneBuilder.build( fv, dutHolderOrArm, attribute);      
       break;
     default:

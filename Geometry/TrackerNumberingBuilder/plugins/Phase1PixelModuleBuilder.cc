@@ -17,6 +17,13 @@ void Phase1PixelModuleBuilder::buildComponent( DDFilteredView& fv, GeometricDet*
   GeometricDet* phase1PixelModule = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
   switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
   case GeometricDet::Phase1PixelModule:
+    // TEST
+    std::cout << "phase1PixelModule DetId = " << phase1PixelModule->geographicalID().rawId() 
+	      << ", x = " << phase1PixelModule->translation().X() 
+	      << ", y = " << phase1PixelModule->translation().Y()
+	      << ", z = " << phase1PixelModule->translation().Z()
+	      << ", phi = "  << phase1PixelModule->phi() * 180. / M_PI << std::endl;
+    // END TEST
     myActiveSensorBuilder.build( fv, phase1PixelModule, attribute);      
     break;
   default:

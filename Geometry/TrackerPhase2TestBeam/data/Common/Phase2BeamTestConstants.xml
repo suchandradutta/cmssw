@@ -33,11 +33,14 @@
 <Constant name="Phase1BPIXModuleThickness" value="[Phase1BPIXLayer4Module:Module23Thick]"/>  <!-- = 1.28 mm, sensor active is 0.285 mm for Phase1 -->
 </ConstantsSection>
 
-<!-- ROTATIONS USED TO PLACE DUT -->
+<!-- ROTATIONS USED TO PLACE DUT, OR TO FLIP PHASE 1 MODULE -->
 <RotationSection label="Phase2BeamTestConstants.xml">
 <Rotation name="DUTTiltMinus" thetaX="90*deg" phiX="0*deg" thetaY="90*deg+[DUTTiltAngle]" phiY="90*deg" thetaZ="[DUTTiltAngle]" phiZ="90*deg"/>
 <Rotation name="DUTTiltPlus" thetaX="90*deg" phiX="0*deg" thetaY="90*deg-[DUTTiltAngle]" phiY="90*deg" thetaZ="[DUTTiltAngle]" phiZ="270*deg"/>
 <Rotation name="PlaceDUTInDUTHolder" thetaX="90*deg" phiX="90*deg" thetaY="90*deg" phiY="180*deg" thetaZ="0*deg" phiZ="0*deg"/>
+<Rotation name="Z180" phiX="180.*deg" thetaX="90.*deg" phiY="270.*deg" thetaY="90.*deg" phiZ="0.*deg" thetaZ="0.*deg"/> <!-- Rotation of 180 deg around Z axis. -->
+                                                                                                                        <!-- In Phase 1 BPIX module, local Z axis is along the sensor length direction. -->
+                                                                                                                        <!-- Hence, this transformation is a flip along the sensor length direction. -->
 </RotationSection>
 
 

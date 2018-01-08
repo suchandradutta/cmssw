@@ -17,6 +17,13 @@ void PlaneBuilder::buildComponent( DDFilteredView& fv, GeometricDet* arm, std::s
   GeometricDet* plane = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
   switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
   case GeometricDet::Plane:
+    // TEST
+    std::cout << "plane DetId = " << plane->geographicalID().rawId() 
+	      << ", x = " << plane->translation().X() 
+	      << ", y = " << plane->translation().Y()
+	      << ", z = " << plane->translation().Z()
+	      << ", phi = "  << plane->phi() * 180. / M_PI << std::endl;
+    // END TEST
     myPhase1PixelModuleBuilder.build( fv, plane, attribute);      
     break;
   default:
