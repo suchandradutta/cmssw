@@ -5,7 +5,7 @@
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerDetIdBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/DetIdBuilder.h"
 
 #include "Geometry/TrackerNumberingBuilder/plugins/DUTHolderOrArmBuilder.h"
 
@@ -36,8 +36,8 @@ const GeometricDet* DDDCmsTrackerContruction::construct( const DDCompactView* cp
 
 
   
-  CmsTrackerDetIdBuilder myTelescopeDetIdBuilder( std::move(detidShifts) );
-  myTelescopeDetIdBuilder.buildDetIds(telescope);
+  DetIdBuilder myDetIdBuilder( std::move(detidShifts) );
+  myDetIdBuilder.build(telescope);
 
   fv.parent(); // come back to world volume
  

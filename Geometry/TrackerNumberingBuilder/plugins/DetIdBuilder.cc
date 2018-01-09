@@ -1,4 +1,4 @@
-#include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerDetIdBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/DetIdBuilder.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "DataFormats/DetId/interface/DetId.h"
@@ -11,12 +11,12 @@
 #include <bitset>
 
 
-CmsTrackerDetIdBuilder::CmsTrackerDetIdBuilder( std::vector<int> detidShifts )
+DetIdBuilder::DetIdBuilder( std::vector<int> detidShifts )
   : detIdShifts_(detidShifts), numHierarchyLevels_(detIdShifts_.size())
 {}
 
 
-void CmsTrackerDetIdBuilder::buildDetIds(GeometricDet* telescope) {
+void DetIdBuilder::build(GeometricDet* telescope) {
   LogDebug("BuildingTelescopeDetIds") << "Starting to build Telescope DetIds";
 
   int hierarchyLevel = 0;
@@ -34,7 +34,7 @@ void CmsTrackerDetIdBuilder::buildDetIds(GeometricDet* telescope) {
 }
 
 
-void CmsTrackerDetIdBuilder::iterate(uint32_t parentId, GeometricDet* volume, int siblingCounter, int hierarchyLevel) {
+void DetIdBuilder::iterate(uint32_t parentId, GeometricDet* volume, int siblingCounter, int hierarchyLevel) {
 
   if (hierarchyLevel >= numHierarchyLevels_) {
     edm::LogError( "TelescopeDetIdBuilder" ) << " ERROR - I reached hierarchyLevel " << hierarchyLevel << ". Level should be strictly lower than " << numHierarchyLevels_;
@@ -51,7 +51,7 @@ void CmsTrackerDetIdBuilder::iterate(uint32_t parentId, GeometricDet* volume, in
 
 
 
-    std::cout << "GeometricDet = " << volume->type()
+    std::cout << "GeometricDet = " << theCmsTrackerStringToEnum_.name(volume->type())
 	      << ", DetId = " << volume->geographicalID().rawId() 
 	      << ", x = " << volume->translation().X() 
 	      << ", y = " << volume->translation().Y()
