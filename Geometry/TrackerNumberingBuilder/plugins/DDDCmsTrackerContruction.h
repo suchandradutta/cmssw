@@ -18,7 +18,7 @@ class DDDCmsTrackerContruction
 {
 public:
   DDDCmsTrackerContruction( void );
-  const GeometricDet* construct( const DDCompactView* cpv);
+  const GeometricDet* construct( const DDCompactView* cpv, std::vector<int> detidShifts);
   
 protected:
 

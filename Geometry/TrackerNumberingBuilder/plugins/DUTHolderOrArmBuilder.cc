@@ -44,12 +44,6 @@ void DUTHolderOrArmBuilder::buildComponent( DDFilteredView& fv, GeometricDet* te
 void DUTHolderOrArmBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
   GeometricDet::ConstGeometricDetContainer& myDutHolderOrArms = parent->components();
   std::stable_sort( myDutHolderOrArms.begin(), myDutHolderOrArms.end(), LessZ());
-  
-  for (uint32_t counter = 1; counter <= myDutHolderOrArms.size(); counter++) {
-    //uint32_t id = (parent->geographicalID().rawId() << 2) | counter;
-    uint32_t id = counter;
-    parent->component(counter-1)->setGeographicalID(DetId(id));
-  }
 }
 
 

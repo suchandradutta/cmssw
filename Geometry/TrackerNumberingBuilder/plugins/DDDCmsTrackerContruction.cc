@@ -14,14 +14,14 @@ using namespace cms;
 DDDCmsTrackerContruction::DDDCmsTrackerContruction( void )
 {}
 
-const GeometricDet* DDDCmsTrackerContruction::construct( const DDCompactView* cpv) {
+const GeometricDet* DDDCmsTrackerContruction::construct( const DDCompactView* cpv, std::vector<int> detidShifts) {
   attribute = "TelescopeDDDStructure";
 
   DDSpecificsHasNamedValueFilter filter{ attribute }; 
   DDFilteredView fv( *cpv, filter ); 
 
   // TELESCOPE VOLUME
-  fv.firstChild();
+  fv.firstChild();  // TO DO: Add check that child exist!!
 
 
   DUTHolderOrArmBuilder myDUTHolderOrArmBuilder;
@@ -35,14 +35,9 @@ const GeometricDet* DDDCmsTrackerContruction::construct( const DDCompactView* cp
   }
 
 
-  //CmsTrackerBuilder theCmsTrackerBuilder;
-  //theCmsTrackerBuilder.build( fv, telescope, attribute );
   
-  //CmsTrackerDetIdBuilder theCmsTrackerDetIdBuilder( std::move(detidShifts) );
-  //tracker = theCmsTrackerDetIdBuilder.buildId( tracker );
-
-  telescope->setGeographicalID(DetId(1)); // TO DO: Should create a DetId specific to telescope mother volume (see DataFormats/DetId/interface/DetId.h ).
-  // Issue is the space allocated for it is 3 bits, and integers from 1 to 7 are already assigned (cannot used 0).
+  CmsTrackerDetIdBuilder myTelescopeDetIdBuilder( std::move(detidShifts) );
+  myTelescopeDetIdBuilder.buildDetIds(telescope);
 
   fv.parent(); // come back to world volume
  

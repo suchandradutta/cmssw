@@ -37,12 +37,6 @@ void Phase1PixelModuleBuilder::buildComponent( DDFilteredView& fv, GeometricDet*
 void Phase1PixelModuleBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
   GeometricDet::ConstGeometricDetContainer& myPhase1PixelModules = parent->components();
   std::stable_sort( myPhase1PixelModules.begin(), myPhase1PixelModules.end(), LessY());
-  
-  for (uint32_t counter = 1; counter <= myPhase1PixelModules.size(); counter++) {
-    //uint32_t id = (parent->geographicalID().rawId() << 2) | counter;
-    uint32_t id = counter;
-    parent->component(counter-1)->setGeographicalID(DetId(id));
-  }
 }
 
 

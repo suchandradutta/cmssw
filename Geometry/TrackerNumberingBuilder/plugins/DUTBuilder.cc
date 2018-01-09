@@ -30,12 +30,6 @@ void DUTBuilder::buildComponent( DDFilteredView& fv, GeometricDet* myDUTHolder, 
 void DUTBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
   GeometricDet::ConstGeometricDetContainer& myDUTs = parent->components();
   std::stable_sort( myDUTs.begin(), myDUTs.end(), LessZ());
-  
-  for (uint32_t counter = 1; counter <= myDUTs.size(); counter++) {
-    //uint32_t id = (parent->geographicalID().rawId() << 5) | counter;
-    uint32_t id = counter;
-    parent->component(counter-1)->setGeographicalID(DetId(id));
-  }
 }
 
 

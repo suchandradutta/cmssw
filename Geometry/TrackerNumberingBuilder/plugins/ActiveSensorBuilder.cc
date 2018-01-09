@@ -32,10 +32,8 @@ void ActiveSensorBuilder::buildComponent( DDFilteredView& fv, GeometricDet* pare
   else {
     edm::LogError("ActiveSensorBuilder") << "Child is nor DUTInnerSensor nor DUTOuterSensor nor Phase1PixelSensor.";
   }
-
-  //uint32_t id = (parent->geographicalID().rawId() << 2) | temp;    
-  uint32_t id = temp;
-  activeSensor->setGeographicalID(DetId(id));
+ 
+  activeSensor->setGeographicalID(DetId(temp));
 
   parent->addComponent(activeSensor);
 }

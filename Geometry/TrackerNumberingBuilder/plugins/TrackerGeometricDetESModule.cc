@@ -43,8 +43,8 @@ std::unique_ptr<GeometricDet> TrackerGeometricDetESModule::produce( const IdealG
   iRecord.get( cpv );
 
   DDDCmsTrackerContruction theDDDCmsTrackerContruction;
-  //return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv), dbl_to_int( DDVectorGetter::get( "detIdShifts" )))));
-  return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv)) ));
+  return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv), dbl_to_int( DDVectorGetter::get( "telescopeDetIdShifts" )))));
+  //return std::unique_ptr<GeometricDet> (const_cast<GeometricDet*>( theDDDCmsTrackerContruction.construct(&(*cpv)) ));
   //}
 
 

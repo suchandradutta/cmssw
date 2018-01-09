@@ -30,7 +30,7 @@ void CmsTrackerLevelBuilder::build (
 
 
   // TEST
-  GeometricDet::ConstGeometricDetContainer& children = parent->components();
+  /* GeometricDet::ConstGeometricDetContainer& children = parent->components();
   
   for (const GeometricDet* child : children) {
     std::cout << "GeometricDet = " << _CmsTrackerStringToEnum.name(child->type())
@@ -39,7 +39,7 @@ void CmsTrackerLevelBuilder::build (
 	      << ", y = " << child->translation().Y()
 	      << ", z = " << child->translation().Z()
 	      << ", phi = "  << child->phi() * 180. / M_PI << std::endl;
-  }
+	      }*/
   // END TEST
 
 

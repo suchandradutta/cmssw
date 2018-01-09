@@ -37,12 +37,6 @@ void PlaneBuilder::buildComponent( DDFilteredView& fv, GeometricDet* arm, std::s
 void PlaneBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
   GeometricDet::ConstGeometricDetContainer& myPlanes= parent->components();
   std::stable_sort( myPlanes.begin(), myPlanes.end(), LessModZ());
-  
-  for (uint32_t counter = 1; counter <= myPlanes.size(); counter++) {
-    //uint32_t id = (parent->geographicalID().rawId() << 3) | counter;
-    uint32_t id = counter;
-    parent->component(counter-1)->setGeographicalID(DetId(id));
-  }
 }
 
 

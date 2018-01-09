@@ -12,22 +12,16 @@ class GeometricDet;
  * Class to build a geographicalId.
  */
 
-class CmsTrackerDetIdBuilder
-{
-public:
-  CmsTrackerDetIdBuilder(std::vector<int> detidShifts );
-  GeometricDet* buildId( GeometricDet *det );  
-protected:
-  void iterate( GeometricDet *det, int level, unsigned int ID );
-  
-private:
+class CmsTrackerDetIdBuilder {
+ public:
+  CmsTrackerDetIdBuilder(std::vector<int> detidShifts);
+  void buildDetIds(GeometricDet* telescope);
 
-  static const unsigned int nSubDet=6;
-  static const int maxLevels=6;
+ private:
+  void iterate(uint32_t parentId, GeometricDet* volume, int siblingCounter, int hierarchyLevel);
 
-  // This is the map between detid and navtype to restore backward compatibility between 12* and 13* series
-  std::map< std::string , uint32_t > m_mapNavTypeToDetId;
-  std::array<int,nSubDet*maxLevels> m_detidshifts; 
+  std::vector<int> detIdShifts_;
+  int numHierarchyLevels_;
 };
 
 #endif
