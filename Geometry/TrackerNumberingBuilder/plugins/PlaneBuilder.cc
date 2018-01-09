@@ -18,11 +18,11 @@ void PlaneBuilder::buildComponent( DDFilteredView& fv, GeometricDet* arm, std::s
   switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
   case GeometricDet::Plane:
     // TEST
-    std::cout << "plane DetId = " << plane->geographicalID().rawId() 
+    /*std::cout << "plane DetId = " << plane->geographicalID().rawId() 
 	      << ", x = " << plane->translation().X() 
 	      << ", y = " << plane->translation().Y()
 	      << ", z = " << plane->translation().Z()
-	      << ", phi = "  << plane->phi() * 180. / M_PI << std::endl;
+	      << ", phi = "  << plane->phi() * 180. / M_PI << std::endl;*/
     // END TEST
     myPhase1PixelModuleBuilder.build( fv, plane, attribute);      
     break;
@@ -33,19 +33,17 @@ void PlaneBuilder::buildComponent( DDFilteredView& fv, GeometricDet* arm, std::s
   arm->addComponent(plane);
 }
 
-/*void
-PlaneBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent )
-{  
-  GeometricDet::ConstGeometricDetContainer & children = parent->components();
-  std::stable_sort( children.begin(), children.end(), LessZ());
-  
-  for(auto& child : uint32_t i = 0; i < children.size(); i++ )
-  {
-    uint32_t temp= children[i]->type();
-    det->component(i)->setGeographicalID(temp%100);  // it relies on the fact that the GeometricDet::GDEnumType enumerators used to identify the subdetectors in the upgrade geometries are equal to the ones of the present detector + n*100
-  }
-  }*/
 
+void PlaneBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
+  GeometricDet::ConstGeometricDetContainer& myPlanes= parent->components();
+  std::stable_sort( myPlanes.begin(), myPlanes.end(), LessModZ());
+  
+  for (uint32_t counter = 1; counter <= myPlanes.size(); counter++) {
+    //uint32_t id = (parent->geographicalID().rawId() << 3) | counter;
+    uint32_t id = counter;
+    parent->component(counter-1)->setGeographicalID(DetId(id));
+  }
+}
 
 
 

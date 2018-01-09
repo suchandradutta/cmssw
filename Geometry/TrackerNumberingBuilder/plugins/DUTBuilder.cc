@@ -26,18 +26,17 @@ void DUTBuilder::buildComponent( DDFilteredView& fv, GeometricDet* myDUTHolder, 
   myDUTHolder->addComponent( dut );
 }
 
-/*void
-DUTBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent )
-{  
-  GeometricDet::ConstGeometricDetContainer & children = parent->components();
-  std::stable_sort( children.begin(), children.end(), LessZ());
+
+void DUTBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
+  GeometricDet::ConstGeometricDetContainer& myDUTs = parent->components();
+  std::stable_sort( myDUTs.begin(), myDUTs.end(), LessZ());
   
-  for(auto& child : uint32_t i = 0; i < children.size(); i++ )
-  {
-    uint32_t temp= children[i]->type();
-    det->component(i)->setGeographicalID(temp%100);  // it relies on the fact that the GeometricDet::GDEnumType enumerators used to identify the subdetectors in the upgrade geometries are equal to the ones of the present detector + n*100
+  for (uint32_t counter = 1; counter <= myDUTs.size(); counter++) {
+    //uint32_t id = (parent->geographicalID().rawId() << 5) | counter;
+    uint32_t id = counter;
+    parent->component(counter-1)->setGeographicalID(DetId(id));
   }
-  }*/
+}
 
 
 

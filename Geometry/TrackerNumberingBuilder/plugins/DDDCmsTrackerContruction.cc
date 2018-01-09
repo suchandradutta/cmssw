@@ -7,77 +7,32 @@
 #include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
 #include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerDetIdBuilder.h"
 
-#include "Geometry/TrackerNumberingBuilder/plugins/DUTBuilder.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/PlaneBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/DUTHolderOrArmBuilder.h"
 
 using namespace cms;
 
 DDDCmsTrackerContruction::DDDCmsTrackerContruction( void )
 {}
 
-const GeometricDet*
-DDDCmsTrackerContruction::construct( const DDCompactView* cpv)
-{
+const GeometricDet* DDDCmsTrackerContruction::construct( const DDCompactView* cpv) {
   attribute = "TelescopeDDDStructure";
 
   DDSpecificsHasNamedValueFilter filter{ attribute }; 
   DDFilteredView fv( *cpv, filter ); 
 
-
   // TELESCOPE VOLUME
   fv.firstChild();
-  if (theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString(attribute,&fv)) == GeometricDet::Telescope ) {  
-    std::cout << "DDDCmsTrackerContruction::construct I have found the telescope at level 1 " << std::endl;
+
+
+  DUTHolderOrArmBuilder myDUTHolderOrArmBuilder;
+  GeometricDet* telescope = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
+  switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
+  case GeometricDet::Telescope:
+     myDUTHolderOrArmBuilder.build(fv, telescope, attribute);      
+    break;
+  default:
+    edm::LogError( "DDDCmsTrackerContruction" ) << " ERROR - I was expecting a Telescope, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
   }
-  else { std::cout << "DDDCmsTrackerContruction::construct I have not found the telescope. " << std::endl; }
-  
-  GeometricDet* telescope = new GeometricDet( &fv, GeometricDet::Telescope );
-
-
-
-
-  // DUT HOLDER AND ARMS
-  bool doLayers = fv.firstChild();
-
-  while (doLayers) {
-    //buildComponent(fv,telescope,attribute);      
-
-    DUTBuilder myDUTBuilder; // TO DO: why not having the build directly at construction time?
-    PlaneBuilder myPlaneBuilder;
-    GeometricDet* dutHolderOrArm = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
-    switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
-      // DUT holder
-    case GeometricDet::DUTHolder:
-      myDUTBuilder.build(fv, dutHolderOrArm, attribute);      
-      break;
-      // Telescope arm
-    case GeometricDet::Arm:
-      // TEST        
-      std::cout << "arm DetId = " << dutHolderOrArm->geographicalID().rawId() 
-		<< ", x = " << dutHolderOrArm->translation().X() 
-		<< ", y = " << dutHolderOrArm->translation().Y()
-		<< ", z = " << dutHolderOrArm->translation().Z()
-		<< ", phi = "  << dutHolderOrArm->phi() * 180. / M_PI << std::endl;
-      // END TEST
-      myPlaneBuilder.build( fv, dutHolderOrArm, attribute);      
-      break;
-    default:
-      edm::LogError( "DDDCmsTrackerContruction" ) << " ERROR - I was expecting a DUTHolder or an Arm, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
-    }
-  
-    telescope->addComponent(dutHolderOrArm);
-
-    doLayers = fv.nextSibling();
-  }
-
-  fv.parent(); // come back to telescope volume
-
-  //sortNS(fv,telescope);
-
-
-
-
-
 
 
   //CmsTrackerBuilder theCmsTrackerBuilder;
@@ -85,7 +40,9 @@ DDDCmsTrackerContruction::construct( const DDCompactView* cpv)
   
   //CmsTrackerDetIdBuilder theCmsTrackerDetIdBuilder( std::move(detidShifts) );
   //tracker = theCmsTrackerDetIdBuilder.buildId( tracker );
-  telescope->setGeographicalID(DetId(500));
+
+  telescope->setGeographicalID(DetId(1)); // TO DO: Should create a DetId specific to telescope mother volume (see DataFormats/DetId/interface/DetId.h ).
+  // Issue is the space allocated for it is 3 bits, and integers from 1 to 7 are already assigned (cannot used 0).
 
   fv.parent(); // come back to world volume
  

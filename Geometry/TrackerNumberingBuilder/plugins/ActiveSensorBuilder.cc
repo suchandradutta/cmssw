@@ -16,19 +16,27 @@ void ActiveSensorBuilder::buildComponent( DDFilteredView& fv, GeometricDet* pare
   static const std::string isUpper = "DUTOuterSensor";
   static const std::string isPixel = "Phase1PixelSensor";
 
-  if (ExtractStringFromDDD::getString(isLower, &fv) == "true"){
-    uint32_t temp = 1;
-    activeSensor->setGeographicalID(DetId(temp));
-  } else if (ExtractStringFromDDD::getString(isUpper,&fv) == "true"){
-    uint32_t temp = 2;
-    activeSensor->setGeographicalID(DetId(temp));
-  } else if (ExtractStringFromDDD::getString(isPixel,&fv) == "true"){
-    uint32_t temp = 1;
-    activeSensor->setGeographicalID(DetId(temp));
+  uint32_t temp = 0;
+  if (ExtractStringFromDDD::getString(isLower, &fv) == "true") {
+    temp = 1;   
+  } 
+
+  else if (ExtractStringFromDDD::getString(isUpper,&fv) == "true") {
+    temp = 2;
+  } 
+
+  else if (ExtractStringFromDDD::getString(isPixel,&fv) == "true") {
+    temp = 0;
   }
+  
   else {
     edm::LogError("ActiveSensorBuilder") << "Child is nor DUTInnerSensor nor DUTOuterSensor nor Phase1PixelSensor.";
   }
+
+  //uint32_t id = (parent->geographicalID().rawId() << 2) | temp;    
+  uint32_t id = temp;
+  activeSensor->setGeographicalID(DetId(id));
+
   parent->addComponent(activeSensor);
 }
 

@@ -18,11 +18,11 @@ void Phase1PixelModuleBuilder::buildComponent( DDFilteredView& fv, GeometricDet*
   switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
   case GeometricDet::Phase1PixelModule:
     // TEST
-    std::cout << "phase1PixelModule DetId = " << phase1PixelModule->geographicalID().rawId() 
+    /*std::cout << "phase1PixelModule DetId = " << phase1PixelModule->geographicalID().rawId() 
 	      << ", x = " << phase1PixelModule->translation().X() 
 	      << ", y = " << phase1PixelModule->translation().Y()
 	      << ", z = " << phase1PixelModule->translation().Z()
-	      << ", phi = "  << phase1PixelModule->phi() * 180. / M_PI << std::endl;
+	      << ", phi = "  << phase1PixelModule->phi() * 180. / M_PI << std::endl;*/
     // END TEST
     myActiveSensorBuilder.build( fv, phase1PixelModule, attribute);      
     break;
@@ -33,18 +33,17 @@ void Phase1PixelModuleBuilder::buildComponent( DDFilteredView& fv, GeometricDet*
   plane->addComponent(phase1PixelModule);
 }
 
-/*void
-Phase1PixelModuleBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent )
-{  
-  GeometricDet::ConstGeometricDetContainer & children = parent->components();
-  std::stable_sort( children.begin(), children.end(), LessZ());
+
+void Phase1PixelModuleBuilder::sortNS( DDFilteredView& fv, GeometricDet* parent ) {  
+  GeometricDet::ConstGeometricDetContainer& myPhase1PixelModules = parent->components();
+  std::stable_sort( myPhase1PixelModules.begin(), myPhase1PixelModules.end(), LessY());
   
-  for(auto& child : uint32_t i = 0; i < children.size(); i++ )
-  {
-    uint32_t temp= children[i]->type();
-    det->component(i)->setGeographicalID(temp%100);  // it relies on the fact that the GeometricDet::GDEnumType enumerators used to identify the subdetectors in the upgrade geometries are equal to the ones of the present detector + n*100
+  for (uint32_t counter = 1; counter <= myPhase1PixelModules.size(); counter++) {
+    //uint32_t id = (parent->geographicalID().rawId() << 2) | counter;
+    uint32_t id = counter;
+    parent->component(counter-1)->setGeographicalID(DetId(id));
   }
-  }*/
+}
 
 
 

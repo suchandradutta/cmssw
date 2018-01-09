@@ -15,7 +15,7 @@ public:
 
 private:
   void buildComponent( DDFilteredView& , GeometricDet*, std::string ) override;
-  //void sortNS( DDFilteredView& , GeometricDet* ) override;
+  void sortNS( DDFilteredView& , GeometricDet* ) override;
 };
 
 #endif
