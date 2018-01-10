@@ -3,6 +3,8 @@
 <use   name="clhep"/>
 <use   name="DataFormats/GeometrySurface"/>
 <use   name="DetectorDescription/Core"/>
+<use   name="Geometry/TrackerNumberingBuilder"/>
 <export>
   <lib   name="1"/>
 </export>
+
