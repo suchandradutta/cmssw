@@ -35,6 +35,5 @@
 <use   name="DataFormats/GeometrySurface"/>
 <!--<use   name="Geometry/TrackerPhase2TestBeam"/>-->
 <library   file="*.cc" name="GeometryTrackerPhase2TestBeamPlugins">
-  <use   name="Geometry/TrackerNumberingBuilder"/>
   <flags   EDM_PLUGIN="1"/>
 </library>

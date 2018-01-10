@@ -1,6 +1,15 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
 
 
+
+# include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.h"
+# include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.cc"
+#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.cc"
+
+
+
 DUTHolderOrArmBuilder::DUTHolderOrArmBuilder() {}
 
 void DUTHolderOrArmBuilder::buildComponent( DDFilteredView& fv, GeometricDet* telescope, std::string attribute ) {
