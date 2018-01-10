@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerNumberingBuilder_ActiveSensorBuilder_H
-# define Geometry_TrackerNumberingBuilder_ActiveSensorBuilder_H
+#ifndef Geometry_TrackerPhase2TestBeam_ActiveSensorBuilder_H
+# define Geometry_TrackerPhase2TestBeam_ActiveSensorBuilder_H
 
 # include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.h"
 # include "FWCore/ParameterSet/interface/types.h"

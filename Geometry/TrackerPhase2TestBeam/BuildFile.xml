@@ -1,8 +1,8 @@
 <use   name="FWCore/Utilities"/>
 <use   name="FWCore/MessageLogger"/>
-<!--<use   name="Geometry/CMSCommonData"/>
-<use   name="Geometry/TrackerCommonData"/>-->
 <use   name="clhep"/>
+<use   name="DataFormats/GeometrySurface"/>
+<use   name="DetectorDescription/Core"/>
 <export>
   <lib   name="1"/>
 </export>

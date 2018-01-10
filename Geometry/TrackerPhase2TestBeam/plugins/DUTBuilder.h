@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerNumberingBuilder_Phase1PixelModuleBuilder_H
-# define Geometry_TrackerNumberingBuilder_Phase1PixelModuleBuilder_H
+#ifndef Geometry_TrackerPhase2TestBeam_DUTBuilder_H
+# define Geometry_TrackerPhase2TestBeam_DUTBuilder_H
 
 # include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.h"
 # include "FWCore/ParameterSet/interface/types.h"
@@ -8,10 +8,10 @@
 /**
  * Abstract Class to construct a Level in the hierarchy
  */
-class Phase1PixelModuleBuilder : public CmsTrackerLevelBuilder
+class DUTBuilder : public CmsTrackerLevelBuilder
 {
 public:
-  Phase1PixelModuleBuilder();
+  DUTBuilder();
 
 private:
   void buildComponent( DDFilteredView& , GeometricDet*, std::string ) override;

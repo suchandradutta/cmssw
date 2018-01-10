@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerNumberingBuilder_DetIdBuilder_H
-# define Geometry_TrackerNumberingBuilder_DetIdBuilder_H
+#ifndef Geometry_TrackerPhase2TestBeam_DetIdBuilder_H
+# define Geometry_TrackerPhase2TestBeam_DetIdBuilder_H
 
 # include "Geometry/TrackerNumberingBuilder/interface/CmsTrackerStringToEnum.h"
 # include "FWCore/ParameterSet/interface/types.h"

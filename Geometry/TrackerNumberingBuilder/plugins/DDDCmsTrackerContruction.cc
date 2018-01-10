@@ -5,42 +5,47 @@
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/DetIdBuilder.h"
-
-#include "Geometry/TrackerNumberingBuilder/plugins/DUTHolderOrArmBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerDetIdBuilder.h"
 
 using namespace cms;
 
 DDDCmsTrackerContruction::DDDCmsTrackerContruction( void )
 {}
 
-const GeometricDet* DDDCmsTrackerContruction::construct( const DDCompactView* cpv, std::vector<int> detidShifts) {
-  attribute = "TelescopeDDDStructure";
-
-  DDSpecificsHasNamedValueFilter filter{ attribute }; 
-  DDFilteredView fv( *cpv, filter ); 
-
-  // TELESCOPE VOLUME
-  fv.firstChild();  // TO DO: Add check that child exist!!
-
-
-  DUTHolderOrArmBuilder myDUTHolderOrArmBuilder;
-  GeometricDet* telescope = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
-  switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
-  case GeometricDet::Telescope:
-     myDUTHolderOrArmBuilder.build(fv, telescope, attribute);      
-    break;
-  default:
-    edm::LogError( "DDDCmsTrackerContruction" ) << " ERROR - I was expecting a Telescope, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
-  }
-
-
+const GeometricDet*
+DDDCmsTrackerContruction::construct( const DDCompactView* cpv, std::vector<int> detidShifts)
+{
+  attribute = "TkDDDStructure"; // could come from .orcarc
+  DDSpecificsHasNamedValueFilter filter{ attribute };
   
-  DetIdBuilder myDetIdBuilder( std::move(detidShifts) );
-  myDetIdBuilder.build(telescope);
+  DDFilteredView fv( *cpv, filter ); 
+  if( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString(attribute,&fv)) != GeometricDet::Tracker )
+  {
+    fv.firstChild();
+    if( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString(attribute,&fv)) != GeometricDet::Tracker )
+    {  
+      throw cms::Exception( "Configuration" ) << " The first child of the DDFilteredView is not what is expected \n"
+					      << ExtractStringFromDDD::getString( attribute, &fv ) << "\n";
+    }
+  }
+  
+  GeometricDet* tracker = new GeometricDet( &fv, GeometricDet::Tracker );
+  CmsTrackerBuilder theCmsTrackerBuilder;
+  theCmsTrackerBuilder.build( fv, tracker, attribute );
+  
+  CmsTrackerDetIdBuilder theCmsTrackerDetIdBuilder( std::move(detidShifts) );
+  
+  tracker = theCmsTrackerDetIdBuilder.buildId( tracker );
+  fv.parent();
+  //
+  // set the Tracker
+  //
+  //TrackerMapDDDtoID::instance().setTracker(tracker);
+  //NOTE: If it is decided that the TrackerMapDDDtoID should be
+  // constructed here, then we should return from this
+  // function so that the EventSetup can manage it
 
-  fv.parent(); // come back to world volume
- 
-  return telescope;
+  return tracker;
 }
 

@@ -1,11 +1,11 @@
-#include "Geometry/TrackerNumberingBuilder/plugins/Phase1PixelModuleBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/Phase1PixelModuleBuilder.h"
 #include "DetectorDescription/Core/interface/DDFilteredView.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-#include "Geometry/TrackerNumberingBuilder/plugins/ActiveSensorBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/ActiveSensorBuilder.h"
 
 #include <bitset>
 

@@ -1,13 +1,13 @@
-#include "Geometry/TrackerNumberingBuilder/plugins/TelescopeGeometryBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeGeometryBuilder.h"
 
 #include <utility>
 #include "DetectorDescription/Core/interface/DDFilteredView.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/DetIdBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DetIdBuilder.h"
 
-#include "Geometry/TrackerNumberingBuilder/plugins/DUTHolderOrArmBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
 
 using namespace cms;
 

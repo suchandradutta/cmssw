@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerNumberingBuilder_DUTHolderOrArmBuilder_H
-# define Geometry_TrackerNumberingBuilder_DUTHolderOrArmBuilder_H
+#ifndef Geometry_TrackerPhase2TestBeam_DUTHolderOrArmBuilder_H
+# define Geometry_TrackerPhase2TestBeam_DUTHolderOrArmBuilder_H
 
 # include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.h"
 # include "FWCore/ParameterSet/interface/types.h"

@@ -1,4 +1,4 @@
-#include "Geometry/TrackerNumberingBuilder/plugins/DetIdBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DetIdBuilder.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "DataFormats/DetId/interface/DetId.h"

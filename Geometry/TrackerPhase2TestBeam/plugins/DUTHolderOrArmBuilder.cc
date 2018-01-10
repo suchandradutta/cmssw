@@ -1,12 +1,12 @@
-#include "Geometry/TrackerNumberingBuilder/plugins/DUTHolderOrArmBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
 #include "DetectorDescription/Core/interface/DDFilteredView.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-#include "Geometry/TrackerNumberingBuilder/plugins/DUTBuilder.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/PlaneBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DUTBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/PlaneBuilder.h"
 
 #include <bitset>
 

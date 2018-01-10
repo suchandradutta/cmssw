@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerNumberingBuilder_TelescopeGeometryBuilder_H
-# define Geometry_TrackerNumberingBuilder_TelescopeGeometryBuilder_H
+#ifndef Geometry_TrackerPhase2TestBeam_TelescopeGeometryBuilder_H
+# define Geometry_TrackerPhase2TestBeam_TelescopeGeometryBuilder_H
 
 #include "Geometry/TrackerNumberingBuilder/interface/CmsTrackerStringToEnum.h"
 #include "FWCore/ParameterSet/interface/types.h"
