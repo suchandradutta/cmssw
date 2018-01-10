@@ -5,3 +5,8 @@
 
 
 DEFINE_EDM_PLUGIN (DDAlgorithmFactory, DDTelescopePlanesAlgo, "phase2TestBeam:DDTelescopePlanesAlgo");
+
+
+#include "Geometry/TrackerNumberingBuilder/interface/CmsTrackerStringToEnum.h"
+# include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.h"
+#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"

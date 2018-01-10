@@ -1,13 +1,5 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/PlaneBuilder.h"
-#include "DetectorDescription/Core/interface/DDFilteredView.h"
-#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
-#include "DataFormats/DetId/interface/DetId.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-#include "Geometry/TrackerPhase2TestBeam/plugins/Phase1PixelModuleBuilder.h"
-
-#include <bitset>
 
 PlaneBuilder::PlaneBuilder() {}
 

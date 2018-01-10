@@ -5,6 +5,7 @@
 <use   name="DetectorDescription/Core"/>
 <use   name="Geometry/TrackerNumberingBuilder"/>
 <export>
+  <use   name="Geometry/TrackerNumberingBuilder"/>
   <lib   name="1"/>
 </export>
 

@@ -1,13 +1,5 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
-#include "DetectorDescription/Core/interface/DDFilteredView.h"
 
-#include "DataFormats/DetId/interface/DetId.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-
-#include "Geometry/TrackerPhase2TestBeam/plugins/DUTBuilder.h"
-#include "Geometry/TrackerPhase2TestBeam/plugins/PlaneBuilder.h"
-
-#include <bitset>
 
 DUTHolderOrArmBuilder::DUTHolderOrArmBuilder() {}
 

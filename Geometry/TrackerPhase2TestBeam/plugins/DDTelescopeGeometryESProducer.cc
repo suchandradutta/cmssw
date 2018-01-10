@@ -1,18 +1,4 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/DDTelescopeGeometryESProducer.h"
-#include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeGeometryBuilder.h"
-//#include "Geometry/TrackerNumberingBuilder/plugins/CondDBCmsTrackerConstruction.h"
-#include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "DetectorDescription/Core/interface/DDCompactView.h"
-#include "DetectorDescription/Core/interface/DDVectorGetter.h"
-#include "DetectorDescription/Core/interface/DDutils.h"
-#include "FWCore/Framework/interface/EventSetup.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "FWCore/Framework/interface/ESTransientHandle.h"
-#include "FWCore/Framework/interface/ModuleFactory.h"
-#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
-#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
-
-#include <memory>
 
 using namespace edm;
 

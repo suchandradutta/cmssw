@@ -1,13 +1,5 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/DUTBuilder.h"
-#include "DetectorDescription/Core/interface/DDFilteredView.h"
-#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
-#include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
-#include "DataFormats/DetId/interface/DetId.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-#include "Geometry/TrackerPhase2TestBeam/plugins/ActiveSensorBuilder.h"
-
-#include <bitset>
 
 DUTBuilder::DUTBuilder() {}
 

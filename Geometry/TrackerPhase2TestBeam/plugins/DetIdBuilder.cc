@@ -1,15 +1,4 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/DetIdBuilder.h"
-#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
-#include "FWCore/Utilities/interface/Exception.h"
-#include "DataFormats/DetId/interface/DetId.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <bitset>
-
 
 DetIdBuilder::DetIdBuilder( std::vector<int> detidShifts )
   : detIdShifts_(detidShifts), numHierarchyLevels_(detIdShifts_.size())

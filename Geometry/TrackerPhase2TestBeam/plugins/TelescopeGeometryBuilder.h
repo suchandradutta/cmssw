@@ -1,10 +1,20 @@
 #ifndef Geometry_TrackerPhase2TestBeam_TelescopeGeometryBuilder_H
 # define Geometry_TrackerPhase2TestBeam_TelescopeGeometryBuilder_H
 
-#include "Geometry/TrackerNumberingBuilder/interface/CmsTrackerStringToEnum.h"
-#include "FWCore/ParameterSet/interface/types.h"
-#include <string>
+//#include "Geometry/TrackerNumberingBuilder/interface/CmsTrackerStringToEnum.h"
+//#include "FWCore/ParameterSet/interface/types.h"
+//#include <string>
 #include <vector>
+
+
+#include <utility>
+//#include "DetectorDescription/Core/interface/DDFilteredView.h"
+#include "DetectorDescription/Core/interface/DDCompactView.h"
+//#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
+//#include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/DetIdBuilder.h"
+
+#include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
 
 class GeometricDet;
 class DDCompactView;
