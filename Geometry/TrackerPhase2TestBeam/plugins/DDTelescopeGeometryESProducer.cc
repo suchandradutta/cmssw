@@ -29,7 +29,7 @@ void DDTelescopeGeometryESProducer::fillDescriptions( edm::ConfigurationDescript
  
   edm::ParameterSetDescription desc;
   desc.add<bool>( "fromDDD", true );
-  descriptions.add( "trackerNumberingGeometry", desc );
+  descriptions.add( "telescopeGeometryNumbering", desc );
 }
 
 

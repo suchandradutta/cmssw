@@ -5,7 +5,7 @@ import FWCore.ParameterSet.Config as cms
 
 from Geometry.TrackerPhase2TestBeam.Phase2TestBeamGeometryXML_cfi import *
 
-from Geometry.TrackerNumberingBuilder.telescopeGeometryNumbering_cfi import *   # This is where TelescopeGeometryBuilder is called!!!
+from Geometry.TrackerPhase2TestBeam.telescopeGeometryNumbering_cfi import *   # This is where TelescopeGeometryBuilder is called!!!
 
 
 
