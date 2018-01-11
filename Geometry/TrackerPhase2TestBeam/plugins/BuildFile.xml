@@ -1,23 +1,14 @@
-<!--
-<library   file="*.cc" name="GeometryTrackerPhase2TestBeamPlugin">
-  <use   name="DetectorDescription/Parser"/>
-  <use   name="FWCore/PluginManager"/>
-  <flags   EDM_PLUGIN="1"/>
-</library>
--->
-
-
-
 <library   file="*.cc" name="GeometryTrackerPhase2TestBeamPlugins">
-  <use   name="CondFormats/GeometryObjects"/>
-  <use   name="Geometry/TrackerNumberingBuilder"/>
+  <use   name="Geometry/TrackerPhase2TestBeam"/>
+  <use   name="Geometry/TrackerNumberingBuilder"/> 
   <use   name="DetectorDescription/Core"/>
-  <use   name="Geometry/Records"/>
-  <use   name="DataFormats/DetId"/>
-  <use   name="Geometry/CommonTopologies"/>
-  <use   name="DataFormats/TrackerCommon"/>
   <use   name="DetectorDescription/Parser"/>
-  <use   name="FWCore/PluginManager"/>
+  <use   name="Geometry/CommonTopologies"/>
+  <use   name="DataFormats/DetId"/>
   <use   name="DataFormats/GeometrySurface"/>
+  <use   name="DataFormats/TrackerCommon"/>
+  <use   name="Geometry/Records"/> 
+  <use   name="CondFormats/GeometryObjects"/> 
+  <use   name="FWCore/PluginManager"/>
   <flags   EDM_PLUGIN="1"/>
 </library>

@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/DetIdBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/DetIdBuilder.h"
 
 DetIdBuilder::DetIdBuilder( std::vector<int> detidShifts )
   : detIdShifts_(detidShifts), numHierarchyLevels_(detIdShifts_.size())

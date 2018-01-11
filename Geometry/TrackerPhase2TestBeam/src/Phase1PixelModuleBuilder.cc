@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/Phase1PixelModuleBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/Phase1PixelModuleBuilder.h"
 
 
 Phase1PixelModuleBuilder::Phase1PixelModuleBuilder() {}

@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/DUTHolderOrArmBuilder.h"
 
 
 #include "Geometry/TrackerNumberingBuilder/plugins/CmsTrackerLevelBuilder.cc"

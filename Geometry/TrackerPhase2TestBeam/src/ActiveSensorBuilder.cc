@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/ActiveSensorBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/ActiveSensorBuilder.h"
 
 
 ActiveSensorBuilder::ActiveSensorBuilder() {}

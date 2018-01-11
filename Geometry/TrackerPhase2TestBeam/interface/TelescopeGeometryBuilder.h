@@ -12,9 +12,9 @@
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 //#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 //#include "Geometry/TrackerNumberingBuilder/plugins/ExtractStringFromDDD.h"
-#include "Geometry/TrackerPhase2TestBeam/plugins/DetIdBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/DetIdBuilder.h"
 
-#include "Geometry/TrackerPhase2TestBeam/plugins/DUTHolderOrArmBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/DUTHolderOrArmBuilder.h"
 
 class GeometricDet;
 class DDCompactView;

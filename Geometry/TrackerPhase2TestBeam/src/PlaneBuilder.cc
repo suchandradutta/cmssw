@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/PlaneBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/PlaneBuilder.h"
 
 
 PlaneBuilder::PlaneBuilder() {}

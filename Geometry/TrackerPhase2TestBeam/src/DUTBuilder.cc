@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/DUTBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/DUTBuilder.h"
 
 
 DUTBuilder::DUTBuilder() {}

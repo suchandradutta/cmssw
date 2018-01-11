@@ -4,7 +4,7 @@
 #include "FWCore/Framework/interface/ESProducer.h"
 
 
-#include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeGeometryBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometryBuilder.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "DetectorDescription/Core/interface/DDVectorGetter.h"

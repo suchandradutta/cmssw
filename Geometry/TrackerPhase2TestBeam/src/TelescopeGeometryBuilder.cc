@@ -1,4 +1,4 @@
-#include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeGeometryBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometryBuilder.h"
 
 
 using namespace cms;

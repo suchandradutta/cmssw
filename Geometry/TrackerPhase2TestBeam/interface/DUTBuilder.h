@@ -12,7 +12,7 @@
 #include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"*/
 
-#include "Geometry/TrackerPhase2TestBeam/plugins/ActiveSensorBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/ActiveSensorBuilder.h"
 
 //#include <bitset>
 
