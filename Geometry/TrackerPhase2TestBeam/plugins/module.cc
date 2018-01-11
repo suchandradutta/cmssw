@@ -5,3 +5,4 @@
 
 
 DEFINE_EDM_PLUGIN (DDAlgorithmFactory, DDTelescopePlanesAlgo, "phase2TestBeam:DDTelescopePlanesAlgo");
+
