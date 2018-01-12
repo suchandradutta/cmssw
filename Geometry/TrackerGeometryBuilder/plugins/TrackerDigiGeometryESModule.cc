@@ -76,16 +76,22 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
   edm::ESHandle<GeometricDet> gD;
   iRecord.getRecord<IdealGeometryRecord>().get( gD );
 
-  edm::ESHandle<TrackerTopology> tTopoHand;
-  iRecord.getRecord<TrackerTopologyRcd>().get(tTopoHand);
-  const TrackerTopology *tTopo=tTopoHand.product();
 
-  edm::ESHandle<PTrackerParameters> ptp;
-  iRecord.getRecord<PTrackerParametersRcd>().get( ptp );
+  // TO DO: No topology or tracker parameters for the moment, as they are duplicating the trackerParameters.xml info and that's it!
+
+  /*edm::ESHandle<TrackerTopology> tTopoHand;
+  iRecord.getRecord<TrackerTopologyRcd>().get(tTopoHand);
+  const TrackerTopology *tTopo=tTopoHand.product();*/
+
+  /*edm::ESHandle<PTrackerParameters> ptp;
+    iRecord.getRecord<PTrackerParametersRcd>().get( ptp );*/
   
   TrackerGeomBuilderFromGeometricDet builder;
-  _tracker  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), *ptp, tTopo));
+  //_tracker  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), *ptp, tTopo));
+  _telescope  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD)));
 
+
+  /* No thanks
   if (applyAlignment_) {
     // Since fake is fully working when checking for 'empty', we should get rid of applyAlignment_!
     edm::ESHandle<Alignments> globalPosition;
@@ -119,9 +125,10 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
       GeometryAligner ali;
       ali.attachSurfaceDeformations<TrackerGeometry>(&(*_tracker), &(*surfaceDeformations));
     }
-  }
+    }
+  */
   
-  return _tracker;
+  return _telescope;
 }
 
 DEFINE_FWK_EVENTSETUP_MODULE(TrackerDigiGeometryESModule);

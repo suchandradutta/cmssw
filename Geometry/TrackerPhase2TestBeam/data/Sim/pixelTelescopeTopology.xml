@@ -12,6 +12,11 @@
 
 
 <!-- DUT Holder and DUT -->
+<SpecPar name="DUTContainerPar">
+<PartSelector path="//telescope:DUTContainer"/>
+<Parameter name="TelescopeDDDStructure" value="DUTContainer"/>
+</SpecPar>
+
 <SpecPar name="DUTHolderPar">
 <PartSelector path="//telescope:DUTHolder"/>
 <Parameter name="TelescopeDDDStructure" value="DUTHolder"/>
@@ -25,7 +30,7 @@
 <SpecPar name="InnerSensor2SActivePar">
 <PartSelector path="//DUT:BModule1Layer6Lower2Sactive"/>
   <Parameter name="TelescopeDDDStructure" value="PixelBarrelDet"/>     <!-- TO DO : Renaming and associated work here as well -->
-<Parameter name="DUTInnerSensor" value="true"/>                        <!-- TO DO : use equivalent of Geometry/TrackerNumberingBuilder/plugins/CmsDetConstruction.cc for telescope & rename the strings -->
+<Parameter name="DUTInnerSensor" value="true"/>                       
 <Parameter name="PixelROCRows" value="127"/>
 <Parameter name="PixelROCCols" value="1"/>
 <Parameter name="PixelROC_X" value="8"/>

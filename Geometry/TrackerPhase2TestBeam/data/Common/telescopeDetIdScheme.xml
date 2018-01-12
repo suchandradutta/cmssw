@@ -4,7 +4,7 @@
  <ConstantsSection  label="telescopeDetIdScheme.xml" eval="true">
  
   <Vector name="telescopeDetIdShifts" type="numeric" nEntries="5">
-    9, 7, 4, 2, 0
+    28, 25, 4, 2, 0
   </Vector>
   
  </ConstantsSection>

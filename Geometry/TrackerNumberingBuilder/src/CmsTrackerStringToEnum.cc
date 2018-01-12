@@ -64,6 +64,7 @@ CmsTrackerStringToEnum::Impl::Impl(){
   
   // pixel Telescope. TO DO : move to pixel Telescope package ? (Not trivial, as we might not want to duplicate the GeometricDet class.)
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Telescope",GeometricDet::Telescope));
+  _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUTContainer",GeometricDet::DUTContainer));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUTHolder",GeometricDet::DUTHolder));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("DUT",GeometricDet::DUT));
   _map.insert(std::pair<std::string, GeometricDet::GeometricEnumType>("Arm",GeometricDet::Arm));
@@ -108,7 +109,8 @@ CmsTrackerStringToEnum::Impl::Impl(){
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::panel,"Panel")); 
   
    // pixel Telescope. TO DO : move to pixel Telescope package ? (Not trivial, as we might not want to duplicate the GeometricDet class.)
-  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Telescope,"Telescope")); 
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Telescope,"Telescope"));
+  _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUTContainer,"DUTContainer")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUTHolder,"DUTHolder")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::DUT,"DUT")); 
   _reverseMap.insert(std::pair<GeometricDet::GeometricEnumType, std::string>(GeometricDet::Arm,"Arm")); 

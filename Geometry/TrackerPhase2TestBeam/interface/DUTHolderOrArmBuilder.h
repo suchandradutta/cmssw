@@ -13,7 +13,7 @@
 //#include "DataFormats/DetId/interface/DetId.h"
 //#include "FWCore/MessageLogger/interface/MessageLogger.h"
 
-#include "Geometry/TrackerPhase2TestBeam/interface/DUTBuilder.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/DUTHolderBuilder.h"
 #include "Geometry/TrackerPhase2TestBeam/interface/PlaneBuilder.h"
 
 //#include <bitset>

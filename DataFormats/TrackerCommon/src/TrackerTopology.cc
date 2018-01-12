@@ -88,6 +88,7 @@ unsigned int TrackerTopology::module(const DetId &id) const {
 uint32_t TrackerTopology::glued(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
+    /*
     if ( subdet == PixelSubdetector::PixelBarrel )
       return 0;
     if ( subdet == PixelSubdetector::PixelEndcap )
@@ -102,26 +103,63 @@ uint32_t TrackerTopology::glued(const DetId &id) const {
       return tecGlued(id);
 
     throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::glued";
+    */
+
+    // Telescope arm, (-Z) side
+    if (subdet == 1) { return 0;  }    
+
+    // Telescope DUT containers (contains only 1 DUT here)    
+    else if (subdet == 2) {   
+      if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() - 1 ); }  // inner sensor = 1
+      else { return DetId( id.rawId() - 2 ); } // outer sensor = 2
+    }    
+
+    // Telescope arm, (+Z) side
+    else if (subdet == 3) { return 0; }  
+  
+    else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+
+
     return 0;
 }
 
 uint32_t TrackerTopology::stack(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
+    /*
     if ( subdet == PixelSubdetector::PixelBarrel )
       return 0;
-    if ( subdet == PixelSubdetector::PixelEndcap )
+      if ( subdet == PixelSubdetector::PixelEndcap )
       return 0;
-    if ( subdet == StripSubdetector::TIB )
+      if ( subdet == StripSubdetector::TIB )
       return tibStack(id);
-    if ( subdet == StripSubdetector::TID )
+      if ( subdet == StripSubdetector::TID )
       return tidStack(id);
-    if ( subdet == StripSubdetector::TOB )
+      if ( subdet == StripSubdetector::TOB )
       return tobStack(id);
-    if ( subdet == StripSubdetector::TEC )
+      if ( subdet == StripSubdetector::TEC )
       return tecStack(id);
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::stack";
+      throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::stack";
+    */
+
+
+    // Telescope arm, (-Z) side
+    if (subdet == 1) { return 0;  }    
+
+    // Telescope DUT containers (contains only 1 DUT here)    
+    else if (subdet == 2) {   
+      if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() - 1 ); }  // inner sensor = 1
+      else { return DetId( id.rawId() - 2 ); } // outer sensor = 2
+    }    
+
+    // Telescope arm, (+Z) side
+    else if (subdet == 3) { return 0; }  
+  
+    else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+
 }
 
 uint32_t TrackerTopology::lower(const DetId &id) const {
@@ -245,22 +283,39 @@ bool TrackerTopology::isUpper(const DetId &id) const {
 
 DetId TrackerTopology::partnerDetId(const DetId &id) const {
 
-    uint32_t subdet=id.subdetId();
+  uint32_t subdet=id.subdetId();
+  /*
     if ( subdet == PixelSubdetector::PixelBarrel )
-      return 0;
+    return 0;
     if ( subdet == PixelSubdetector::PixelEndcap )
-      return 0;
+    return 0;
     if ( subdet == StripSubdetector::TIB )
-      return tibPartnerDetId(id);
+    return tibPartnerDetId(id);
     if ( subdet == StripSubdetector::TID )
-      return tidPartnerDetId(id);
+    return tidPartnerDetId(id);
     if ( subdet == StripSubdetector::TOB )
-      return tobPartnerDetId(id);
+    return tobPartnerDetId(id);
     if ( subdet == StripSubdetector::TEC )
-      return tecPartnerDetId(id);
+    return tecPartnerDetId(id);
 
     throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::partnerDetId";
-    return 0;
+  */
+
+  // Telescope arm, (-Z) side
+  if (subdet == 1) { return 0;  }    
+
+  // Telescope DUT containers (contains only 1 DUT here)    
+  else if (subdet == 2) {   
+    if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() + 1 ); }  // inner sensor, hence return outer
+    else { return DetId( id.rawId() - 1 ); } // outer sensor, hence return inner
+  }    
+
+  // Telescope arm, (+Z) side
+  else if (subdet == 3) { return 0; }  
+  
+  else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+  return 0;
 }
 
 std::string TrackerTopology::print(DetId id) const {

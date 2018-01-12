@@ -10,13 +10,13 @@ DUTHolderOrArmBuilder::DUTHolderOrArmBuilder() {}
 
 void DUTHolderOrArmBuilder::buildComponent( DDFilteredView& fv, GeometricDet* telescope, std::string attribute ) {
 
-  DUTBuilder myDUTBuilder; // TO DO: why not having the build directly at construction time?
+  DUTHolderBuilder myDUTHolderBuilder; // TO DO: why not having the build directly at construction time?
   PlaneBuilder myPlaneBuilder;
   GeometricDet* dutHolderOrArm = new GeometricDet( &fv, theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv )));
   switch( theCmsTrackerStringToEnum.type( ExtractStringFromDDD::getString( attribute, &fv ))) {
     // DUT holder
-  case GeometricDet::DUTHolder:
-    myDUTBuilder.build(fv, dutHolderOrArm, attribute);      
+  case GeometricDet::DUTContainer:
+    myDUTHolderBuilder.build(fv, dutHolderOrArm, attribute);      
     break;
     // Telescope arm
   case GeometricDet::Arm:
@@ -30,7 +30,7 @@ void DUTHolderOrArmBuilder::buildComponent( DDFilteredView& fv, GeometricDet* te
     myPlaneBuilder.build( fv, dutHolderOrArm, attribute);      
     break;
   default:
-    edm::LogError( "DUTHolderOrArmBuilder" ) << " ERROR - I was expecting a DUTHolder or an Arm, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
+    edm::LogError( "DUTHolderOrArmBuilder" ) << " ERROR - I was expecting a DUTContainer or an Arm, I got a " << ExtractStringFromDDD::getString( attribute, &fv );
   }
   
   telescope->addComponent(dutHolderOrArm);

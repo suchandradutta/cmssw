@@ -38,11 +38,13 @@ namespace {
   }
 }
 
-TrackerGeometry*
-TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTrackerParameters& ptp, const TrackerTopology* tTopo )
-{
-  int BIG_PIX_PER_ROC_X = ptp.vpars[2];
-  int BIG_PIX_PER_ROC_Y = ptp.vpars[3];
+//TrackerGeometry* TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTrackerParameters& ptp, const TrackerTopology* tTopo ) {
+TrackerGeometry* TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd) {
+  //int BIG_PIX_PER_ROC_X = ptp.vpars[2];
+  //int BIG_PIX_PER_ROC_Y = ptp.vpars[3];
+
+  int BIG_PIX_PER_ROC_X = 0;
+  int BIG_PIX_PER_ROC_Y = 0; // 0 as defined in the vpars vector in trackerParameters.xml, which is all what PTrackerParameters are for!!
     
   thePixelDetTypeMap.clear();
   theStripDetTypeMap.clear();
@@ -51,10 +53,12 @@ TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTracke
   std::vector<const GeometricDet*> comp;
   gd->deepComponents(comp);
  
-  if(tTopo)  theTopo = tTopo;
+  //if(tTopo)  theTopo = tTopo;
 
   //define a vector which associate to the detid subdetector index -1 (from 0 to 5) the GeometridDet enumerator to be able to know which type of subdetector it is
   
+
+  /* ALL THIS IS TO SORT THE GEOMETRICDET BY SUBDETECTOR !!
   std::vector<GeometricDet::GDEnumType> gdsubdetmap(6,GeometricDet::unknown); // hardcoded "6" should not be a surprise... 
   GeometricDet::ConstGeometricDetContainer subdetgd = gd->components();
   
@@ -66,23 +70,43 @@ TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTracke
 					    << " type " << subdetgd[i]->type()
 					    << " detid " <<  subdetgd[i]->geographicalId().rawId()
 					    << " subdetid " <<  subdetgd[i]->geographicalId().subdetId();
+					    }
+*/
+  
+  std::vector<const GeometricDet*> dets[3];
+  std::vector<const GeometricDet*> & armNegSideDets = dets[0]; armNegSideDets.reserve(comp.size());
+  std::vector<const GeometricDet*> & DUTDets = dets[1]; DUTDets.reserve(comp.size());
+  std::vector<const GeometricDet*> & armPosSideDets  = dets[2];  armPosSideDets.reserve(comp.size());
+  
+
+
+
+  
+  for(auto & i : comp) {
+    dets[i->geographicalID().subdetId()-1].emplace_back(i);
   }
   
-  std::vector<const GeometricDet*> dets[6];
-  std::vector<const GeometricDet*> & pixB = dets[0]; pixB.reserve(comp.size());
-  std::vector<const GeometricDet*> & pixF = dets[1]; pixF.reserve(comp.size());
-  std::vector<const GeometricDet*> & tib  = dets[2];  tib.reserve(comp.size());
-  std::vector<const GeometricDet*> & tid  = dets[3];  tid.reserve(comp.size());
-  std::vector<const GeometricDet*> & tob  = dets[4];  tob.reserve(comp.size());
-  std::vector<const GeometricDet*> & tec  = dets[5];  tec.reserve(comp.size());
-
-  for(auto & i : comp)
-    dets[i->geographicalID().subdetId()-1].emplace_back(i);
+    /*
+  std::vector<const GeometricDet*> armNegSideDets;
+  std::vector<const GeometricDet*> DUTDets;
+  std::vector<const GeometricDet*> armPosSideDets;
+  for (auto & i : comp) {
+    if (i->geographicalID().rawId() < 750) armNegSideDets.push_back(i);
+    else if (i->geographicalID().rawId() > 750 && i->geographicalID().rawId() < 800) DUTDets.push_back(i);
+    else if (i->geographicalID().rawId() > 800) armPosSideDets.push_back(i);
+    }*/
   
+
+
+
+
+
+
   //loop on all the six elements of dets and firstly check if they are from pixel-like detector and call buildPixel, then loop again and check if they are strip and call buildSilicon. "unknown" can be filled either way but the vector of GeometricDet must be empty !!
   // this order is VERY IMPORTANT!!!!! For the moment I (AndreaV) understand that some pieces of code rely on pixel-like being before strip-like 
   
   // now building the Pixel-like subdetectors
+  /*
   for(unsigned int i=0;i<6;++i) {
     if(gdsubdetmap[i] == GeometricDet::PixelBarrel) 
       buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::PixelBarrel,
@@ -141,9 +165,32 @@ TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTracke
       buildSilicon(dets[i],tracker,GeomDetEnumerators::tkDetEnum[i+1], "barrel"); // "barrel" is used but it is irrelevant
     }
   }
+  */
+
+
+  // Telescope arm, (-Z) side
+  buildPixel(armNegSideDets,tracker,GeomDetEnumerators::SubDetector::P1PXEC,
+	     false,
+	     BIG_PIX_PER_ROC_X,
+	     BIG_PIX_PER_ROC_Y);
+  // Telescope DUT containers (contains only 1 DUT here) 
+  buildPixel(DUTDets,tracker,GeomDetEnumerators::SubDetector::P2OTB,
+	     true,
+	     BIG_PIX_PER_ROC_X,
+	     BIG_PIX_PER_ROC_Y); 
+  // Telescope arm, (+Z) side
+  buildPixel(armPosSideDets,tracker,GeomDetEnumerators::SubDetector::P1PXEC,
+	     false,
+	     BIG_PIX_PER_ROC_X,
+	     BIG_PIX_PER_ROC_Y);
+  
+
+
+
+
   buildGeomDet(tracker);//"GeomDet"
 
-  verifyDUinTG(*tracker);
+  //verifyDUinTG(*tracker);
 
   return tracker;
 }
@@ -217,7 +264,7 @@ void TrackerGeomBuilderFromGeometricDet::buildSilicon(std::vector<const Geometri
       tracker->addType(theStripDetTypeMap[detName]);
     }
      
-    double scale  = (theTopo->partnerDetId(i->geographicalID())) ? 0.5 : 1.0 ;	
+    double scale  = (partnerDetId(i->geographicalID())) ? 0.5 : 1.0 ;	// theTopo
 
     PlaneBuilderFromGeometricDet::ResultType plane = buildPlaneWithMaterial(i,scale);  
     GeomDetUnit* temp = new StripGeomDetUnit(&(*plane), theStripDetTypeMap[detName],i->geographicalID());
@@ -245,12 +292,16 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
     //this step is time consuming >> TO FIX with a MAP?
     if( (gduTypeName.find("Ster")!=std::string::npos || 
          gduTypeName.find("Lower")!=std::string::npos) && 
-        (theTopo->glued(gduId[i])!=0 || theTopo->stack(gduId[i])!=0 )) {
+        (glued(gduId[i])!=0 || stack(gduId[i])!=0 )) {  // theTopo
     
+
+      //std::cout << "gduId[i] = " << gduId[i] < std::endl;
+      //std::cout << "partnerDetId(gduId[i]) = " << partnerDetId(gduId[i]) << std::endl;
+
 
       int partner_pos=-1;
       for(u_int32_t jj=0;jj<gduId.size();jj++){
-  	  if(theTopo->partnerDetId(gduId[i]) == gduId[jj]) {
+  	  if(partnerDetId(gduId[i]) == gduId[jj]) {   // theTopo
   	    partner_pos=jj;
   	    break;
   	  }
@@ -269,7 +320,7 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
       if(gduTypeName.find("Ster")!=std::string::npos){
 
         PlaneBuilderForGluedDet::ResultType plane = gluedplaneBuilder.plane(composed);
-        composedDetId = theTopo->glued(gduId[i]);
+        composedDetId = glued(gduId[i]);  // theTopo
         GluedGeomDet* gluedDet = new GluedGeomDet(&(*plane),dum,dus,composedDetId);
         tracker->addDet((GeomDet*) gluedDet);
         tracker->addDetId(composedDetId);
@@ -278,7 +329,7 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
 
         //FIXME::ERICA: the plane builder is built in the middle...
         PlaneBuilderForGluedDet::ResultType plane = gluedplaneBuilder.plane(composed);
-        composedDetId = theTopo->stack(gduId[i]);
+        composedDetId = stack(gduId[i]);   // theTopo
         StackGeomDet* stackDet = new StackGeomDet(&(*plane),dum,dus,composedDetId);
         tracker->addDet((GeomDet*) stackDet);
         tracker->addDetId(composedDetId);
@@ -289,6 +340,127 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
 
   }
 }
+
+
+
+uint32_t TrackerGeomBuilderFromGeometricDet::glued(const DetId &id) const {
+
+    uint32_t subdet=id.subdetId();
+    /*
+    if ( subdet == PixelSubdetector::PixelBarrel )
+      return 0;
+    if ( subdet == PixelSubdetector::PixelEndcap )
+      return 0;
+    if ( subdet == StripSubdetector::TIB )
+      return tibGlued(id);
+    if ( subdet == StripSubdetector::TID )
+      return tidGlued(id);
+    if ( subdet == StripSubdetector::TOB )
+      return tobGlued(id);
+    if ( subdet == StripSubdetector::TEC )
+      return tecGlued(id);
+
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::glued";
+    */
+
+    // Telescope arm, (-Z) side
+    if (subdet == 1) { return 0;  }    
+
+    // Telescope DUT containers (contains only 1 DUT here)    
+    else if (subdet == 2) {   
+      if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() - 1 ); }  // inner sensor = 1
+      else { return DetId( id.rawId() - 2 ); } // outer sensor = 2
+    }    
+
+    // Telescope arm, (+Z) side
+    else if (subdet == 3) { return 0; }  
+  
+    else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+
+
+    return 0;
+}
+
+
+uint32_t TrackerGeomBuilderFromGeometricDet::stack(const DetId &id) const {
+
+    uint32_t subdet=id.subdetId();
+    /*
+    if ( subdet == PixelSubdetector::PixelBarrel )
+      return 0;
+      if ( subdet == PixelSubdetector::PixelEndcap )
+      return 0;
+      if ( subdet == StripSubdetector::TIB )
+      return tibStack(id);
+      if ( subdet == StripSubdetector::TID )
+      return tidStack(id);
+      if ( subdet == StripSubdetector::TOB )
+      return tobStack(id);
+      if ( subdet == StripSubdetector::TEC )
+      return tecStack(id);
+
+      throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::stack";
+    */
+
+
+    // Telescope arm, (-Z) side
+    if (subdet == 1) { return 0;  }    
+
+    // Telescope DUT containers (contains only 1 DUT here)    
+    else if (subdet == 2) {   
+      if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() - 1 ); }  // inner sensor = 1
+      else { return DetId( id.rawId() - 2 ); } // outer sensor = 2
+    }    
+
+    // Telescope arm, (+Z) side
+    else if (subdet == 3) { return 0; }  
+  
+    else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+
+}
+
+
+DetId TrackerGeomBuilderFromGeometricDet::partnerDetId(const DetId &id) const {
+
+  uint32_t subdet=id.subdetId();
+  /*
+    if ( subdet == PixelSubdetector::PixelBarrel )
+    return 0;
+    if ( subdet == PixelSubdetector::PixelEndcap )
+    return 0;
+    if ( subdet == StripSubdetector::TIB )
+    return tibPartnerDetId(id);
+    if ( subdet == StripSubdetector::TID )
+    return tidPartnerDetId(id);
+    if ( subdet == StripSubdetector::TOB )
+    return tobPartnerDetId(id);
+    if ( subdet == StripSubdetector::TEC )
+    return tecPartnerDetId(id);
+
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::partnerDetId";
+  */
+
+  // Telescope arm, (-Z) side
+  if (subdet == 1) { return 0;  }    
+
+  // Telescope DUT containers (contains only 1 DUT here)    
+  else if (subdet == 2) {   
+    if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() + 1 ); }  // inner sensor, hence return outer
+    else { return DetId( id.rawId() - 1 ); } // outer sensor, hence return inner
+  }    
+
+  // Telescope arm, (+Z) side
+  else if (subdet == 3) { return 0; }  
+  
+  else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+  return 0;
+}
+
+
+
 
 PlaneBuilderFromGeometricDet::ResultType
 TrackerGeomBuilderFromGeometricDet::buildPlaneWithMaterial(const GeometricDet* gd,

@@ -13,13 +13,6 @@ void DetIdBuilder::build(GeometricDet* telescope) {
   uint32_t parentId = 0;
 
   iterate(parentId, telescope, siblingCounter, hierarchyLevel);
-
-
-  /*
-  //DetId t( DetId::Tracker, 0 );
-  telescope->setGeographicalID(DetId(1)); // TO DO: Should create a DetId specific to telescope mother volume (see DataFormats/DetId/interface/DetId.h ).
-  // Issue is the space allocated for it is 3 bits, and integers from 1 to 7 are already assigned (cannot used 0).
-  */
 }
 
 
@@ -32,7 +25,8 @@ void DetIdBuilder::iterate(uint32_t parentId, GeometricDet* volume, int siblingC
   else {
 
     uint32_t indicator = 0;
-    if (hierarchyLevel == (numHierarchyLevels_ - 1)) { indicator = volume->geographicalID().rawId(); }
+    if (hierarchyLevel == 0) { indicator = 8; }  // At telescope volume level: DetId::Telescope = 8 (see DataFormats/DetId/interface/DetId.h ).
+    else if (hierarchyLevel == (numHierarchyLevels_ - 1)) { indicator = volume->geographicalID().rawId(); }
     else { indicator = siblingCounter + 1; }
 
     uint32_t id = parentId | ( indicator << detIdShifts_.at(hierarchyLevel));

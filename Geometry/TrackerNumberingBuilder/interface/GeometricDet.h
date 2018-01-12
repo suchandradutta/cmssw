@@ -59,7 +59,8 @@ class GeometricDet {
 			   PixelPhase2Barrel=201, PixelPhase2EndCap=202, OTPhase2Wheel=209,
 			   PixelPhase2FullDisk=217,PixelPhase2ReducedDisk=227,
 			   PixelPhase2TDRDisk=237,
-			    Telescope = 300, DUTHolder = 301, DUT = 302,
+			    Telescope = 300, 
+			    DUTContainer = 301, DUTHolder = 302, DUT = 303,
 			    Arm = 310, Plane = 311, Phase1PixelModule = 312
   } GeometricEnumType;
 			   

@@ -18,6 +18,11 @@
 namespace {
   GeomDetEnumerators::SubDetector
   geometricDetToGeomDet(GeometricDet::GDEnumType gdenum) {
+    // TO DO: Add here telescope arm, DUT container, and remove all the rest.
+    // Obviously this class will be, after adapation, renamed into Telescope Geometry.
+    // That way, we will have a Digitizer for the telescope :)
+    // But first, let's see if things can slightly make sense!
+
     // provide a map between the GeometricDet enumerators and the GeomDet enumerators of the possible tracker subdetectors
     if(gdenum == GeometricDet::GDEnumType::PixelBarrel ) return GeomDetEnumerators::SubDetector::PixelBarrel;
     if(gdenum == GeometricDet::GDEnumType::PixelEndCap) return GeomDetEnumerators::SubDetector::PixelEndcap;
@@ -45,14 +50,29 @@ namespace {
 }
 
 TrackerGeometry::TrackerGeometry(GeometricDet const* gd)
-   : theTrackerDet(gd)
-{
-  for(unsigned int i=0;i<6;++i) {
+   : theTrackerDet(gd) {
+
+  /*
+    for(unsigned int i=0;i<6;++i) {
     theSubDetTypeMap[i] = GeomDetEnumerators::invalidDet;
     theNumberOfLayers[i] = 0;
-  }
+    }
+  */
+  // Telescope arm, (-Z) side
+  theSubDetTypeMap[0] = GeomDetEnumerators::SubDetector::P1PXEC;  // See Geometry/CommonDetUnit/interface/GeomDetEnumerators.h (and its amazing code style lol)
+  theNumberOfLayers[0] = 4;
+
+  // Telescope DUT containers (contains only 1 DUT here)
+  theSubDetTypeMap[1] = GeomDetEnumerators::SubDetector::P2OTB;
+  theNumberOfLayers[1] = 1;
+
+  // Telescope arm, (+Z) side
+  theSubDetTypeMap[2] = GeomDetEnumerators::SubDetector::P1PXEC;  // See Geometry/CommonDetUnit/interface/GeomDetEnumerators.h (and its amazing code style lol)
+  theNumberOfLayers[2] = 4;
+
+
+  /*
   GeometricDet::ConstGeometricDetContainer subdetgd = gd->components();
-  
   LogDebug("BuildingSubDetTypeMap") << "GeometriDet and GeomDetEnumerators enumerator values of the subdetectors";
   for(unsigned int i=0;i<subdetgd.size();++i) {
     assert(subdetgd[i]->geographicalId().subdetId()>0 && subdetgd[i]->geographicalId().subdetId()<7);
@@ -73,6 +93,8 @@ TrackerGeometry::TrackerGeometry(GeometricDet const* gd)
   for(unsigned int i=1;i<7;++i) {
     LogTrace("NumberOfLayers") << " detid subdet "<< i << " number of layers " << numberOfLayers(i); 
   }
+  */
+
   std::vector<const GeometricDet*> deepcomp;
   gd->deepComponents(deepcomp);
    

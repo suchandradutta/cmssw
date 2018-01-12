@@ -23,7 +23,7 @@ class  TrackerDigiGeometryESModule: public edm::ESProducer{
   
  private:
   /// Called when geometry description changes
-  std::shared_ptr<TrackerGeometry> _tracker;
+  std::shared_ptr<TrackerGeometry> _telescope;
   const std::string alignmentsLabel_;
   const std::string myLabel_;
   bool applyAlignment_; // Switch to apply alignment corrections
