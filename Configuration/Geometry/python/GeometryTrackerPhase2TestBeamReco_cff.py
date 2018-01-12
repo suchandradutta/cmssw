@@ -8,9 +8,13 @@ from Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff import *  # DDGeom
 # tracker
 #from Geometry.CommonDetUnit.globalTrackingGeometry_cfi import *
 #from RecoTracker.GeometryESProducer.TrackerRecoGeometryESProducer_cfi import *
-from Geometry.TrackerGeometryBuilder.trackerParameters_cfi import *
-from Geometry.TrackerNumberingBuilder.trackerTopology_cfi import *
+
+#from Geometry.TrackerGeometryBuilder.trackerParameters_cfi import *
+#from Geometry.TrackerNumberingBuilder.trackerTopology_cfi import *
 from Geometry.TrackerGeometryBuilder.idealForDigiTrackerGeometry_cff import *
+
+
+
 #trackerGeometry.applyAlignment = cms.bool(False)
 
 

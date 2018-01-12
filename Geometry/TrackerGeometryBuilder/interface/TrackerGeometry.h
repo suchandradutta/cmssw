@@ -114,8 +114,8 @@ private:
   DetContainer      theTOBDets; // not owned: they're also in 'theDets'
   DetContainer      theTECDets; // not owned: they're also in 'theDets'
 
-  GeomDetEnumerators::SubDetector theSubDetTypeMap[6];
-  unsigned int theNumberOfLayers[6];
+  GeomDetEnumerators::SubDetector theSubDetTypeMap[3];
+  unsigned int theNumberOfLayers[3];
   std::vector< std::tuple< DetId, TrackerGeometry::ModuleType, float> > theDetTypetList; 
 };
 

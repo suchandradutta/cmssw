@@ -295,8 +295,8 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
         (glued(gduId[i])!=0 || stack(gduId[i])!=0 )) {  // theTopo
     
 
-      //std::cout << "gduId[i] = " << gduId[i] < std::endl;
-      //std::cout << "partnerDetId(gduId[i]) = " << partnerDetId(gduId[i]) << std::endl;
+      std::cout << "TrackerGeomBuilderFromGeometricDet::buildGeomDet  gduId[i].rawId() = " << gduId[i].rawId() << std::endl;
+      std::cout << "TrackerGeomBuilderFromGeometricDet::buildGeomDet  partnerDetId(gduId[i]).rawId() = " << partnerDetId(gduId[i]).rawId() << std::endl;
 
 
       int partner_pos=-1;
@@ -331,6 +331,7 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
         PlaneBuilderForGluedDet::ResultType plane = gluedplaneBuilder.plane(composed);
         composedDetId = stack(gduId[i]);   // theTopo
         StackGeomDet* stackDet = new StackGeomDet(&(*plane),dum,dus,composedDetId);
+	std::cout << "TrackerGeomBuilderFromGeometricDet::buildGeomDet  composedDetId.rawId() = " << composedDetId.rawId() << std::endl;
         tracker->addDet((GeomDet*) stackDet);
         tracker->addDetId(composedDetId);
 
