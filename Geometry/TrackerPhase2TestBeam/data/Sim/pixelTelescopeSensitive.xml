@@ -15,7 +15,7 @@
 <SpecPar name="ROUHitsTrackerPixelBarrel">
     <PartSelector path="//Phase1BPIXLayer4Module:PixelBarrelActiveFull3" />
     <Parameter name="SensitiveDetector" value="TkAccumulatingSensitiveDetector" />
-    <Parameter name="ReadOutName" value="TrackerHitsPixelBarrel" />
+    <Parameter name="ReadOutName" value="TrackerHitsPixelEndcap" />
 </SpecPar>
 
 </SpecParSection>

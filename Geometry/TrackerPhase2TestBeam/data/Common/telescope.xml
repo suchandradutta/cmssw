@@ -30,7 +30,7 @@
 
 <SolidSection label="telescope.xml">
 <Box name="Telescope" dx="500.0*mm" dy="300.0*mm" dz="1000.0*mm"/>
-<Box name="DUTContainer" dx="260.0*mm" dy="160.0*mm" dz="20.0*mm"/>  <!-- TO DO: Increase dz (DUTContainer can contain several DUT Holders, and DUTHolder can be tilted. -->
+<Box name="DUTContainer" dx="260.0*mm" dy="180.0*mm" dz="74.0*mm"/>
 <Box name="DUTHolder" dx="260.0*mm" dy="160.0*mm" dz="20.0*mm"/>
 <Box name="Arm" dx="70.0*mm" dy="160.0*mm" dz="100.0*mm"/>
 <Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]/2.0" dz="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0"/>
