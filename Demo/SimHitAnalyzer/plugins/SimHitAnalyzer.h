@@ -34,7 +34,7 @@ class SimHitAnalyzer : public edm::EDAnalyzer
     edm::InputTag simHitsBarrelHighTof_;
     edm::InputTag simHitsBarrelLowTof_;
     edm::InputTag simHitsEndcapHighTof_;
-    edm::InputTag simHitsEndcapLowTof_;
+     edm::InputTag simHitsEndcapLowTof_;
 
     edm::EDGetTokenT<vector<PSimHit> > simHitsBarrelHighTofToken_;
     edm::EDGetTokenT<vector<PSimHit> > simHitsBarrelLowTofToken_;
