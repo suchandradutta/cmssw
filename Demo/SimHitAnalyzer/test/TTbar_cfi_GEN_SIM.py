@@ -14,16 +14,12 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 
-#process.load('Geometry.TrackerPhase2TestBeam.Phase2TestBeamGeometryXML_cfi')
 #process.load('Configuration.Geometry.GeometryExtended2023D17Reco_cff')
 #process.load('Configuration.Geometry.GeometryExtended2023D17_cff')
 
-#process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff')
-#process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeamReco_cff')
 
-
-process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff") # used to be reco _cff
-process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
+process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff")
+process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")     
 
 
 
@@ -44,8 +40,9 @@ process.maxEvents = cms.untracked.PSet(
 # Input source
 process.source = cms.Source ("PoolSource",
     fileNames = cms.untracked.vstring ([
-        "file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/MinBias_TuneZ2star_14TeV_pythia6_Phase2_cff_GEN_SIM_2000.root"
-        #"file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/SingleMuPt1000_pythia8_cfi_py_GEN_SIM.root"     
+        #"file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/SingleMuPt1000_pythia8_cfi_py_GEN_SIM.root"
+        #"file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/MinBias_TuneZ2star_14TeV_pythia6_Phase2_cff_GEN_SIM_2000.root"
+        "file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/gensim.root"    
         ])
 )
 
@@ -54,10 +51,10 @@ process.options = cms.untracked.PSet(
 )
 
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase2_realistic', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')  # 'auto:phase2_realistic'
 
 process.TFileService = cms.Service ("TFileService",
-    fileName = cms.string ("hsimhit_minbias_200.root")
+    fileName = cms.string ("pixelTelescope_simhitmap.root")
 )
 
 process.simHitAnalyzer = cms.EDAnalyzer ("SimHitAnalyzer",
