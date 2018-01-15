@@ -27,7 +27,7 @@ SimHitAnalyzer::SimHitAnalyzer (const edm::ParameterSet &cfg) :
   TH1::SetDefaultSumw2 ();
 
   twoDHists_["rhoPhi"] = fs_->make<TH2D> ("rhoPhi", ";x [cm];y [cm]", 500, -8.0, 8.0, 500, -8.0, 8.0);
-  twoDHists_["ZY"] = fs_->make<TH2D> ("ZY", ";z [cm]; y [cm]", 5000, 110.0, 190.0, 5000, -8.0, 8.0);  // (ZY) plot
+  twoDHists_["ZY"] = fs_->make<TH2D> ("ZY", ";z [cm]; y [cm]", 5000, -40.0, 40.0, 5000, -8.0, 8.0);  // (ZY) plot
   //twoDHists_["rhoZ"] = fs_->make<TH2D> ("rhoZ", ";z [cm];#rho [cm]", 500, 70.0, 230.0, 500, 0.0, 10.0);
 
   simHitsBarrelHighTofToken_ = consumes<vector<PSimHit> > (simHitsBarrelHighTof_);

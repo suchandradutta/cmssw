@@ -58,7 +58,7 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",       # process.FEVT
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('gensim.root'),
+    fileName = cms.untracked.string('TrackerPhase2TestBeam_GEN_SIM.root'),
     outputCommands = process.RAWSIMEventContent.outputCommands,   # process.FEVTDEBUGEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
@@ -88,7 +88,7 @@ process.generator = cms.EDProducer("FlatRandomEThetaGunProducer",
     firstRun = cms.untracked.uint32(1),
     psethack = cms.string('single muon E 100')
 )
-process.VtxSmeared.MinZ = -800.0
+process.VtxSmeared.MinZ = -800.0                    # TO DO: Is -800 fine ????
 process.VtxSmeared.MaxZ = -800.0
 process.VtxSmeared.MinX = -7.5
 process.VtxSmeared.MaxX =  7.5

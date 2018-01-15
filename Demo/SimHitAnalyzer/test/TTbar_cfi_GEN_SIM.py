@@ -42,7 +42,7 @@ process.source = cms.Source ("PoolSource",
     fileNames = cms.untracked.vstring ([
         #"file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/SingleMuPt1000_pythia8_cfi_py_GEN_SIM.root"
         #"file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/MinBias_TuneZ2star_14TeV_pythia6_Phase2_cff_GEN_SIM_2000.root"
-        "file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/gensim.root"    
+        "file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/TrackerPhase2TestBeam_GEN_SIM.root"    
         ])
 )
 
