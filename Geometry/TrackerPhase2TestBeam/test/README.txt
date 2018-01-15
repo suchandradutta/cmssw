@@ -8,7 +8,10 @@ cmsRun Geometry/TrackerGeometryBuilder/test/tracker_cfg.py
 
 
 # SimHit map is on the way :)
+cmsRun MinBias_TuneZ2star_14TeV_pythia6_Phase2_2000_cff_GEN_SIM.py
 cmsRun Demo/SimHitAnalyzer/test/TTbar_cfi_GEN_SIM.py
+
+
 12-Jan-2018 19:09:01 CET  Initiating request to open file file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/SingleMuPt1000_pythia8_cfi_py_GEN_SIM.root
 12-Jan-2018 19:09:02 CET  Successfully opened file file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/SingleMuPt1000_pythia8_cfi_py_GEN_SIM.root
 Begin processing the 1st record. Run 1, Event 1, LumiSection 1 at 12-Jan-2018 19:09:02.858 CET
