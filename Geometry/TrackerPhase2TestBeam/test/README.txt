@@ -1,3 +1,7 @@
+# Visualize Geometry on Fireworks
+cmsShow --sim-geom-file simGeoTelescope.root -c $CMSSW_RELEASE_BASE/src/Fireworks/Core/macros/simGeo.fwc
+
+
 # Produce TelescopeDigiGeometry (is called Tracker for the moment, but is on the actual telescope geometry, just need to be renamed :))
 cmsRun Geometry/TrackerGeometryBuilder/test/tracker_cfg.py
 
