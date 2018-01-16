@@ -30,7 +30,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.load('SimG4CMS.HGCalTestBeam.HGCalTBAnalyzer_cfi')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50)
+    input = cms.untracked.int32(50000)
 )
 
 # Input source
@@ -77,7 +77,7 @@ process.generator = cms.EDProducer("FlatRandomEThetaGunProducer",
     AddAntiParticle = cms.bool(False),
     PGunParameters = cms.PSet(
         MinE = cms.double(9.99),
-        MaxE = cms.double(10.01),
+        MaxE = cms.double(10.01),                   # In GeV! TO DO: Is E = 10 GeV fine ????
         MinTheta = cms.double(0.0),
         MaxTheta = cms.double(0.0),
         MinPhi = cms.double(-3.14159265359),
@@ -86,10 +86,10 @@ process.generator = cms.EDProducer("FlatRandomEThetaGunProducer",
     ),
     Verbosity = cms.untracked.int32(0),
     firstRun = cms.untracked.uint32(1),
-    psethack = cms.string('single muon E 100')
+    psethack = cms.string('single muon E 10')
 )
-process.VtxSmeared.MinZ = -800.0                    # TO DO: Is -800 fine ????
-process.VtxSmeared.MaxZ = -800.0
+process.VtxSmeared.MinZ = -200.0                    # In mm! TO DO: Change to -800mm ????
+process.VtxSmeared.MaxZ = -200.0
 process.VtxSmeared.MinX = -7.5
 process.VtxSmeared.MaxX =  7.5
 process.VtxSmeared.MinY = -7.5

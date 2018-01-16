@@ -30,10 +30,10 @@
 
 <SolidSection label="telescope.xml">
 <Box name="Telescope" dx="500.0*mm" dy="300.0*mm" dz="1000.0*mm"/>
-<Box name="DUTContainer" dx="260.0*mm" dy="180.0*mm" dz="74.0*mm"/>
+<Box name="DUTContainer" dx="260.0*mm" dy="180.0*mm" dz="73.0*mm"/>
 <Box name="DUTHolder" dx="260.0*mm" dy="160.0*mm" dz="20.0*mm"/>
-<Box name="Arm" dx="70.0*mm" dy="160.0*mm" dz="100.0*mm"/>
-<Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]/2.0" dz="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0"/>
+<Box name="Arm" dx="70.0*mm" dy="160.0*mm" dz="101.0*mm"/>
+<Box name="Plane" dx="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]" dy="[Phase2BeamTestConstants:Phase1BPIXModuleThickness]" dz="[Phase2BeamTestConstants:Phase1BPIXModuleLength]/2.0"/>
 </SolidSection>
 
 
@@ -94,13 +94,13 @@
 <PosPart copyNumber="1">
 <rParent name="telescope:Plane"/>
 <rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
-<Translation x="-[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
+<rRotation name="Phase2BeamTestConstants:Z180"/>     <!-- TO DO: Within each telescope plane, the module with the lowest CMS_Y is flipped. Should it be the module with the highest CMS_Y ? + Adjust the shifts of Phase 1 modules within planes. -->
+<Translation x="-[Phase2BeamTestConstants:InterPhase1BPIXModuleDeltaX]/2.0" y="-[Phase2BeamTestConstants:InterPhase1BPIXModuleDeltaY]/2.0" z="0.0*mm"/>
 </PosPart>
 <PosPart copyNumber="2">
 <rParent name="telescope:Plane"/>
-<rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>
-<rRotation name="Phase2BeamTestConstants:Z180"/>                 <!-- TO DO: Within each telescope plane, the module with the highest CMS_Y is flipped. Should it be the module with the lowest CMS_Y ? -->
-<Translation x="[Phase2BeamTestConstants:Phase1BPIXModuleWidth]/2.0" y="0.0*mm" z="0.0*mm"/>
+<rChild name="Phase1BPIXLayer4Module:PixelBarrelModuleFullPlus"/>     
+<Translation x="[Phase2BeamTestConstants:InterPhase1BPIXModuleDeltaX]/2.0" y="[Phase2BeamTestConstants:InterPhase1BPIXModuleDeltaY]/2.0" z="0.0*mm"/>
 </PosPart>
 
 
