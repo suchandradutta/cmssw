@@ -70,8 +70,6 @@ TkAccumulatingSensitiveDetector::TkAccumulatingSensitiveDetector(string name,
    oldVolume(nullptr), lastId(0), lastTrack(0), eventno(0) ,rTracker(1200.*mm),zTracker(3000.*mm),
    numberingScheme_(nullptr)
 {
-
-  std::cout << "TkAccumulatingSensitiveDetector::TkAccumulatingSensitiveDetector" << std::endl;
    
   edm::ParameterSet m_TrackerSD = p.getParameter<edm::ParameterSet>("TrackerSD");
   allowZeroEnergyLoss = m_TrackerSD.getParameter<bool>("ZeroEnergyLoss");

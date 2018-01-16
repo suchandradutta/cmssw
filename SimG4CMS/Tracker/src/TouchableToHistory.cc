@@ -43,8 +43,6 @@ void TouchableToHistory::buildAll(){
     myMap[st] = nav_type((*it)->navType().begin(),(*it)->navType().end());
     myDirectMap[st] = (*it)->geographicalID();
 
-    std::cout << "TouchableToHistory::buildAll  (*it)->geographicalID() = " << (*it)->geographicalID() << std::endl;
-
     /*
 #ifdef DEBUG    
     LogDebug("TrackerSimDebugNumbering")<< " INSERTING "<<view.logicalPart().name()<<" "<<t<<" "<<hist->GetVolume()->GetLogicalVolume()->GetName();
