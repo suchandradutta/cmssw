@@ -2,6 +2,11 @@
 cmsShow --sim-geom-file simGeoTelescope.root -c $CMSSW_RELEASE_BASE/src/Fireworks/Core/macros/simGeo.fwc
 
 
+# Print DetIds 
+cd SLHCUpgradeSimulations/Geometry/test 
+cmsRun printGeometry_pixelTelescope_cfg.py
+
+
 # Produce TelescopeDigiGeometry (is called Tracker for the moment, but is on the actual telescope geometry, just need to be renamed :))
 cmsRun Geometry/TrackerGeometryBuilder/test/tracker_cfg.py
 
