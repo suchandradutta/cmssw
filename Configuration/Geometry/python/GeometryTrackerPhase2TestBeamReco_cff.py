@@ -4,16 +4,18 @@ import FWCore.ParameterSet.Config as cms
 # If you notice a mistake, please update the generating script, not just this config
 
 from Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff import *  # DDGeometry + GeometryNumberingBuilder
+from Geometry.TrackerGeometryBuilder.idealForDigiTrackerGeometry_cff import *  # Needs to be renamed to 'Telescope' and moved to telescope package (needs big cleaning!). But this is already on the telescope geometry.
 
+
+
+
+# Off-topic, but kept for understanding. Will be removed when reco is reached (not tomorrow).
 # tracker
 #from Geometry.CommonDetUnit.globalTrackingGeometry_cfi import *
 #from RecoTracker.GeometryESProducer.TrackerRecoGeometryESProducer_cfi import *
 
 #from Geometry.TrackerGeometryBuilder.trackerParameters_cfi import *
 #from Geometry.TrackerNumberingBuilder.trackerTopology_cfi import *
-from Geometry.TrackerGeometryBuilder.idealForDigiTrackerGeometry_cff import *
-
-
 
 #trackerGeometry.applyAlignment = cms.bool(False)
 
@@ -21,7 +23,7 @@ from Geometry.TrackerGeometryBuilder.idealForDigiTrackerGeometry_cff import *
 
 
 
-# Off-topic, but kept for understanding. Will be removed when reco is reached (not tomorrow).
+
 # calo
 # from Geometry.CaloEventSetup.HGCalV6Topology_cfi import *
 # from Geometry.HGCalGeometry.HGCalV6GeometryESProducer_cfi import *

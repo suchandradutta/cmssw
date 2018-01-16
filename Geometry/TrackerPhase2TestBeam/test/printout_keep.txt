@@ -1,0 +1,178 @@
+Begin processing the 1st record. Run 1, Event 1, LumiSection 1 at 16-Jan-2018 09:57:40.934 CET
+DDTelescopeGeometryESProducer::produce  fromDDD_ = 1
+GeometricDet = Telescope, DetId = 2147483648, x = 0, y = 0, z = 0, phi = 0
+GeometricDet = Arm, DetId = 2181038080, x = 0, y = 0, z = -175, phi = 0
+GeometricDet = Plane, DetId = 2181038096, x = 0, y = 0, z = -100, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2181038100, x = 2.09487, y = -11.5112, z = -96.3716, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2181038100, x = 2.03732, y = -11.5531, z = -96.4713, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2181038104, x = -2.09487, y = 11.5112, z = -103.628, phi = 100.314
+GeometricDet = DetUnit, DetId = 2181038104, x = -2.03732, y = 11.5531, z = -103.529, phi = 100.001
+GeometricDet = Plane, DetId = 2181038112, x = 0, y = 0, z = -150, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2181038116, x = 2.09487, y = -11.5112, z = -146.372, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2181038116, x = 2.03732, y = -11.5531, z = -146.471, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2181038120, x = -2.09487, y = 11.5112, z = -153.628, phi = 100.314
+GeometricDet = DetUnit, DetId = 2181038120, x = -2.03732, y = 11.5531, z = -153.529, phi = 100.001
+GeometricDet = Plane, DetId = 2181038128, x = 0, y = 0, z = -200, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2181038132, x = 2.09487, y = -11.5112, z = -196.372, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2181038132, x = 2.03732, y = -11.5531, z = -196.471, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2181038136, x = -2.09487, y = 11.5112, z = -203.628, phi = 100.314
+GeometricDet = DetUnit, DetId = 2181038136, x = -2.03732, y = 11.5531, z = -203.529, phi = 100.001
+GeometricDet = Plane, DetId = 2181038144, x = 0, y = 0, z = -250, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2181038148, x = 2.09487, y = -11.5112, z = -246.372, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2181038148, x = 2.03732, y = -11.5531, z = -246.471, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2181038152, x = -2.09487, y = 11.5112, z = -253.628, phi = 100.314
+GeometricDet = DetUnit, DetId = 2181038152, x = -2.03732, y = 11.5531, z = -253.529, phi = 100.001
+GeometricDet = DUTContainer, DetId = 2214592512, x = 0, y = 0, z = 0, phi = 0
+GeometricDet = DUTHolder, DetId = 2214592528, x = 0, y = 0, z = 0, phi = 0
+GeometricDet = DUT, DetId = 2214592532, x = 0, y = 0, z = 0, phi = 0
+GeometricDet = DetUnit, DetId = 2214592533, x = 7.89487e-18, y = -0.156283, z = -0.886327, phi = -90
+GeometricDet = DetUnit, DetId = 2214592534, x = -7.89487e-18, y = 0.156283, z = 0.886327, phi = 90
+GeometricDet = Arm, DetId = 2248146944, x = 0, y = 0, z = 175, phi = 0
+GeometricDet = Plane, DetId = 2248146960, x = 0, y = 0, z = 100, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2248146964, x = 2.09487, y = -11.5112, z = 103.628, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2248146964, x = 2.03732, y = -11.5531, z = 103.529, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2248146968, x = -2.09487, y = 11.5112, z = 96.3716, phi = 100.314
+GeometricDet = DetUnit, DetId = 2248146968, x = -2.03732, y = 11.5531, z = 96.4713, phi = 100.001
+GeometricDet = Plane, DetId = 2248146976, x = 0, y = 0, z = 150, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2248146980, x = 2.09487, y = -11.5112, z = 153.628, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2248146980, x = 2.03732, y = -11.5531, z = 153.529, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2248146984, x = -2.09487, y = 11.5112, z = 146.372, phi = 100.314
+GeometricDet = DetUnit, DetId = 2248146984, x = -2.03732, y = 11.5531, z = 146.471, phi = 100.001
+GeometricDet = Plane, DetId = 2248146992, x = 0, y = 0, z = 200, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2248146996, x = 2.09487, y = -11.5112, z = 203.628, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2248146996, x = 2.03732, y = -11.5531, z = 203.529, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2248147000, x = -2.09487, y = 11.5112, z = 196.372, phi = 100.314
+GeometricDet = DetUnit, DetId = 2248147000, x = -2.03732, y = 11.5531, z = 196.471, phi = 100.001
+GeometricDet = Plane, DetId = 2248147008, x = 0, y = 0, z = 250, phi = 0
+GeometricDet = Phase1PixelModule, DetId = 2248147012, x = 2.09487, y = -11.5112, z = 253.628, phi = -79.6859
+GeometricDet = DetUnit, DetId = 2248147012, x = 2.03732, y = -11.5531, z = 253.529, phi = -79.9991
+GeometricDet = Phase1PixelModule, DetId = 2248147016, x = -2.09487, y = 11.5112, z = 246.372, phi = 100.314
+GeometricDet = DetUnit, DetId = 2248147016, x = -2.03732, y = 11.5531, z = 246.471, phi = 100.001
+TrackerGeomBuilderFromGeometricDet::buildGeomDet  gduId[i].rawId() = 2214592533
+TrackerGeomBuilderFromGeometricDet::buildGeomDet  partnerDetId(gduId[i]).rawId() = 2214592534
+TrackerGeomBuilderFromGeometricDet::buildGeomDet  composedDetId.rawId() = 2214592532
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.98719e-05 simHit.entryPoint() =  (-1.65247,2.22215,-0.01)  simHit.exitPoint() =  (-1.65601,2.22212,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.24329e-05 simHit.entryPoint() =  (-1.68437,2.22192,-0.01)  simHit.exitPoint() =  (-1.68791,2.22189,0.01) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038148 simHit.trackId() = 1 simHit.energyLoss() = 0.000115079 simHit.entryPoint() =  (0.492703,-2.92546,-0.01425)  simHit.exitPoint() =  (0.503109,-2.94292,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038132 simHit.trackId() = 1 simHit.energyLoss() = 0.000101188 simHit.entryPoint() =  (0.497521,-2.91902,-0.01425)  simHit.exitPoint() =  (0.507926,-2.93648,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038116 simHit.trackId() = 1 simHit.energyLoss() = 0.000107869 simHit.entryPoint() =  (0.502886,-2.91248,-0.01425)  simHit.exitPoint() =  (0.513296,-2.92994,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038100 simHit.trackId() = 1 simHit.energyLoss() = 9.92137e-05 simHit.entryPoint() =  (0.507878,-2.90624,-0.01425)  simHit.exitPoint() =  (0.518285,-2.9237,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146964 simHit.trackId() = 1 simHit.energyLoss() = 0.00010466 simHit.entryPoint() =  (0.52636,-2.88031,-0.01425)  simHit.exitPoint() =  (0.536762,-2.89777,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146980 simHit.trackId() = 1 simHit.energyLoss() = 0.000140427 simHit.entryPoint() =  (0.530077,-2.8736,-0.01425)  simHit.exitPoint() =  (0.540477,-2.89107,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146996 simHit.trackId() = 1 simHit.energyLoss() = 9.99152e-05 simHit.entryPoint() =  (0.533875,-2.86678,-0.01425)  simHit.exitPoint() =  (0.544272,-2.88424,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147012 simHit.trackId() = 1 simHit.energyLoss() = 0.000124872 simHit.entryPoint() =  (0.537564,-2.85911,-0.01425)  simHit.exitPoint() =  (0.547962,-2.87656,0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146996 simHit.trackId() = 1 simHit.energyLoss() = 5.19519e-05 simHit.entryPoint() =  (0.543212,-2.88246,0.0113433)  simHit.exitPoint() =  (0.544038,-2.88237,0.0113217) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146964 simHit.trackId() = 1 simHit.energyLoss() = 3.22332e-05 simHit.entryPoint() =  (0.53436,-2.89374,0.00766817)  simHit.exitPoint() =  (0.534081,-2.89368,0.00788689) 
+Begin processing the 2nd record. Run 1, Event 2, LumiSection 1 at 16-Jan-2018 09:57:41.123 CET
+Begin processing the 3rd record. Run 1, Event 3, LumiSection 1 at 16-Jan-2018 09:57:41.123 CET
+Begin processing the 4th record. Run 1, Event 4, LumiSection 1 at 16-Jan-2018 09:57:41.123 CET
+Begin processing the 5th record. Run 1, Event 5, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 7.7393e-05 simHit.entryPoint() =  (-3.78904,-1.03911,-0.01)  simHit.exitPoint() =  (-3.79254,-1.03915,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.94005e-05 simHit.entryPoint() =  (-3.82044,-1.03952,-0.01)  simHit.exitPoint() =  (-3.82393,-1.03957,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 0.000111725 simHit.entryPoint() =  (-3.82282,-1.03955,0.00367865)  simHit.exitPoint() =  (-3.82234,-1.04225,0.0078003) 
+Begin processing the 6th record. Run 1, Event 6, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+Begin processing the 7th record. Run 1, Event 7, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 4.38029e-05 simHit.entryPoint() =  (-2.06205,-2.82772,-0.01)  simHit.exitPoint() =  (-2.06554,-2.82773,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.47342e-05 simHit.entryPoint() =  (-2.09341,-2.82783,-0.01)  simHit.exitPoint() =  (-2.09689,-2.82784,0.01) 
+Begin processing the 8th record. Run 1, Event 8, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+Begin processing the 9th record. Run 1, Event 9, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+Begin processing the 10th record. Run 1, Event 10, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+Begin processing the 11th record. Run 1, Event 11, LumiSection 1 at 16-Jan-2018 09:57:41.124 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.60447e-05 simHit.entryPoint() =  (-2.02809,1.26505,-0.01)  simHit.exitPoint() =  (-2.03162,1.26503,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.20311e-05 simHit.entryPoint() =  (-2.05981,1.26483,-0.01)  simHit.exitPoint() =  (-2.06334,1.26481,0.01) 
+Begin processing the 12th record. Run 1, Event 12, LumiSection 1 at 16-Jan-2018 09:57:41.125 CET
+Begin processing the 13th record. Run 1, Event 13, LumiSection 1 at 16-Jan-2018 09:57:41.125 CET
+Begin processing the 14th record. Run 1, Event 14, LumiSection 1 at 16-Jan-2018 09:57:41.125 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 7.40741e-05 simHit.entryPoint() =  (-1.35415,2.87512,-0.01)  simHit.exitPoint() =  (-1.35771,2.87509,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.96193e-05 simHit.entryPoint() =  (-1.38621,2.8749,-0.01)  simHit.exitPoint() =  (-1.38977,2.87488,0.01) 
+Begin processing the 15th record. Run 1, Event 15, LumiSection 1 at 16-Jan-2018 09:57:41.132 CET
+Begin processing the 16th record. Run 1, Event 16, LumiSection 1 at 16-Jan-2018 09:57:41.133 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.35562e-05 simHit.entryPoint() =  (1.3271,-2.8769,-0.01)  simHit.exitPoint() =  (1.3236,-2.87687,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.0453e-05 simHit.entryPoint() =  (1.2956,-2.87661,-0.01)  simHit.exitPoint() =  (1.2921,-2.87658,0.01) 
+Begin processing the 17th record. Run 1, Event 17, LumiSection 1 at 16-Jan-2018 09:57:41.133 CET
+Begin processing the 18th record. Run 1, Event 18, LumiSection 1 at 16-Jan-2018 09:57:41.133 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 4.82781e-05 simHit.entryPoint() =  (-4.24719,-0.519491,-0.01)  simHit.exitPoint() =  (-4.25069,-0.519542,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 0.000101882 simHit.entryPoint() =  (-4.27876,-0.519943,-0.01)  simHit.exitPoint() =  (-4.28227,-0.519994,0.01) 
+Begin processing the 19th record. Run 1, Event 19, LumiSection 1 at 16-Jan-2018 09:57:41.133 CET
+Begin processing the 20th record. Run 1, Event 20, LumiSection 1 at 16-Jan-2018 09:57:41.133 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.14719e-05 simHit.entryPoint() =  (4.1376,-0.0927461,-0.01)  simHit.exitPoint() =  (4.13406,-0.0927036,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.48724e-05 simHit.entryPoint() =  (4.10571,-0.0923691,-0.01)  simHit.exitPoint() =  (4.10217,-0.0923275,0.01) 
+Begin processing the 21st record. Run 1, Event 21, LumiSection 1 at 16-Jan-2018 09:57:41.133 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 4.4558e-05 simHit.entryPoint() =  (4.45454,-0.662111,-0.01)  simHit.exitPoint() =  (4.45101,-0.662057,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.49628e-05 simHit.entryPoint() =  (4.42276,-0.661624,-0.01)  simHit.exitPoint() =  (4.41923,-0.661572,0.01) 
+Begin processing the 22nd record. Run 1, Event 22, LumiSection 1 at 16-Jan-2018 09:57:41.134 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.98413e-05 simHit.entryPoint() =  (1.2322,2.70647,-0.01)  simHit.exitPoint() =  (1.22863,2.70648,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 4.73614e-05 simHit.entryPoint() =  (1.20012,2.70655,-0.01)  simHit.exitPoint() =  (1.19655,2.70656,0.01) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038152 simHit.trackId() = 1 simHit.energyLoss() = 9.55321e-05 simHit.entryPoint() =  (0.0993141,-2.85044,0.01425)  simHit.exitPoint() =  (0.0888716,-2.86798,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038136 simHit.trackId() = 1 simHit.energyLoss() = 0.000112863 simHit.entryPoint() =  (0.0894577,-2.85365,0.01425)  simHit.exitPoint() =  (0.0790147,-2.87119,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038120 simHit.trackId() = 1 simHit.energyLoss() = 8.71318e-05 simHit.entryPoint() =  (0.0790154,-2.8586,0.01425)  simHit.exitPoint() =  (0.0685668,-2.87615,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038104 simHit.trackId() = 1 simHit.energyLoss() = 0.000107019 simHit.entryPoint() =  (0.0678835,-2.86382,0.01425)  simHit.exitPoint() =  (0.0574327,-2.88136,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146968 simHit.trackId() = 1 simHit.energyLoss() = 0.000101092 simHit.entryPoint() =  (0.0265677,-2.88198,0.01425)  simHit.exitPoint() =  (0.0161284,-2.89952,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146984 simHit.trackId() = 1 simHit.energyLoss() = 0.000139697 simHit.entryPoint() =  (0.0173104,-2.88421,0.01425)  simHit.exitPoint() =  (0.00687277,-2.90174,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147000 simHit.trackId() = 1 simHit.energyLoss() = 0.000154035 simHit.entryPoint() =  (0.00868686,-2.88665,0.01425)  simHit.exitPoint() =  (-0.0017483,-2.90419,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147016 simHit.trackId() = 1 simHit.energyLoss() = 0.000167524 simHit.entryPoint() =  (-0.000223778,-2.88972,0.01425)  simHit.exitPoint() =  (-0.0106625,-2.90725,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147000 simHit.trackId() = 1 simHit.energyLoss() = 5.37464e-05 simHit.entryPoint() =  (0.0043773,-2.89389,0.002479)  simHit.exitPoint() =  (0.00417116,-2.89325,0.00191447) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038120 simHit.trackId() = 1 simHit.energyLoss() = 4.43397e-05 simHit.entryPoint() =  (0.0695469,-2.8745,-0.0115778)  simHit.exitPoint() =  (0.0700957,-2.8747,-0.0118146) 
+Begin processing the 23rd record. Run 1, Event 23, LumiSection 1 at 16-Jan-2018 09:57:41.134 CET
+Begin processing the 24th record. Run 1, Event 24, LumiSection 1 at 16-Jan-2018 09:57:41.134 CET
+Begin processing the 25th record. Run 1, Event 25, LumiSection 1 at 16-Jan-2018 09:57:41.134 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.78056e-05 simHit.entryPoint() =  (-0.3418,-3.81735,-0.01)  simHit.exitPoint() =  (-0.345287,-3.81734,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.2446e-05 simHit.entryPoint() =  (-0.373191,-3.81722,-0.01)  simHit.exitPoint() =  (-0.376679,-3.81721,0.01) 
+Begin processing the 26th record. Run 1, Event 26, LumiSection 1 at 16-Jan-2018 09:57:41.134 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.1635e-05 simHit.entryPoint() =  (-4.21729,-1.77593,-0.01)  simHit.exitPoint() =  (-4.22078,-1.77597,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.71679e-05 simHit.entryPoint() =  (-4.24868,-1.77626,-0.01)  simHit.exitPoint() =  (-4.25217,-1.77629,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 4.87673e-05 simHit.entryPoint() =  (-4.21811,-1.77594,-0.00528484)  simHit.exitPoint() =  (-4.21861,-1.77538,-0.00520789) 
+Begin processing the 27th record. Run 1, Event 27, LumiSection 1 at 16-Jan-2018 09:57:41.134 CET
+Begin processing the 28th record. Run 1, Event 28, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+Begin processing the 29th record. Run 1, Event 29, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+Begin processing the 30th record. Run 1, Event 30, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.50056e-05 simHit.entryPoint() =  (2.56577,-2.93091,-0.01)  simHit.exitPoint() =  (2.56227,-2.93087,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.1666e-05 simHit.entryPoint() =  (2.53427,-2.93057,-0.01)  simHit.exitPoint() =  (2.53077,-2.93053,0.01) 
+Begin processing the 31st record. Run 1, Event 31, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.21168e-05 simHit.entryPoint() =  (4.34644,-0.731093,-0.01)  simHit.exitPoint() =  (4.34292,-0.731037,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 7.81292e-05 simHit.entryPoint() =  (4.31473,-0.730589,-0.01)  simHit.exitPoint() =  (4.3112,-0.730533,0.01) 
+Begin processing the 32nd record. Run 1, Event 32, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+Begin processing the 33rd record. Run 1, Event 33, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 7.29728e-05 simHit.entryPoint() =  (3.79727,0.726165,-0.01)  simHit.exitPoint() =  (3.79372,0.726197,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.01271e-05 simHit.entryPoint() =  (3.76531,0.726455,-0.01)  simHit.exitPoint() =  (3.76177,0.726488,0.01) 
+Begin processing the 34th record. Run 1, Event 34, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+Begin processing the 35th record. Run 1, Event 35, LumiSection 1 at 16-Jan-2018 09:57:41.135 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.26379e-05 simHit.entryPoint() =  (1.01328,-2.58903,-0.01)  simHit.exitPoint() =  (1.00977,-2.58902,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 6.97476e-05 simHit.entryPoint() =  (0.981738,-2.58893,-0.01)  simHit.exitPoint() =  (0.978233,-2.58892,0.01) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038152 simHit.trackId() = 1 simHit.energyLoss() = 0.000140661 simHit.entryPoint() =  (-0.213748,3.21337,0.01425)  simHit.exitPoint() =  (-0.224073,3.19583,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038136 simHit.trackId() = 1 simHit.energyLoss() = 0.000116546 simHit.entryPoint() =  (-0.207505,3.20925,0.01425)  simHit.exitPoint() =  (-0.217838,3.19171,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038120 simHit.trackId() = 1 simHit.energyLoss() = 0.000132809 simHit.entryPoint() =  (-0.201122,3.2053,0.01425)  simHit.exitPoint() =  (-0.211451,3.18776,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2181038104 simHit.trackId() = 1 simHit.energyLoss() = 8.59566e-05 simHit.entryPoint() =  (-0.194677,3.20243,0.01425)  simHit.exitPoint() =  (-0.205003,3.1849,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146968 simHit.trackId() = 1 simHit.energyLoss() = 0.000106816 simHit.entryPoint() =  (-0.172016,3.19299,0.01425)  simHit.exitPoint() =  (-0.182351,3.17546,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248146984 simHit.trackId() = 1 simHit.energyLoss() = 0.000119301 simHit.entryPoint() =  (-0.167284,3.1898,0.01425)  simHit.exitPoint() =  (-0.177624,3.17227,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147000 simHit.trackId() = 1 simHit.energyLoss() = 7.58001e-05 simHit.entryPoint() =  (-0.162889,3.18629,0.01425)  simHit.exitPoint() =  (-0.173232,3.16875,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147016 simHit.trackId() = 1 simHit.energyLoss() = 9.76196e-05 simHit.entryPoint() =  (-0.158838,3.18299,0.01425)  simHit.exitPoint() =  (-0.169184,3.16545,-0.01425) 
+SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = 2248147000 simHit.trackId() = 1 simHit.energyLoss() = 4.06239e-05 simHit.entryPoint() =  (-0.168175,3.17732,-0.000316698)  simHit.exitPoint() =  (-0.167708,3.17711,-0.000483901) 
+Begin processing the 36th record. Run 1, Event 36, LumiSection 1 at 16-Jan-2018 09:57:41.136 CET
+Begin processing the 37th record. Run 1, Event 37, LumiSection 1 at 16-Jan-2018 09:57:41.137 CET
+Begin processing the 38th record. Run 1, Event 38, LumiSection 1 at 16-Jan-2018 09:57:41.137 CET
+Begin processing the 39th record. Run 1, Event 39, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.45333e-05 simHit.entryPoint() =  (2.95442,3.16489,-0.01)  simHit.exitPoint() =  (2.95085,3.16493,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 4.71433e-05 simHit.entryPoint() =  (2.92228,3.16523,-0.01)  simHit.exitPoint() =  (2.91871,3.16527,0.01) 
+Begin processing the 40th record. Run 1, Event 40, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.96285e-05 simHit.entryPoint() =  (-1.04334,4.88399,-0.01)  simHit.exitPoint() =  (-1.04692,4.88395,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.89566e-05 simHit.entryPoint() =  (-1.07559,4.88372,-0.01)  simHit.exitPoint() =  (-1.07917,4.88369,0.01) 
+Begin processing the 41st record. Run 1, Event 41, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+Begin processing the 42nd record. Run 1, Event 42, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.18081e-05 simHit.entryPoint() =  (-2.71114,1.13908,-0.01)  simHit.exitPoint() =  (-2.71466,1.13905,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.16349e-05 simHit.entryPoint() =  (-2.74282,1.13878,-0.01)  simHit.exitPoint() =  (-2.74634,1.13875,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 0.000103346 simHit.entryPoint() =  (-2.79455,1.20556,-0.01)  simHit.exitPoint() =  (-2.81275,1.21679,0.01) 
+Begin processing the 43rd record. Run 1, Event 43, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+Begin processing the 44th record. Run 1, Event 44, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+Begin processing the 45th record. Run 1, Event 45, LumiSection 1 at 16-Jan-2018 09:57:41.138 CET
+Begin processing the 46th record. Run 1, Event 46, LumiSection 1 at 16-Jan-2018 09:57:41.139 CET
+Begin processing the 47th record. Run 1, Event 47, LumiSection 1 at 16-Jan-2018 09:57:41.139 CET
+Begin processing the 48th record. Run 1, Event 48, LumiSection 1 at 16-Jan-2018 09:57:41.139 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 5.47641e-05 simHit.entryPoint() =  (-1.11094,-4.96087,-0.01)  simHit.exitPoint() =  (-1.11441,-4.96087,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 8.63092e-05 simHit.entryPoint() =  (-1.1422,-4.96078,-0.01)  simHit.exitPoint() =  (-1.14568,-4.96077,0.01) 
+Begin processing the 49th record. Run 1, Event 49, LumiSection 1 at 16-Jan-2018 09:57:41.139 CET
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592533 simHit.trackId() = 1 simHit.energyLoss() = 6.65855e-05 simHit.entryPoint() =  (0.55741,-2.90625,-0.01)  simHit.exitPoint() =  (0.553913,-2.90624,0.01) 
+SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = 2214592534 simHit.trackId() = 1 simHit.energyLoss() = 5.8009e-05 simHit.entryPoint() =  (0.525897,-2.90617,-0.01)  simHit.exitPoint() =  (0.522395,-2.90616,0.01) 
+Begin processing the 50th record. Run 1, Event 50, LumiSection 1 at 16-Jan-2018 09:57:41.139 CET
+16-Jan-2018 09:57:41 CET  Closed file file:/afs/cern.ch/user/g/ghugo/CMSSW_10_0_0_pre1/src/TrackerPhase2TestBeam_GEN_SIM.root
+
