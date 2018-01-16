@@ -21,13 +21,7 @@ from Geometry.TrackerGeometryBuilder.idealForDigiTrackerGeometry_cff import *
 
 
 
-
-
-
-
-
-
-# Off-topic
+# Off-topic, but kept for understanding. Will be removed when reco is reached (not tomorrow).
 # calo
 # from Geometry.CaloEventSetup.HGCalV6Topology_cfi import *
 # from Geometry.HGCalGeometry.HGCalV6GeometryESProducer_cfi import *

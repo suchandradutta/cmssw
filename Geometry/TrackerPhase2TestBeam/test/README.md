@@ -4,11 +4,16 @@ cmsShow --sim-geom-file simGeoTelescope.root -c $CMSSW_RELEASE_BASE/src/Firework
 
 
 # Print DetIds
-cmsRun SLHCUpgradeSimulations/Geometry/test/printGeometry_pixelTelescope_cfg.py
+cmsRun Geometry/TrackerPhase2TestBeam/test/printDetIds_cfg.py
 
 
-# Produce TelescopeDigiGeometry (is called Tracker for the moment, but is on the actual telescope geometry, just need to be renamed :))
+# Test TelescopeDigiGeometry (is called Tracker for the moment, but is on the actual telescope geometry, just need to be renamed :))
+# NB: This is not the DIGI step! But this will be directly use by the Digitizer.
 cmsRun Geometry/TrackerGeometryBuilder/test/tracker_cfg.py
+
+
+# Produce the DetIds, numRows, numCols mapping file
+cmsRun SLHCUpgradeSimulations/Geometry/test/printGeometry_pixelTelescope_cfg.py
 
 
 # GEM_SIM step
@@ -16,7 +21,7 @@ cmsRun Geometry/TrackerPhase2TestBeam/python/TrackerPhase2TestBeam_GEN_SIM_cfg.p
 
 
 # Produce SimHit map
-cmsRun Geometry/TrackerPhase2TestBeam/python/TrackerPhase2TestBeam_GEN_SIM_cfg.py  # GEM_SIM step
+cmsRun Geometry/TrackerPhase2TestBeam/python/TrackerPhase2TestBeam_GEN_SIM_cfg.py  # GEM_SIM step required, obviously.
 cmsRun Geometry/TrackerPhase2TestBeam/test/plotSimHitMap_cfg.py                    # Analyzer in charge of plotting the SimHit map
 
 

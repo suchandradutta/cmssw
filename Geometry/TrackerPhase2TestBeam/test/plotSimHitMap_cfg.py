@@ -1,8 +1,3 @@
-# Auto generated configuration file
-# using: 
-# Revision: 1.19 
-# Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: TTbar_cfi --conditions auto:phase2_realistic -n 2 --eventcontent FEVTDEBUG -s GEN,SIM --datatier GEN-SIM --beamspot HLLHC --geometry Extended2023D17 --no_exec
 import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('ANA')

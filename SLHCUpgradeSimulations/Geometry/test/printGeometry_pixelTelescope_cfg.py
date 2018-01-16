@@ -5,6 +5,7 @@ process.load("Configuration.StandardSequences.Services_cff")
 #process.load('Configuration.Geometry.GeometryExtendedPhase2TkBE5D_cff')
 #process.load('Configuration.Geometry.GeometryExtended2023TiltedTKReco_cff')
 process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff')
+process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
 
 #process.load('Geometry.TrackerGeometryBuilder.trackerSLHCGeometry_cfi')
 #process.trackerSLHCGeometry.applyAlignment = cms.bool(False)
