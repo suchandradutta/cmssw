@@ -10,6 +10,8 @@
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 #include "Geometry/CommonDetUnit/interface/TrackingGeometry.h"
 #include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+#include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeTopologyEP.h"
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 
 #include <climits>
 #include <iostream>

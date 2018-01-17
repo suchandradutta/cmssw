@@ -22,6 +22,7 @@
 <use  name="Geometry/Records"/>
 <use  name="Geometry/TrackerGeometryBuilder"/>
 <use  name="Geometry/TrackerNumberingBuilder"/>
+<use  name="Geometry/TrackerPhase2TestBeam"/>
 <use  name="MagneticField/Engine"/>
 <use  name="MagneticField/Records"/>
 <use  name="PhysicsTools/CondLiteIO"/>

@@ -240,6 +240,7 @@ namespace cond {
       FETCH_PAYLOAD_CASE( PGeometricDet )
       FETCH_PAYLOAD_CASE( PGeometricDetExtra )
       FETCH_PAYLOAD_CASE( PTrackerParameters )
+      FETCH_PAYLOAD_CASE( PTelescopeParameters )
       FETCH_PAYLOAD_CASE( PHGCalParameters )
       //FETCH_PAYLOAD_CASE( PerformancePayload )
       FETCH_PAYLOAD_CASE( PerformancePayloadFromTable )

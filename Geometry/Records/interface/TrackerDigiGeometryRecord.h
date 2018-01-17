@@ -8,8 +8,8 @@
 #include "CondFormats/AlignmentRecord/interface/TrackerSurfaceDeformationRcd.h"
 #include "CondFormats/AlignmentRecord/interface/GlobalPositionRcd.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "Geometry/Records/interface/TrackerTopologyRcd.h"
-#include "Geometry/Records/interface/PTrackerParametersRcd.h"
+#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
+#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "boost/mpl/vector.hpp"
 
 class TrackerDigiGeometryRecord : 
@@ -19,7 +19,7 @@ class TrackerDigiGeometryRecord :
                 TrackerAlignmentErrorExtendedRcd,
                 TrackerSurfaceDeformationRcd,
                 GlobalPositionRcd,
-                TrackerTopologyRcd,
-                PTrackerParametersRcd> > {};
+                TelescopeTopologyRcd,
+                PTelescopeParametersRcd> > {};
 
 #endif /* RECORDS_TRACKERDIGIGEOMETRYRECORD_H */

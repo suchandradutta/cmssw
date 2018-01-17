@@ -257,6 +257,7 @@ namespace cond {
       IMPORT_PAYLOAD_CASE( PGeometricDet )
       IMPORT_PAYLOAD_CASE( PGeometricDetExtra )
       IMPORT_PAYLOAD_CASE( PTrackerParameters )
+      IMPORT_PAYLOAD_CASE( PTelescopeParameters )
       IMPORT_PAYLOAD_CASE( PHGCalParameters )
 	//IMPORT_PAYLOAD_CASE( PerformancePayload )
       IMPORT_PAYLOAD_CASE( PerformancePayloadFromTable )

@@ -13,6 +13,7 @@
 <use name="Geometry/Records"/>
 <use name="Geometry/TrackerGeometryBuilder"/>
 <use name="Geometry/TrackerNumberingBuilder"/>
+<use name="Geometry/TrackerPhase2TestBeam"/>
 <use name="Geometry/CaloGeometry"/>
 <use name="Geometry/EcalAlgo"/>
 <use name="Geometry/HcalCommonData"/>
