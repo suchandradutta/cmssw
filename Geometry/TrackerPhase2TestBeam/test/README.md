@@ -8,7 +8,7 @@ cmsRun Geometry/TrackerPhase2TestBeam/test/printDetIds_cfg.py
 
 
 # Test topology
-cmsRun Geometry/TrackerNumberingBuilder/test/trackerTopology_cfg.py
+cmsRun Geometry/TrackerPhase2TestBeam/test/printTelescopeTopology_cfg.py
 
 
 # Test TelescopeDigiGeometry (is called Tracker for the moment, but is on the actual telescope geometry, just need to be renamed :))
