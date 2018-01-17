@@ -8,7 +8,6 @@
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/ParameterSet"/>
   <use   name="Geometry/Records"/>
-  <use   name="Geometry/TrackerPhase2TestBeam"/>
   <use   name="Geometry/TrackerGeometryBuilder"/>
   <use   name="Geometry/TrackerNumberingBuilder"/>
   <flags   EDM_PLUGIN="1"/>

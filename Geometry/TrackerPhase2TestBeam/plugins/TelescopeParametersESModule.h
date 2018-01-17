@@ -16,14 +16,14 @@
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
 #include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/PTelescopeParameters.h"
+//#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 
 
 namespace edm {
   class ConfigurationDescriptions;
 }
-class PTelescopeParameters;
-class PTelescopeParametersRcd;
+
 
 class  TelescopeParametersESModule: public edm::ESProducer
 {

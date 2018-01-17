@@ -20,8 +20,8 @@
 #include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "Geometry/Records/interface/TelescopeTopologyRcd.h"
 
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
-#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
+#include "Geometry/TrackerPhase2TestBeam/interface/PTelescopeParameters.h"
+//#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 #include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
 
@@ -29,8 +29,8 @@
 namespace edm {
   class ConfigurationDescriptions;
 }
-class PTelescopeParameters;
-class PTelescopeParametersRcd;
+//class PTelescopeParameters;
+//class PTelescopeParametersRcd;
 
 class TelescopeTopologyEP : public edm::ESProducer
 {

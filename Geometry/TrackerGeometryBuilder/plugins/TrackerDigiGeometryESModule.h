@@ -21,7 +21,8 @@
 #include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
 #include "Geometry/Records/interface/TrackerTopologyRcd.h"
 
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/PTelescopeParameters.h"
+//#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 #include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
 #include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
@@ -52,7 +53,7 @@
 namespace edm {
   class ConfigurationDescriptions;
 }
-class TelescopeTopology;
+//class TelescopeTopology;
 
 class  TrackerDigiGeometryESModule: public edm::ESProducer{
  public:

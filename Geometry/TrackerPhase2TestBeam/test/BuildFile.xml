@@ -20,7 +20,6 @@
 <use  name="FWCore/Utilities"/>
 <use  name="Geometry/CommonDetUnit"/>
 <use  name="Geometry/Records"/>
-<use  name="Geometry/TrackerPhase2TestBeam"/>
 <use  name="Geometry/TrackerGeometryBuilder"/>
 <use  name="Geometry/TrackerNumberingBuilder"/>
 <use  name="MagneticField/Engine"/>

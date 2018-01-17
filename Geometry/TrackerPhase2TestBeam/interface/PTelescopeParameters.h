@@ -1,9 +1,9 @@
-#ifndef DataFormats_TrackerCommon_PTelescopeParameters_h
-#define DataFormats_TrackerCommon_PTelescopeParameters_h
+#ifndef Geometry_TrackerPhase2TestBeam_PTelescopeParameters_h
+#define Geometry_TrackerPhase2TestBeam_PTelescopeParameters_h
 
 //#include "CondFormats/Serialization/interface/Serializable.h"
 
-#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
+
 
 #include "FWCore/Utilities/interface/Exception.h"
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
