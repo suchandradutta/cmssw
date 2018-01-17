@@ -29,8 +29,6 @@
 namespace edm {
   class ConfigurationDescriptions;
 }
-//class PTelescopeParameters;
-//class PTelescopeParametersRcd;
 
 class TelescopeTopologyEP : public edm::ESProducer
 {

@@ -53,7 +53,6 @@
 namespace edm {
   class ConfigurationDescriptions;
 }
-//class TelescopeTopology;
 
 class  TrackerDigiGeometryESModule: public edm::ESProducer{
  public:

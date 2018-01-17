@@ -1,12 +1,6 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeParametersESModule.h"
 
 
-
-//#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
-//#include "Geometry/TrackerPhase2TestBeam/src/TelescopeParametersFromDD.cc"
-//#include "DataFormats/TrackerCommon/src/TelescopeTopology.cc"
-
-
 TelescopeParametersESModule::TelescopeParametersESModule( const edm::ParameterSet& )
 {
   edm::LogInfo("TELESCOPE") << "TelescopeParametersESModule::TelescopeParametersESModule";

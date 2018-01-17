@@ -1,14 +1,6 @@
 #include "TrackerDigiGeometryESModule.h"
 
 
-//#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
-//#include "Geometry/TrackerPhase2TestBeam/src/TelescopeParametersFromDD.cc"
-//#include "Geometry/Records/src/PTelescopeParametersRcd.cc"
-//#include "DataFormats/TrackerCommon/src/TelescopeTopology.cc"
-//#include "Geometry/Records/src/TelescopeTopologyRcd.cc"
-
-
-
 //__________________________________________________________________
 TrackerDigiGeometryESModule::TrackerDigiGeometryESModule(const edm::ParameterSet & p) 
   : alignmentsLabel_(p.getParameter<std::string>("alignmentsLabel")),

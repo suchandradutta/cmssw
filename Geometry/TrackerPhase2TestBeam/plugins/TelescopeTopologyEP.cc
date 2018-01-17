@@ -1,11 +1,6 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeTopologyEP.h"
 
 
-//#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
-//#include "Geometry/TrackerPhase2TestBeam/src/TelescopeParametersFromDD.cc"
-//#include "DataFormats/TrackerCommon/src/TelescopeTopology.cc"
-
-
 TelescopeTopologyEP::TelescopeTopologyEP( const edm::ParameterSet& conf ) {
   edm::LogInfo("TELESCOPE") << "TelescopeTopologyEP::TelescopeTopologyEP";
 
