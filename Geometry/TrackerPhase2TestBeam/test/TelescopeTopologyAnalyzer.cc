@@ -3,15 +3,16 @@
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
+
 #include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "Geometry/Records/interface/TelescopeTopologyRcd.h"
+
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 #include "Geometry/CommonDetUnit/interface/TrackingGeometry.h"
 #include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
 #include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeTopologyEP.h"
-#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 
 #include <climits>
 #include <iostream>

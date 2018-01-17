@@ -6,6 +6,13 @@
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
 
+
+#include "FWCore/Utilities/interface/Exception.h"
+#include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
+#include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include <sstream>
+
 #include <vector>
 #include <string>
 #include <iostream>

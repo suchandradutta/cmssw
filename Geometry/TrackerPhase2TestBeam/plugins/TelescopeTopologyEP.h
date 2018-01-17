@@ -3,17 +3,34 @@
 
 #include "memory"
 #include "FWCore/Framework/interface/ESProducer.h"
-#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
-#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
+
+
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "DetectorDescription/Core/interface/DDVectorGetter.h"
 #include "DetectorDescription/Core/interface/DDutils.h"
+
+#include "FWCore/Utilities/interface/Exception.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
+#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
+#include "FWCore/Framework/interface/ModuleFactory.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+
+
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
+#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
+
+#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
+#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
+#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
 
 
 namespace edm {
   class ConfigurationDescriptions;
 }
+class PTelescopeParameters;
+class PTelescopeParametersRcd;
 
 class TelescopeTopologyEP : public edm::ESProducer
 {

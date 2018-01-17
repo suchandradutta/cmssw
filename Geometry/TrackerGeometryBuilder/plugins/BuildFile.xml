@@ -3,10 +3,12 @@
   <use   name="CondFormats/GeometryObjects"/>
   <use   name="CondFormats/AlignmentRecord"/>
   <use   name="DataFormats/MuonDetId"/>
+  <use   name="DataFormats/TrackerCommon"/>
   <use   name="DetectorDescription/Core"/>
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/ParameterSet"/>
   <use   name="Geometry/Records"/>
+  <use   name="Geometry/TrackerPhase2TestBeam"/>
   <use   name="Geometry/TrackerGeometryBuilder"/>
   <use   name="Geometry/TrackerNumberingBuilder"/>
   <flags   EDM_PLUGIN="1"/>

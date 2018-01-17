@@ -1,6 +1,11 @@
 #ifndef Geometry_TrackerPhase2TestBeam_TelescopeParametersFromDD_h
 #define Geometry_TrackerPhase2TestBeam_TelescopeParametersFromDD_h
 
+
+#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
+#include "DetectorDescription/Core/interface/DDCompactView.h"
+#include "DetectorDescription/Core/interface/DDVectorGetter.h"
+#include "DetectorDescription/Core/interface/DDutils.h"
 #include <vector>
 
 class DDCompactView;

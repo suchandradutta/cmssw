@@ -3,6 +3,7 @@
 <use   name="DataFormats/GeometrySurface"/>
 <use   name="DataFormats/SiPixelDetId"/>
 <use   name="DataFormats/SiStripDetId"/>
+<use   name="DataFormats/TrackerCommon"/>
 <!--<use   name="DetectorDescription/Base"/>-->
 <use   name="DetectorDescription/Core"/>
 <use   name="FWCore/MessageLogger"/>
@@ -10,6 +11,7 @@
 <use   name="FWCore/Utilities"/>
 <use   name="Geometry/CommonDetUnit"/>
 <use   name="Geometry/CommonTopologies"/>
+<use   name="Geometry/Records"/> 
 <use   name="Geometry/TrackerNumberingBuilder"/>
 <export>
   <lib   name="1"/>

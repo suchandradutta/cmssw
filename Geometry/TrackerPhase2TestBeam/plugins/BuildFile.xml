@@ -1,12 +1,13 @@
 <library   file="*.cc" name="GeometryTrackerPhase2TestBeamPlugins">
-  <use   name="Geometry/TrackerPhase2TestBeam"/>
-  <use   name="Geometry/TrackerNumberingBuilder"/> 
   <use   name="DetectorDescription/Core"/>
   <use   name="DetectorDescription/Parser"/>
   <use   name="Geometry/CommonTopologies"/>
   <use   name="DataFormats/DetId"/>
   <use   name="DataFormats/GeometrySurface"/>
   <use   name="DataFormats/TrackerCommon"/>
+  <use   name="Geometry/TrackerPhase2TestBeam"/>
+  <use   name="Geometry/TrackerNumberingBuilder"/> 
+  <use  name="Geometry/TrackerGeometryBuilder"/>
   <use   name="Geometry/Records"/> 
   <use   name="CondFormats/GeometryObjects"/> 
   <use   name="FWCore/PluginManager"/>

@@ -1,8 +1,4 @@
 #include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
-#include "DetectorDescription/Core/interface/DDCompactView.h"
-#include "DetectorDescription/Core/interface/DDVectorGetter.h"
-#include "DetectorDescription/Core/interface/DDutils.h"
 
 
 bool TelescopeParametersFromDD::build( const DDCompactView* cvp, PTelescopeParameters& ptp) {

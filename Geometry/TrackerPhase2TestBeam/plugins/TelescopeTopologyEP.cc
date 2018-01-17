@@ -1,11 +1,10 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeTopologyEP.h"
-#include "FWCore/Utilities/interface/Exception.h"
-#include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
-#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
-#include "FWCore/Framework/interface/ModuleFactory.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
+
+
+#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
+#include "Geometry/TrackerPhase2TestBeam/src/TelescopeParametersFromDD.cc"
+#include "DataFormats/TrackerCommon/src/TelescopeTopology.cc"
+
 
 TelescopeTopologyEP::TelescopeTopologyEP( const edm::ParameterSet& conf ) {
   edm::LogInfo("TELESCOPE") << "TelescopeTopologyEP::TelescopeTopologyEP";

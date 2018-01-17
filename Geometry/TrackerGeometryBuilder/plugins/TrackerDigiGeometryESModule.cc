@@ -1,38 +1,13 @@
 #include "TrackerDigiGeometryESModule.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeomBuilderFromGeometricDet.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
-#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
-#include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "DetectorDescription/Core/interface/DDCompactView.h"
 
-#include "CondFormats/GeometryObjects/interface/PTrackerParameters.h"
-#include "Geometry/Records/interface/PTrackerParametersRcd.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
-#include "Geometry/Records/interface/TrackerTopologyRcd.h"
 
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
-#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
-#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
+#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
+#include "Geometry/TrackerPhase2TestBeam/src/TelescopeParametersFromDD.cc"
+//#include "Geometry/Records/src/PTelescopeParametersRcd.cc"
+#include "DataFormats/TrackerCommon/src/TelescopeTopology.cc"
+//#include "Geometry/Records/src/TelescopeTopologyRcd.cc"
 
-// Alignments
-#include "CondFormats/Alignment/interface/Alignments.h"
-#include "CondFormats/Alignment/interface/AlignmentErrorsExtended.h"
-#include "CondFormats/Alignment/interface/AlignmentSurfaceDeformations.h"
-#include "CondFormats/Alignment/interface/DetectorGlobalPosition.h"
-#include "CondFormats/AlignmentRecord/interface/GlobalPositionRcd.h"
-#include "CondFormats/AlignmentRecord/interface/TrackerAlignmentRcd.h"
-#include "CondFormats/AlignmentRecord/interface/TrackerAlignmentErrorExtendedRcd.h"
-#include "CondFormats/AlignmentRecord/interface/TrackerSurfaceDeformationRcd.h"
-#include "Geometry/CommonTopologies/interface/GeometryAligner.h"
 
-#include "FWCore/Framework/interface/EventSetup.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "FWCore/Framework/interface/ModuleFactory.h"
-#include "FWCore/Framework/interface/ESProducer.h"
-#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
-#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
-
-#include <memory>
 
 //__________________________________________________________________
 TrackerDigiGeometryESModule::TrackerDigiGeometryESModule(const edm::ParameterSet & p) 

@@ -1,14 +1,11 @@
 #include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeParametersESModule.h"
-#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
-#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
-#include "FWCore/Framework/interface/ModuleFactory.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "FWCore/Framework/interface/ESTransientHandle.h"
-#include "DetectorDescription/Core/interface/DDCompactView.h"
-#include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
-#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
-#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
+
+
+
+//#include "DataFormats/TrackerCommon/src/PTelescopeParameters.cc"
+//#include "Geometry/TrackerPhase2TestBeam/src/TelescopeParametersFromDD.cc"
+//#include "DataFormats/TrackerCommon/src/TelescopeTopology.cc"
+
 
 TelescopeParametersESModule::TelescopeParametersESModule( const edm::ParameterSet& )
 {
