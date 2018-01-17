@@ -3,9 +3,9 @@ import FWCore.ParameterSet.Config as cms
 # This config was generated automatically using generate2023Geometry.py
 # If you notice a mistake, please update the generating script, not just this config
 
-from Geometry.TrackerPhase2TestBeam.Phase2TestBeamGeometryXML_cfi import *
+from Geometry.TrackerPhase2TestBeam.Phase2TestBeamGeometryXML_cfi import *    # DDGeometry
 
-from Geometry.TrackerPhase2TestBeam.telescopeGeometryNumbering_cfi import *   # This is where TelescopeGeometryBuilder is called!!!
+from Geometry.TrackerPhase2TestBeam.telescopeGeometryNumbering_cfi import *   # Sorting and Numbering of DDGeometry. Produced by DDTelescopeGeometryESProducer.
 
 
 
