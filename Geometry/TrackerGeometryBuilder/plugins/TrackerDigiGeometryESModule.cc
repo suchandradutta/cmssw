@@ -3,9 +3,14 @@
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
-#include "CondFormats/GeometryObjects/interface/PTelescopeParameters.h"
+
+#include "CondFormats/GeometryObjects/interface/PTrackerParameters.h"
+#include "Geometry/Records/interface/PTrackerParametersRcd.h"
+#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "Geometry/Records/interface/TrackerTopologyRcd.h"
+
+#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 #include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "Geometry/Records/interface/TelescopeTopologyRcd.h"
 

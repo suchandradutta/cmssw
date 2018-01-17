@@ -1,5 +1,5 @@
 #include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
-#include "CondFormats/GeometryObjects/interface/PTelescopeParameters.h"
+#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "DetectorDescription/Core/interface/DDVectorGetter.h"
 #include "DetectorDescription/Core/interface/DDutils.h"

@@ -8,7 +8,7 @@
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
 #include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "Geometry/TrackerPhase2TestBeam/interface/TelescopeParametersFromDD.h"
-#include "CondFormats/GeometryObjects/interface/PTelescopeParameters.h"
+#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 
 TelescopeParametersESModule::TelescopeParametersESModule( const edm::ParameterSet& )
 {
