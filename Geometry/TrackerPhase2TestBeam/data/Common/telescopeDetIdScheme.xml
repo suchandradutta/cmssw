@@ -7,6 +7,10 @@
     28, 25, 4, 2, 0
   </Vector>
   
+  <Vector name="telescopeDetIdMasks" type="numeric" nEntries="5">  TO DO: This is somehow redundant with the first vector, remove it?
+    0xF, 0x7, 0x1FFFFF, 0x3, 0x3
+  </Vector>
+  
  </ConstantsSection>
  
 </DDDefinition>

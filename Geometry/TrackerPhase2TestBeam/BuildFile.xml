@@ -1,8 +1,15 @@
-<use   name="FWCore/Utilities"/>
-<use   name="FWCore/MessageLogger"/>
+<use   name="boost_serialization"/>
 <use   name="clhep"/>
 <use   name="DataFormats/GeometrySurface"/>
+<use   name="DataFormats/SiPixelDetId"/>
+<use   name="DataFormats/SiStripDetId"/>
+<!--<use   name="DetectorDescription/Base"/>-->
 <use   name="DetectorDescription/Core"/>
+<use   name="FWCore/MessageLogger"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="FWCore/Utilities"/>
+<use   name="Geometry/CommonDetUnit"/>
+<use   name="Geometry/CommonTopologies"/>
 <use   name="Geometry/TrackerNumberingBuilder"/>
 <export>
   <lib   name="1"/>

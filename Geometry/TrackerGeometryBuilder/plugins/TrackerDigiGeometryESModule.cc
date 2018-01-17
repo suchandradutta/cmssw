@@ -3,11 +3,11 @@
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "Geometry/Records/interface/PTrackerParametersRcd.h"
+#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
-#include "CondFormats/GeometryObjects/interface/PTrackerParameters.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
-#include "Geometry/Records/interface/TrackerTopologyRcd.h"
+#include "CondFormats/GeometryObjects/interface/PTelescopeParameters.h"
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
+#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
 
 // Alignments
 #include "CondFormats/Alignment/interface/Alignments.h"
@@ -76,19 +76,17 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
   edm::ESHandle<GeometricDet> gD;
   iRecord.getRecord<IdealGeometryRecord>().get( gD );
 
+  edm::ESHandle<TelescopeTopology> tTopoHand;
+  iRecord.getRecord<TelescopeTopologyRcd>().get(tTopoHand);
+  const TelescopeTopology *tTopo=tTopoHand.product();
 
-  // TO DO: No topology or tracker parameters for the moment, as they are duplicating the trackerParameters.xml info and that's it!
-
-  /*edm::ESHandle<TrackerTopology> tTopoHand;
-  iRecord.getRecord<TrackerTopologyRcd>().get(tTopoHand);
-  const TrackerTopology *tTopo=tTopoHand.product();*/
-
+  // Parameters are not really needed here
   /*edm::ESHandle<PTrackerParameters> ptp;
     iRecord.getRecord<PTrackerParametersRcd>().get( ptp );*/
   
   TrackerGeomBuilderFromGeometricDet builder;
   //_tracker  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), *ptp, tTopo));
-  _telescope  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD)));
+  _telescope  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), tTopo));
 
 
   /* No thanks

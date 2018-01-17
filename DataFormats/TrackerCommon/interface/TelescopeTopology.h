@@ -1,5 +1,5 @@
-#ifndef TRACKERTOPOLOGY_H
-#define TRACKERTOPOLOGY_H
+#ifndef TELESCOPETOPOLOGY_H
+#define TELESCOPETOPOLOGY_H
 
 #include "DataFormats/DetId/interface/DetId.h"
 #include "DataFormats/SiStripDetId/interface/SiStripDetId.h"
@@ -8,116 +8,51 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
-//knower of all things tracker geometry
+//knower of all things telescope geometry
 //flexible replacement for PXBDetId and friends
 //to implement
 // endcap pixel
 
 
-class TrackerTopology {
+class TelescopeTopology {
 
  public:
 
-  struct PixelBarrelValues {
-    unsigned int layerStartBit_;
-    unsigned int ladderStartBit_;
+  struct TelescopeScheme {
+    unsigned int telescopeStartBit_;
+    unsigned int telescopeMask_;
+
+    unsigned int containerStartBit_;
+    unsigned int containerMask_;
+
+    unsigned int planeStartBit_;
+    unsigned int planeMask_;
+
     unsigned int moduleStartBit_;
-    unsigned int layerMask_;
-    unsigned int ladderMask_;
     unsigned int moduleMask_;
+
+    unsigned int sensorStartBit_;
+    unsigned int sensorMask_;
   };
 
-  struct PixelEndcapValues {
-    unsigned int sideStartBit_;
-    unsigned int diskStartBit_;
-    unsigned int bladeStartBit_;
-    unsigned int panelStartBit_;
-    unsigned int moduleStartBit_;
-    unsigned int sideMask_;
-    unsigned int diskMask_;
-    unsigned int bladeMask_;
-    unsigned int panelMask_;
-    unsigned int moduleMask_;
-  };
 
-  struct TECValues {
-    unsigned int sideStartBit_;
-    unsigned int wheelStartBit_;
-    unsigned int petal_fw_bwStartBit_;
-    unsigned int petalStartBit_;
-    unsigned int ringStartBit_;
-    unsigned int moduleStartBit_;
-    unsigned int sterStartBit_;
-    unsigned int sideMask_;
-    unsigned int wheelMask_;
-    unsigned int petal_fw_bwMask_;
-    unsigned int petalMask_;
-    unsigned int ringMask_;
-    unsigned int moduleMask_;
-    unsigned int sterMask_;
-  };
-
-  struct TIBValues {
-    unsigned int layerStartBit_;
-    unsigned int str_fw_bwStartBit_;
-    unsigned int str_int_extStartBit_;
-    unsigned int strStartBit_;
-    unsigned int moduleStartBit_;
-    unsigned int sterStartBit_;
-
-    unsigned int layerMask_;
-    unsigned int str_fw_bwMask_;
-    unsigned int str_int_extMask_;
-    unsigned int strMask_;
-    unsigned int moduleMask_;
-    unsigned int sterMask_;
-  };
-
-  struct TIDValues {
-    unsigned int sideStartBit_;
-    unsigned int wheelStartBit_;
-    unsigned int ringStartBit_;
-    unsigned int module_fw_bwStartBit_;
-    unsigned int moduleStartBit_;
-    unsigned int sterStartBit_;
-    unsigned int sideMask_;
-    unsigned int wheelMask_;
-    unsigned int ringMask_;
-    unsigned int module_fw_bwMask_;
-    unsigned int moduleMask_;
-    unsigned int sterMask_;
-  };
-
-  struct TOBValues {
-    unsigned int layerStartBit_;
-    unsigned int rod_fw_bwStartBit_;
-    unsigned int rodStartBit_;
-    unsigned int moduleStartBit_;
-    unsigned int sterStartBit_;
-    unsigned int layerMask_;
-    unsigned int rod_fw_bwMask_;
-    unsigned int rodMask_;
-    unsigned int moduleMask_;
-    unsigned int sterMask_;
-  };
-
-  enum DetIdFields {
+  /*enum DetIdFields {
     PBModule, PBLadder, PBLayer,
-    PFModule, PFPanel, PFBlade, PFDisk, PFSide, 
-    /* TODO: this can be extended for all subdetectors */
-    DETID_FIELDS_MAX
-  };
+    PFModule, PFPanel, PFBlade, PFDisk, PFSide,
+    DETID_FIELDS_MAX  // ???
+    };*/
 
   class SameLayerComparator {
   public:
-    explicit SameLayerComparator(const TrackerTopology *topo): topo_(topo) {}
+    explicit SameLayerComparator(const TelescopeTopology *topo): topo_(topo) {}
 
     bool operator()(DetId i1, DetId i2) const {
       if(i1.det() == i2.det() &&
          i1.subdetId() == i2.subdetId() &&
          topo_->side(i1) == topo_->side(i2) &&
-         topo_->layer(i1) == topo_->layer(i2)) {
+         topo_->plane(i1) == topo_->plane(i2)) {
         return false;
       }
       return i1 < i2;
@@ -127,20 +62,19 @@ class TrackerTopology {
       return operator()(DetId(i1), DetId(i2));
     }
   private:
-    const TrackerTopology *topo_;
+    const TelescopeTopology *topo_;
   };
 
   
-  TrackerTopology( const PixelBarrelValues& pxb, const PixelEndcapValues& pxf,
-		   const TECValues& tecv, const TIBValues& tibv, 
-		   const TIDValues& tidv, const TOBValues& tobv);
+  TelescopeTopology( const TelescopeScheme& telescopeScheme );
 
   unsigned int side(const DetId &id) const;
-  unsigned int layer(const DetId &id) const;
+  unsigned int plane(const DetId &id) const;
   unsigned int module(const DetId &id) const;
 
 
   // layer numbers
+  /*
   unsigned int pxbLayer(const DetId &id) const {
     return int((id.rawId()>>pbVals_.layerStartBit_) & pbVals_.layerMask_);
   }
@@ -245,13 +179,16 @@ class TrackerTopology {
     num.push_back( tobRod(id) );
     return num ;
   }
+  */
+
 
   //generic function to return DetIds and boolean factors
   uint32_t glued(const DetId &id) const ;
   uint32_t stack(const DetId &id) const ;
-  uint32_t lower(const DetId &id) const ;
-  uint32_t upper(const DetId &id) const ;
+  //uint32_t lower(const DetId &id) const ;
+  //uint32_t upper(const DetId &id) const ;
 
+  /*
   bool isStereo(const DetId &id) const;
   bool isRPhi(const DetId &id) const;
   bool isLower(const DetId &id) const;
@@ -365,10 +302,12 @@ class TrackerTopology {
   uint32_t tidStack(const DetId &id) const { return tidGlued(id); }
   uint32_t tobStack(const DetId &id) const { return tobGlued(id); }
   uint32_t tecStack(const DetId &id) const { return tecGlued(id); }
+  */
 
   //these should be used now!!
   DetId partnerDetId(const DetId &id) const;
 
+  /*
   DetId tibPartnerDetId(const DetId &id) const {
     if ( ((id.rawId()>>tibVals_.sterStartBit_) & tibVals_.sterMask_ ) == 1 ) {
       return DetId( id.rawId() + 1 );
@@ -467,7 +406,7 @@ class TrackerTopology {
 		 uint32_t ladder,
 		 uint32_t module) const {
     //uply
-    DetId id(DetId::Tracker,PixelSubdetector::PixelBarrel);
+    DetId id(DetId::Telescope,PixelSubdetector::PixelBarrel);
     uint32_t rawid=id.rawId();
     rawid |= (layer& pbVals_.layerMask_) << pbVals_.layerStartBit_     |
       (ladder& pbVals_.ladderMask_) << pbVals_.ladderStartBit_  |
@@ -480,7 +419,7 @@ class TrackerTopology {
 		 uint32_t blade,
 		 uint32_t panel,
 		 uint32_t module) const {
-    DetId id(DetId::Tracker,PixelSubdetector::PixelEndcap);
+    DetId id(DetId::Telescope,PixelSubdetector::PixelEndcap);
     uint32_t rawid=id.rawId();
     rawid |= (side& pfVals_.sideMask_)  << pfVals_.sideStartBit_   |
       (disk& pfVals_.diskMask_)        << pfVals_.diskStartBit_      |
@@ -494,7 +433,7 @@ class TrackerTopology {
 		 uint32_t petal_fw_bw, uint32_t petal,
 		 uint32_t ring, uint32_t module, uint32_t ster) const {  
 
-    DetId id=SiStripDetId(DetId::Tracker,StripSubdetector::TEC);
+    DetId id=SiStripDetId(DetId::Telescope,StripSubdetector::TEC);
     uint32_t rawid=id.rawId();
 
     rawid |= (side& tecVals_.sideMask_)         << tecVals_.sideStartBit_ |
@@ -513,7 +452,7 @@ class TrackerTopology {
 		 uint32_t str,
 		 uint32_t module,
 		 uint32_t ster) const {
-    DetId id=SiStripDetId(DetId::Tracker,StripSubdetector::TIB);
+    DetId id=SiStripDetId(DetId::Telescope,StripSubdetector::TIB);
     uint32_t rawid=id.rawId();
     rawid |= (layer& tibVals_.layerMask_) << tibVals_.layerStartBit_ |
       (str_fw_bw& tibVals_.str_fw_bwMask_) << tibVals_.str_fw_bwStartBit_ |
@@ -530,7 +469,7 @@ class TrackerTopology {
 		 uint32_t module_fw_bw,
 		 uint32_t module,
 		 uint32_t ster) const { 
-    DetId id=SiStripDetId(DetId::Tracker,StripSubdetector::TID);
+    DetId id=SiStripDetId(DetId::Telescope,StripSubdetector::TID);
     uint32_t rawid=id.rawId();
     rawid |= (side& tidVals_.sideMask_)      << tidVals_.sideStartBit_    |
       (wheel& tidVals_.wheelMask_)          << tidVals_.wheelStartBit_      |
@@ -546,7 +485,7 @@ class TrackerTopology {
 		 uint32_t rod,
 		 uint32_t module,
 		 uint32_t ster) const {
-    DetId id=SiStripDetId(DetId::Tracker,StripSubdetector::TOB);
+    DetId id=SiStripDetId(DetId::Telescope,StripSubdetector::TOB);
     uint32_t rawid=id.rawId();
     rawid |= (layer& tobVals_.layerMask_) << tobVals_.layerStartBit_ |
       (rod_fw_bw& tobVals_.rod_fw_bwMask_) << tobVals_.rod_fw_bwStartBit_ |
@@ -581,9 +520,13 @@ class TrackerTopology {
   }
 
   std::string print(DetId detid) const;
+  */
 
-  SiStripDetId::ModuleGeometry moduleGeometry(const DetId &id) const; 
+
+  //SiStripDetId::ModuleGeometry moduleGeometry(const DetId &id) const; 
   
+
+  /*
   int getOTLayerNumber(const DetId &id)const;
   int getITPixelLayerNumber(const DetId &id)const;
 
@@ -599,24 +542,18 @@ class TrackerTopology {
   // This boils down to checking whether it is the correct subdetector.
   bool hasField(const DetId &id, DetIdFields idx) const {
     return id.subdetId() == bits_per_field[idx].subdet;
-  }
+    }*/
  
  private:
 
-  const PixelBarrelValues pbVals_;
-  const PixelEndcapValues pfVals_;
+  const TelescopeScheme telescopeScheme_;
 
-  const TOBValues tobVals_;
-  const TIBValues tibVals_;
-  const TIDValues tidVals_;
-  const TECValues tecVals_;
-
-  struct BitmaskAndSubdet { 
+  /*struct BitmaskAndSubdet { 
     unsigned int startBit; 
     unsigned int mask;
     int subdet;
   };
-  const BitmaskAndSubdet bits_per_field[DETID_FIELDS_MAX];
+  const BitmaskAndSubdet bits_per_field[DETID_FIELDS_MAX];*/
 
 };
 

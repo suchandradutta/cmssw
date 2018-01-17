@@ -1,93 +1,76 @@
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "FWCore/Utilities/interface/Exception.h"
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include <sstream>
 
-TrackerTopology::TrackerTopology( const PixelBarrelValues& pxb, const PixelEndcapValues& pxf,
-                                  const TECValues& tecv, const TIBValues& tibv, 
-                                  const TIDValues& tidv, const TOBValues& tobv) 
-    : pbVals_(pxb),
-      pfVals_(pxf),
-      tobVals_(tobv),
-      tibVals_(tibv),
-      tidVals_(tidv),
-      tecVals_(tecv),
-      bits_per_field{
-        [PBModule] = { pbVals_.moduleStartBit_, pbVals_.moduleMask_, PixelSubdetector::PixelBarrel},
-        [PBLadder] = { pbVals_.ladderStartBit_, pbVals_.ladderMask_, PixelSubdetector::PixelBarrel},
-        [PBLayer]  = { pbVals_.layerStartBit_,  pbVals_.layerMask_,  PixelSubdetector::PixelBarrel},
-        [PFModule] = { pfVals_.moduleStartBit_, pfVals_.moduleMask_, PixelSubdetector::PixelEndcap},
-        [PFPanel]  = { pfVals_.panelStartBit_,  pfVals_.panelMask_,  PixelSubdetector::PixelEndcap},
-        [PFBlade]  = { pfVals_.bladeStartBit_,  pfVals_.bladeMask_,  PixelSubdetector::PixelEndcap},
-        [PFDisk]   = { pfVals_.diskStartBit_,   pfVals_.diskMask_,   PixelSubdetector::PixelEndcap},
-        [PFSide]   = { pfVals_.sideStartBit_,   pfVals_.sideMask_,   PixelSubdetector::PixelEndcap}
-      } 
-{}
+TelescopeTopology::TelescopeTopology( const TelescopeScheme& telescopeScheme ) 
+  : telescopeScheme_(telescopeScheme) {
+  /*[PBModule] = { pbVals_.moduleStartBit_, pbVals_.moduleMask_, PixelSubdetector::PixelBarrel},
+    [PBLadder] = { pbVals_.ladderStartBit_, pbVals_.ladderMask_, PixelSubdetector::PixelBarrel},
+    [PBLayer]  = { pbVals_.layerStartBit_,  pbVals_.layerMask_,  PixelSubdetector::PixelBarrel},
+    [PFModule] = { pfVals_.moduleStartBit_, pfVals_.moduleMask_, PixelSubdetector::PixelEndcap},
+    [PFPanel]  = { pfVals_.panelStartBit_,  pfVals_.panelMask_,  PixelSubdetector::PixelEndcap},
+    [PFBlade]  = { pfVals_.bladeStartBit_,  pfVals_.bladeMask_,  PixelSubdetector::PixelEndcap},
+    [PFDisk]   = { pfVals_.diskStartBit_,   pfVals_.diskMask_,   PixelSubdetector::PixelEndcap},
+    [PFSide]   = { pfVals_.sideStartBit_,   pfVals_.sideMask_,   PixelSubdetector::PixelEndcap}*/
+} 
 
 
 
-unsigned int TrackerTopology::side(const DetId &id) const {
-  uint32_t subdet=id.subdetId();
-  if ( subdet == PixelSubdetector::PixelBarrel )
+unsigned int TelescopeTopology::side(const DetId &id) const {
+  const uint32_t subdet = id.subdetId();
+
+  // Telescope arm, (-Z) side
+  if (subdet == 1) { return 1;  }    
+
+  // Telescope DUT containers (contains only 1 DUT here)    
+  else if (subdet == 2) { return 0; }    
+
+  // Telescope arm, (+Z) side
+  else if (subdet == 3) { return 1; }  
+
+  /*if ( subdet == PixelSubdetector::PixelBarrel )
     return 0;
-  if ( subdet == PixelSubdetector::PixelEndcap )
+    if ( subdet == PixelSubdetector::PixelEndcap )
     return pxfSide(id);
-  if ( subdet == StripSubdetector::TIB )
+    if ( subdet == StripSubdetector::TIB )
     return 0;
-  if ( subdet == StripSubdetector::TID )
+    if ( subdet == StripSubdetector::TID )
     return tidSide(id);
-  if ( subdet == StripSubdetector::TOB )
+    if ( subdet == StripSubdetector::TOB )
     return 0;
-  if ( subdet == StripSubdetector::TEC )
-    return tecSide(id);
+    if ( subdet == StripSubdetector::TEC )
+    return tecSide(id);*/
 
-  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::side";
+  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::side";
   return 0;
 }
 
-unsigned int TrackerTopology::layer(const DetId &id) const {
-  uint32_t subdet=id.subdetId();
-  if ( subdet == PixelSubdetector::PixelBarrel )
-    return pxbLayer(id);
-  if ( subdet == PixelSubdetector::PixelEndcap )
-    return pxfDisk(id);
-  if ( subdet == StripSubdetector::TIB )
-    return tibLayer(id);
-  if ( subdet == StripSubdetector::TID )
-    return tidWheel(id);
-  if ( subdet == StripSubdetector::TOB )
-    return tobLayer(id);
-  if ( subdet == StripSubdetector::TEC )
-    return tecWheel(id);
 
-  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::layer";
+unsigned int TelescopeTopology::plane(const DetId &id) const {
+
+  return int((id.rawId() >> telescopeScheme_.planeStartBit_) & telescopeScheme_.planeMask_);
+
+  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::plane";
   return 0;
 }
 
-unsigned int TrackerTopology::module(const DetId &id) const {
-  uint32_t subdet=id.subdetId();
-  if ( subdet == PixelSubdetector::PixelBarrel )
-    return pxbModule(id);
-  if ( subdet == PixelSubdetector::PixelEndcap )
-    return pxfModule(id);
-  if ( subdet == StripSubdetector::TIB )
-    return tibModule(id);
-  if ( subdet == StripSubdetector::TID )
-    return tidModule(id);
-  if ( subdet == StripSubdetector::TOB )
-    return tobModule(id);
-  if ( subdet == StripSubdetector::TEC )
-    return tecModule(id);
 
-  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::module";
+unsigned int TelescopeTopology::module(const DetId &id) const {
+
+  return int((id.rawId() >> telescopeScheme_.moduleStartBit_) & telescopeScheme_.moduleMask_);
+
+  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::module";
   return 0;
 }
 
-uint32_t TrackerTopology::glued(const DetId &id) const {
+
+uint32_t TelescopeTopology::glued(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
+    /*
     if ( subdet == PixelSubdetector::PixelBarrel )
       return 0;
     if ( subdet == PixelSubdetector::PixelEndcap )
@@ -101,49 +84,75 @@ uint32_t TrackerTopology::glued(const DetId &id) const {
     if ( subdet == StripSubdetector::TEC )
       return tecGlued(id);
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::glued";
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::glued";
+    */
+
+    // Telescope arm, (-Z) side
+    if (subdet == 1) { return 0;  }    
+
+    // Telescope DUT containers (contains only 1 DUT here)    
+    else if (subdet == 2) {   
+      if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() - 1 ); }  // inner sensor = 1
+      else { return DetId( id.rawId() - 2 ); } // outer sensor = 2
+    }    
+
+    // Telescope arm, (+Z) side
+    else if (subdet == 3) { return 0; }  
+  
+    else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+
+
     return 0;
 }
 
-uint32_t TrackerTopology::stack(const DetId &id) const {
+uint32_t TelescopeTopology::stack(const DetId &id) const {
 
+  return glued(id);
+
+  /*
     uint32_t subdet=id.subdetId();
+    
     if ( subdet == PixelSubdetector::PixelBarrel )
       return 0;
-    if ( subdet == PixelSubdetector::PixelEndcap )
+      if ( subdet == PixelSubdetector::PixelEndcap )
       return 0;
-    if ( subdet == StripSubdetector::TIB )
+      if ( subdet == StripSubdetector::TIB )
       return tibStack(id);
-    if ( subdet == StripSubdetector::TID )
+      if ( subdet == StripSubdetector::TID )
       return tidStack(id);
-    if ( subdet == StripSubdetector::TOB )
+      if ( subdet == StripSubdetector::TOB )
       return tobStack(id);
-    if ( subdet == StripSubdetector::TEC )
+      if ( subdet == StripSubdetector::TEC )
       return tecStack(id);
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::stack";
+      throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::stack";
+    */
 }
 
-uint32_t TrackerTopology::lower(const DetId &id) const {
 
-    uint32_t subdet=id.subdetId();
-    if ( subdet == PixelSubdetector::PixelBarrel )
-      return 0;
-    if ( subdet == PixelSubdetector::PixelEndcap )
-      return 0;
-    if ( subdet == StripSubdetector::TIB )
-      return tibLower(id);
-    if ( subdet == StripSubdetector::TID )
-      return tidLower(id);
-    if ( subdet == StripSubdetector::TOB )
-      return tobLower(id);
-    if ( subdet == StripSubdetector::TEC )
-      return tecLower(id);
+/*
+uint32_t TelescopeTopology::lower(const DetId &id) const {
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::lower";
+    const uint32_t subdet = id.subdetId();
+
+    // Telescope arm, (-Z) side
+    if (subdet == 1) { return 0;  }    
+
+    // Telescope DUT containers (contains only 1 DUT here)    
+    else if (subdet == 2) {   
+      if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() - 1 ); }  // inner sensor = 1
+      else { return DetId( id.rawId() - 2 ); } // outer sensor = 2
+    }    
+
+    // Telescope arm, (+Z) side
+    else if (subdet == 3) { return 0; } 
+
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::lower";
 }
 
-uint32_t TrackerTopology::upper(const DetId &id) const {
+
+uint32_t TelescopeTopology::upper(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
     if ( subdet == PixelSubdetector::PixelBarrel )
@@ -159,11 +168,11 @@ uint32_t TrackerTopology::upper(const DetId &id) const {
     if ( subdet == StripSubdetector::TEC )
       return tecUpper(id);
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::upper";
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::upper";
 }
 
 
-bool TrackerTopology::isStereo(const DetId &id) const {
+bool TelescopeTopology::isStereo(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
     if ( subdet == PixelSubdetector::PixelBarrel )
@@ -179,11 +188,11 @@ bool TrackerTopology::isStereo(const DetId &id) const {
     if ( subdet == StripSubdetector::TEC )
       return tecStereo(id)!=0;
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::isStereo";
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::isStereo";
     return false;
 }
 
-bool TrackerTopology::isRPhi(const DetId &id) const {
+bool TelescopeTopology::isRPhi(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
     if ( subdet == PixelSubdetector::PixelBarrel )
@@ -199,10 +208,10 @@ bool TrackerTopology::isRPhi(const DetId &id) const {
     if ( subdet == StripSubdetector::TEC )
       return tecRPhi(id)!=0;
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::isRPhi";
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::isRPhi";
     return false;
 }
-bool TrackerTopology::isLower(const DetId &id) const {
+bool TelescopeTopology::isLower(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
     if ( subdet == PixelSubdetector::PixelBarrel ) 
@@ -218,12 +227,12 @@ bool TrackerTopology::isLower(const DetId &id) const {
     if ( subdet == StripSubdetector::TEC )
       return tecLower(id)!=0;
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::isLower";
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::isLower";
     return false;
 
 }
 
-bool TrackerTopology::isUpper(const DetId &id) const {
+bool TelescopeTopology::isUpper(const DetId &id) const {
 
     uint32_t subdet=id.subdetId();
     if ( subdet == PixelSubdetector::PixelBarrel ) 
@@ -239,31 +248,51 @@ bool TrackerTopology::isUpper(const DetId &id) const {
     if ( subdet == StripSubdetector::TEC )
       return tecUpper(id)!=0;
 
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::isUpper";
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::isUpper";
     return false;
-}
+    }*/
 
-DetId TrackerTopology::partnerDetId(const DetId &id) const {
 
-    uint32_t subdet=id.subdetId();
+
+DetId TelescopeTopology::partnerDetId(const DetId &id) const {
+
+  const uint32_t subdet = id.subdetId();
+  /*
     if ( subdet == PixelSubdetector::PixelBarrel )
-      return 0;
-    if ( subdet == PixelSubdetector::PixelEndcap )
-      return 0;
-    if ( subdet == StripSubdetector::TIB )
-      return tibPartnerDetId(id);
-    if ( subdet == StripSubdetector::TID )
-      return tidPartnerDetId(id);
-    if ( subdet == StripSubdetector::TOB )
-      return tobPartnerDetId(id);
-    if ( subdet == StripSubdetector::TEC )
-      return tecPartnerDetId(id);
-
-    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::partnerDetId";
     return 0;
+    if ( subdet == PixelSubdetector::PixelEndcap )
+    return 0;
+    if ( subdet == StripSubdetector::TIB )
+    return tibPartnerDetId(id);
+    if ( subdet == StripSubdetector::TID )
+    return tidPartnerDetId(id);
+    if ( subdet == StripSubdetector::TOB )
+    return tobPartnerDetId(id);
+    if ( subdet == StripSubdetector::TEC )
+    return tecPartnerDetId(id);
+
+    throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::partnerDetId";
+  */
+
+  // Telescope arm, (-Z) side
+  if (subdet == 1) { return 0;  }    
+
+  // Telescope DUT containers (contains only 1 DUT here)    
+  else if (subdet == 2) {   
+    if ( (id.rawId() % 2) == 1) { return DetId( id.rawId() + 1 ); }  // inner sensor, hence return outer
+    else { return DetId( id.rawId() - 1 ); } // outer sensor, hence return inner
+  }    
+
+  // Telescope arm, (+Z) side
+  else if (subdet == 3) { return 0; }  
+  
+  else { std::cout << "Unexpected subdet = " << subdet << std::endl; return 0; }
+
+  return 0;
 }
 
-std::string TrackerTopology::print(DetId id) const {
+/*
+std::string TelescopeTopology::print(DetId id) const {
   uint32_t subdet=id.subdetId();
   std::stringstream strstr;
 
@@ -405,12 +434,13 @@ std::string TrackerTopology::print(DetId id) const {
   }
 
 
-  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TrackerTopology::module";
+  throw cms::Exception("Invalid DetId") << "Unsupported DetId in TelescopeTopology::module";
   return strstr.str();
-}
+  }*/
 
 
-SiStripDetId::ModuleGeometry TrackerTopology::moduleGeometry(const DetId &id) const {
+/*
+SiStripDetId::ModuleGeometry TelescopeTopology::moduleGeometry(const DetId &id) const {
   switch(id.subdetId()) {
   case StripSubdetector::TIB: return tibLayer(id)<3? SiStripDetId::IB1 : SiStripDetId::IB2;
   case StripSubdetector::TOB: return tobLayer(id)<5? SiStripDetId::OB2 : SiStripDetId::OB1;
@@ -432,33 +462,35 @@ SiStripDetId::ModuleGeometry TrackerTopology::moduleGeometry(const DetId &id) co
   }
   return SiStripDetId::UNKNOWNGEOMETRY;
 }
-int TrackerTopology::getOTLayerNumber(const DetId &id) const {
+
+
+int TelescopeTopology::getOTLayerNumber(const DetId &id) const {
     int layer = -1;
     
-    if (id.det() == DetId::Tracker) {
+    if (id.det() == DetId::Telescope) {
       if (id.subdetId() == StripSubdetector::TOB) {
 	layer = tobLayer(id);
       } else if (id.subdetId() == StripSubdetector::TID) {
 	layer = 100 * tidSide(id)  + tidWheel(id);
       } else {
-	edm::LogInfo("TrackerTopology") << ">>> Invalid subdetId()  " ;
+	edm::LogInfo("TelescopeTopology") << ">>> Invalid subdetId()  " ;
       }
     }
     return layer;
 }
 
-int TrackerTopology::getITPixelLayerNumber(const DetId &id) const {
+int TelescopeTopology::getITPixelLayerNumber(const DetId &id) const {
     int layer = -1;
     
-    if (id.det() == DetId::Tracker) {
+    if (id.det() == DetId::Telescope) {
       if (id.subdetId() == PixelSubdetector::PixelBarrel) {
 	layer = pxbLayer(id);
       } else if (id.subdetId() == PixelSubdetector::PixelEndcap) {
 	layer = 100 * pxfSide(id)  + pxfDisk(id);
       } else {
-	edm::LogInfo("TrackerTopology") << ">>> Invalid subdetId()  " ;
+	edm::LogInfo("TelescopeTopology") << ">>> Invalid subdetId()  " ;
       }
     }
     return layer;
 }
-
+*/

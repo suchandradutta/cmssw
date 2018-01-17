@@ -7,6 +7,10 @@ cmsShow --sim-geom-file simGeoTelescope.root -c $CMSSW_RELEASE_BASE/src/Firework
 cmsRun Geometry/TrackerPhase2TestBeam/test/printDetIds_cfg.py
 
 
+# Test topology
+cmsRun Geometry/TrackerNumberingBuilder/test/trackerTopology_cfg.py
+
+
 # Test TelescopeDigiGeometry (is called Tracker for the moment, but is on the actual telescope geometry, just need to be renamed :))
 # NB: This is not the DIGI step! But this will be directly used by the Digitizer.
 cmsRun Geometry/TrackerGeometryBuilder/test/tracker_cfg.py

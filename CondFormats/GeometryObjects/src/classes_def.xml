@@ -41,6 +41,11 @@
  </class>
  <class name="PTrackerParameters::Item"/>
  <class name="std::vector<PTrackerParameters::Item>"/>
+ 
+ <class name="PTelescopeParameters" class_version="0"> 
+   <field name="detIdShifts" mapping="blob"/>
+   <field name="detIdMasks" mapping="blob"/>
+ </class>
 
  <class name="HcalParameters" class_version="0"> 
    <field name="rHB"              mapping="blob"/>

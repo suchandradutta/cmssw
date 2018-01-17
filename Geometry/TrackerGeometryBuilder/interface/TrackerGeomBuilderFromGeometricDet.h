@@ -12,16 +12,16 @@
 #include <iostream>
 
 class TrackerGeometry;
-class TrackerTopology;
+class TelescopeTopology;
 class PixelGeomDetType;
 class StripGeomDetType;
-class PTrackerParameters;
+//class PTelescopeParameters;
 
 class TrackerGeomBuilderFromGeometricDet {
 public:
 
   //TrackerGeometry* build(const GeometricDet* gd, const PTrackerParameters & ptp, const TrackerTopology* tTopo);
-  TrackerGeometry* build(const GeometricDet* gd);
+  TrackerGeometry* build(const GeometricDet* gd, const TelescopeTopology* tTopo);
 
 private:
 
@@ -39,12 +39,7 @@ private:
 
   std::map<std::string,const PixelGeomDetType*> thePixelDetTypeMap;
   std::map<std::string,const StripGeomDetType*> theStripDetTypeMap;
-  //const TrackerTopology* theTopo;
-
-
-  uint32_t glued(const DetId &id) const;
-  uint32_t stack(const DetId &id) const;
-  DetId partnerDetId(const DetId &id) const;
+  const TelescopeTopology* theTopo;
 };
 
 #endif

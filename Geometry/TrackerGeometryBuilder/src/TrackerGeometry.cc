@@ -16,8 +16,7 @@
 #include <map>
 
 namespace {
-  GeomDetEnumerators::SubDetector
-  geometricDetToGeomDet(GeometricDet::GDEnumType gdenum) {
+  /*GeomDetEnumerators::SubDetector geometricDetToGeomDet(GeometricDet::GDEnumType gdenum) {
     // TO DO: Add here telescope arm, DUT container, and remove all the rest.
     // Obviously this class will be, after adapation, renamed into Telescope Geometry.
     // That way, we will have a Digitizer for the telescope :)
@@ -37,7 +36,7 @@ namespace {
     if(gdenum == GeometricDet::GDEnumType::OTPhase2Barrel) return GeomDetEnumerators::SubDetector::P2OTB;
     if(gdenum == GeometricDet::GDEnumType::OTPhase2EndCap) return GeomDetEnumerators::SubDetector::P2OTEC;
     return GeomDetEnumerators::SubDetector::invalidDet;
-  }
+  }*/
   
   class DetIdComparator {
   public:

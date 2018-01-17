@@ -7,6 +7,10 @@ from Geometry.TrackerPhase2TestBeam.Phase2TestBeamGeometryXML_cfi import *    # 
 
 from Geometry.TrackerPhase2TestBeam.telescopeGeometryNumbering_cfi import *   # Sorting and Numbering of DDGeometry. Produced by DDTelescopeGeometryESProducer.
 
+from Geometry.TrackerPhase2TestBeam.telescopeParameters_cfi import *
+
+from Geometry.TrackerPhase2TestBeam.telescopeTopology_cfi import *
+
 
 
 
