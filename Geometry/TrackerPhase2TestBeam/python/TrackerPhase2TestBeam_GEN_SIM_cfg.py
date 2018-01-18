@@ -1,3 +1,8 @@
+# NB: Single Pion, 120 GeV. Straight beam.
+# This does not pretend to be realistic for the moment, but is there to check that SimHits can be produced on the telescope geometry.
+# Conditions will need to be tuned obviously.
+
+
 import FWCore.ParameterSet.Config as cms
 
 from Configuration.StandardSequences.Eras import eras
@@ -13,12 +18,11 @@ process.load('Configuration.EventContent.EventContent_cff')
 
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 
-process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff')
-process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")  # Rename to PixelTelescopeNumberingInitialization_cfi
-# Add process.load('Geometry.TrackerPhase2TestBeam.PixelTelescopeParametersInitialization_cfi')
+process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff') # Load DDGeometry + telescopeGeometryNumbering_cfi + telescopeParameters_cfi + telescopeTopology_cfi
+process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")  # Rename to pixelTelescopeGeometry_cfi (but this is actually the telescope geometry already)
 
 
-process.load('Configuration.StandardSequences.MagneticField_cff')
+process.load('Configuration.StandardSequences.MagneticField_cff')  # TO DO: Tune here. #process.load('Configuration.StandardSequences.MagneticField_0T_cff')
 process.load('Configuration.StandardSequences.Generator_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedFlat_cfi')  #process.load('IOMC.EventVertexGenerators.VtxSmearedHLLHC_cfi')
 process.load('GeneratorInterface.Core.genFilterSummary_cff')
@@ -30,7 +34,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.load('SimG4CMS.HGCalTestBeam.HGCalTBAnalyzer_cfi')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(50000)
+    input = cms.untracked.int32(30000)
 )
 
 # Input source
@@ -42,7 +46,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('SingleElectronE1000_cfi nevts:10'),
+    annotation = cms.untracked.string('SinglePionE120GeV_cfi nevts:30000'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -71,29 +75,32 @@ process.RAWSIMoutput = cms.OutputModule("PoolOutputModule",       # process.FEVT
 # Other statements
 process.genstepfilter.triggerConditions=cms.vstring("generation_step")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')  # 'auto:phase2_realistic'
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')  # TO DO: Conditions will obviously need to be tuned.
+# 'auto:phase2_realistic'
 
 process.generator = cms.EDProducer("FlatRandomEThetaGunProducer",
-    AddAntiParticle = cms.bool(False),
+    AddAntiParticle = cms.bool(True),
     PGunParameters = cms.PSet(
-        MinE = cms.double(9.99),
-        MaxE = cms.double(10.01),                   # In GeV! TO DO: Is E = 10 GeV fine ????
+        MinE = cms.double(119.99),
+        MaxE = cms.double(120.01),                   # In GeV!
         MinTheta = cms.double(0.0),
         MaxTheta = cms.double(0.0),
         MinPhi = cms.double(-3.14159265359),
         MaxPhi = cms.double(3.14159265359),
-        PartID = cms.vint32(13)
+        PartID = cms.vint32(211)                     # Pion Id
     ),
     Verbosity = cms.untracked.int32(0),
     firstRun = cms.untracked.uint32(1),
-    psethack = cms.string('single muon E 10')
+    psethack = cms.string('Single Pion E 120 GeV')
 )
-process.VtxSmeared.MinZ = -200.0                    # In mm! TO DO: Change to -800mm ????
-process.VtxSmeared.MaxZ = -200.0
-process.VtxSmeared.MinX = -7.5
+process.VtxSmeared.MinZ = -200.0                     # In cm! TO DO: Might need to be updated.
+process.VtxSmeared.MaxZ = -200.0 
+process.VtxSmeared.MinX = -7.5                       # In cm! TO DO: Might need to be updated.
 process.VtxSmeared.MaxX =  7.5
 process.VtxSmeared.MinY = -7.5
 process.VtxSmeared.MaxY =  7.5
+
+
 #process.HGCalTBAnalyzer.DoDigis = False
 #process.HGCalTBAnalyzer.DoRecHits = False
 
@@ -102,7 +109,7 @@ process.generation_step = cms.Path(process.pgen)
 #process.gunfilter_step  = cms.Path(process.HGCalTBCheckGunPostion)
 process.simulation_step = cms.Path(process.psim)
 process.genfiltersummary_step = cms.EndPath(process.genFilterSummary)
-#process.analysis_step = cms.Path(process.HGCalTBAnalyzer)       # TO DO: ADD ANALYSER HERE !!!
+#process.analysis_step = cms.Path(process.HGCalTBAnalyzer)       # Can add an Analyzer directly here if desired.
 process.endjob_step = cms.EndPath(process.endOfProcess)
 process.RAWSIMoutput_step = cms.EndPath(process.RAWSIMoutput)
 
