@@ -43,9 +43,6 @@ using std::string;
 TrackerGeometry* TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const TelescopeTopology* tTopo) {
   //int BIG_PIX_PER_ROC_X = ptp.vpars[2];
   //int BIG_PIX_PER_ROC_Y = ptp.vpars[3];
-
-  int BIG_PIX_PER_ROC_X = 0;
-  int BIG_PIX_PER_ROC_Y = 0; // 0 as defined in the vpars vector in trackerParameters.xml...
     
   thePixelDetTypeMap.clear();
   theStripDetTypeMap.clear();
@@ -155,21 +152,32 @@ TrackerGeometry* TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* 
   */
 
 
+  int BIG_PIX_PER_ROC_X_Phase1 = 1; // To DO: add in telescope params
+  int BIG_PIX_PER_ROC_Y_Phase1 = 2;
+
   // Telescope arm, (-Z) side
   buildPixel(armNegSideDets,tracker,GeomDetEnumerators::SubDetector::P1PXEC,
 	     false,
-	     BIG_PIX_PER_ROC_X,
-	     BIG_PIX_PER_ROC_Y);
-  // Telescope DUT containers (contains only 1 DUT here) 
-  buildPixel(DUTDets,tracker,GeomDetEnumerators::SubDetector::P2OTB,
-	     true,
-	     BIG_PIX_PER_ROC_X,
-	     BIG_PIX_PER_ROC_Y); 
+	     BIG_PIX_PER_ROC_X_Phase1,
+	     BIG_PIX_PER_ROC_Y_Phase1);
+
   // Telescope arm, (+Z) side
   buildPixel(armPosSideDets,tracker,GeomDetEnumerators::SubDetector::P1PXEC,
 	     false,
-	     BIG_PIX_PER_ROC_X,
-	     BIG_PIX_PER_ROC_Y);
+	     BIG_PIX_PER_ROC_X_Phase1,
+	     BIG_PIX_PER_ROC_Y_Phase1);
+
+
+  int BIG_PIX_PER_ROC_X_Phase2 = 0; // To DO: add in telescope params
+  int BIG_PIX_PER_ROC_Y_Phase2 = 0;
+
+  // Telescope DUT containers (contains only 1 DUT here) 
+  buildPixel(DUTDets,tracker,GeomDetEnumerators::SubDetector::P2OTB,
+	     true,
+	     BIG_PIX_PER_ROC_X_Phase2,
+	     BIG_PIX_PER_ROC_Y_Phase2); 
+
+ 
   
 
 
