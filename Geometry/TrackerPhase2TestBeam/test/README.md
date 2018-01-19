@@ -19,13 +19,11 @@
     cmsRun Geometry/TrackerPhase2TestBeam/test/printTelescopeTopology_cfg.py
 
 
-### Test TelescopeDigiGeometry
+### Test TelescopeDigiGeometry   
 
-NB: Is called TrackerDigiGeometry for the moment, but is on the actual telescope geometry, just need to be renamed :)     
+This is obviously not the DIGI step! But this geometry is the one directly used by the Digitizer.    
 
-This is obviously not the DIGI step! But this geometry is the one directly used by the Digitizer.  
-
-    cmsRun Geometry/TrackerGeometryBuilder/test/tracker_cfg.py
+    cmsRun Geometry/TrackerPhase2TestBeam/test/telescope_cfg.py
 
 
 ### GEM_SIM step 
