@@ -28,10 +28,6 @@ PixelTopologyBuilder::build( const Bounds* bs,
   // 2 big pixels per ROC
   float pitchY = length/(ncols+pixelROCsInY*BIG_PIX_PER_ROC_Y);
 
-  std::cout << "BIG_PIX_PER_ROC_X = " << BIG_PIX_PER_ROC_X << "BIG_PIX_PER_ROC_Y = " << BIG_PIX_PER_ROC_Y << std::endl;
-  std::cout << "pitchX  = " << pitchX << std::endl;
-  std::cout << "pitchY  = " << pitchY << std::endl;
-
   return ( new RectangularPixelTopology( nrows, ncols, pitchX, pitchY,
 					 upgradeGeometry,
 					 pixelROCRows, // (int)rocRow
