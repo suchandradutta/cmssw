@@ -20,7 +20,7 @@
   <tr>
     <td> Geometry.TrackerGeometryBuilder.trackerParameters_cfi       </td>
     <td> Geometry.TrackerPhase2TestBeam.telescopeParameters_cfi      </td>
-    <td> Read parameters from DD (actually, DetId sheme only). </td>
+    <td> Read parameters from DD. </td>
   </tr>
 
 

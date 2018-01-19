@@ -7,11 +7,11 @@ from Geometry.TrackerPhase2TestBeam.Phase2TestBeamGeometryXML_cfi import *    # 
 
 from Geometry.TrackerPhase2TestBeam.telescopeGeometryNumbering_cfi import *   # Sorting and Numbering of DDGeometry. Produced by DDTelescopeGeometryESProducer.
 
-from Geometry.TrackerPhase2TestBeam.telescopeParameters_cfi import *
+from Geometry.TrackerPhase2TestBeam.telescopeParameters_cfi import *          # Parameters from DD.
 
-from Geometry.TrackerPhase2TestBeam.telescopeTopology_cfi import *
+from Geometry.TrackerPhase2TestBeam.telescopeTopology_cfi import *            # Allow to get the layer, or plane, or whether a sensor is inner or outer, etc.. from a given DetId.
 
-
+from Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi import *            # Full geometry, as used by the Digitizer.
 
 
 #from SLHCUpgradeSimulations.Geometry.fakeConditions_phase2TkTilted4025_cff import *

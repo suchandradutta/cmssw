@@ -7,8 +7,6 @@ process.load("FWCore.MessageLogger.MessageLogger_cfi")
 # Choose Telescope Geometry
 process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff") # used to be reco _cff
 
-process.load("Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi")
-#process.load("Geometry.TrackerPhase2TestBeam.telescopeParameters_cfi")
 process.telescopeGeometry.applyAlignment = cms.bool(False)
 
 process.source = cms.Source("EmptySource")

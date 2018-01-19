@@ -14,7 +14,6 @@ process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 
 
 process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff")
-process.load("Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi")     
 
 
 

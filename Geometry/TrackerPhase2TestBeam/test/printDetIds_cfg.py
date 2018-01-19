@@ -4,7 +4,6 @@ process = cms.Process("printDetIdsTest")
 process.load("Configuration.StandardSequences.Services_cff")
 
 process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff')
-process.load("Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi")  
 
 
 #  Alignment

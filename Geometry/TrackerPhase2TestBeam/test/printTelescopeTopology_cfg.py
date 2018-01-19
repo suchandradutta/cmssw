@@ -5,7 +5,6 @@ process = cms.Process("NumberingTest")
 #process.load("Configuration.Geometry.GeometryReco_cff")
 #process.load("Geometry.CMSCommonData.cmsExtendedGeometryXML_cfi")
 process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff")
-process.load("Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi")
 
 process.telescopeGeometry.applyAlignment = cms.bool(False)
 
