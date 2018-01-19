@@ -219,7 +219,7 @@ TelescopeGeometry::detsTEC() const
   return theTECDets;
 }
 
-const TelescopeGeomDet * 
+const TrackerGeomDet * 
 TelescopeGeometry::idToDetUnit(DetId s)const
 {
   mapIdToDetUnit::const_iterator p=theMapUnit.find(s.rawId());
@@ -231,7 +231,7 @@ TelescopeGeometry::idToDetUnit(DetId s)const
   }
 }
 
-const TelescopeGeomDet* 
+const TrackerGeomDet* 
 TelescopeGeometry::idToDet(DetId s)const
 {
   mapIdToDet::const_iterator p=theMap.find(s.rawId());

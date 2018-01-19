@@ -54,17 +54,17 @@ namespace edm {
   class ConfigurationDescriptions;
 }
 
-class  TrackerDigiGeometryESModule: public edm::ESProducer{
+class  TelescopeDigiGeometryESModule: public edm::ESProducer{
  public:
-  TrackerDigiGeometryESModule(const edm::ParameterSet & p);
-  ~TrackerDigiGeometryESModule() override; 
-  std::shared_ptr<TrackerGeometry> produce(const TrackerDigiGeometryRecord &);
+  TelescopeDigiGeometryESModule(const edm::ParameterSet & p);
+  ~TelescopeDigiGeometryESModule() override; 
+  std::shared_ptr<TelescopeGeometry> produce(const TelescopeDigiGeometryRecord &);
 
   static void fillDescriptions(edm::ConfigurationDescriptions & descriptions);
   
  private:
   /// Called when geometry description changes
-  std::shared_ptr<TrackerGeometry> _telescope;
+  std::shared_ptr<TelescopeGeometry> _telescope;
   const std::string alignmentsLabel_;
   const std::string myLabel_;
   bool applyAlignment_; // Switch to apply alignment corrections
