@@ -4,7 +4,7 @@
   <use   name="Geometry/CommonTopologies"/>
   <use   name="DataFormats/DetId"/>
   <use   name="DataFormats/GeometrySurface"/>
-  <use   name="DataFormats/TrackerCommon"/>
+  <use   name="DataFormats/TrackerCommon"/>   <!-- test if can remove-->
   <use   name="Geometry/TrackerPhase2TestBeam"/>
   <use   name="Geometry/TrackerNumberingBuilder"/> 
   <use   name="Geometry/TrackerGeometryBuilder"/>

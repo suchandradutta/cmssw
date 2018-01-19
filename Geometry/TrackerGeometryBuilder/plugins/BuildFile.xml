@@ -3,7 +3,6 @@
   <use   name="CondFormats/GeometryObjects"/>
   <use   name="CondFormats/AlignmentRecord"/>
   <use   name="DataFormats/MuonDetId"/>
-  <use   name="DataFormats/TrackerCommon"/>
   <use   name="DetectorDescription/Core"/>
   <use   name="FWCore/Framework"/>
   <use   name="FWCore/ParameterSet"/>
