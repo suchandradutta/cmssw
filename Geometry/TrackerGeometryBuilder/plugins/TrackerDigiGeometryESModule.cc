@@ -1,5 +1,33 @@
 #include "TrackerDigiGeometryESModule.h"
+#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeomBuilderFromGeometricDet.h"
+#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+#include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
+#include "Geometry/Records/interface/IdealGeometryRecord.h"
+#include "Geometry/Records/interface/PTrackerParametersRcd.h"
+#include "DetectorDescription/Core/interface/DDCompactView.h"
+#include "CondFormats/GeometryObjects/interface/PTrackerParameters.h"
+#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "Geometry/Records/interface/TrackerTopologyRcd.h"
 
+// Alignments
+#include "CondFormats/Alignment/interface/Alignments.h"
+#include "CondFormats/Alignment/interface/AlignmentErrorsExtended.h"
+#include "CondFormats/Alignment/interface/AlignmentSurfaceDeformations.h"
+#include "CondFormats/Alignment/interface/DetectorGlobalPosition.h"
+#include "CondFormats/AlignmentRecord/interface/GlobalPositionRcd.h"
+#include "CondFormats/AlignmentRecord/interface/TrackerAlignmentRcd.h"
+#include "CondFormats/AlignmentRecord/interface/TrackerAlignmentErrorExtendedRcd.h"
+#include "CondFormats/AlignmentRecord/interface/TrackerSurfaceDeformationRcd.h"
+#include "Geometry/CommonTopologies/interface/GeometryAligner.h"
+
+#include "FWCore/Framework/interface/EventSetup.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/ModuleFactory.h"
+#include "FWCore/Framework/interface/ESProducer.h"
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
+#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
+
+#include <memory>
 
 //__________________________________________________________________
 TrackerDigiGeometryESModule::TrackerDigiGeometryESModule(const edm::ParameterSet & p) 
@@ -48,20 +76,16 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
   edm::ESHandle<GeometricDet> gD;
   iRecord.getRecord<IdealGeometryRecord>().get( gD );
 
-  edm::ESHandle<TelescopeTopology> tTopoHand;
-  iRecord.getRecord<TelescopeTopologyRcd>().get(tTopoHand);
-  const TelescopeTopology *tTopo=tTopoHand.product();
+  edm::ESHandle<TrackerTopology> tTopoHand;
+  iRecord.getRecord<TrackerTopologyRcd>().get(tTopoHand);
+  const TrackerTopology *tTopo=tTopoHand.product();
 
-  // Parameters are not really needed here
-  /*edm::ESHandle<PTrackerParameters> ptp;
-    iRecord.getRecord<PTrackerParametersRcd>().get( ptp );*/
+  edm::ESHandle<PTrackerParameters> ptp;
+  iRecord.getRecord<PTrackerParametersRcd>().get( ptp );
   
   TrackerGeomBuilderFromGeometricDet builder;
-  //_tracker  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), *ptp, tTopo));
-  _telescope  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), tTopo));
+  _tracker  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), *ptp, tTopo));
 
-
-  /* No thanks
   if (applyAlignment_) {
     // Since fake is fully working when checking for 'empty', we should get rid of applyAlignment_!
     edm::ESHandle<Alignments> globalPosition;
@@ -95,10 +119,9 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
       GeometryAligner ali;
       ali.attachSurfaceDeformations<TrackerGeometry>(&(*_tracker), &(*surfaceDeformations));
     }
-    }
-  */
+  }
   
-  return _telescope;
+  return _tracker;
 }
 
 DEFINE_FWK_EVENTSETUP_MODULE(TrackerDigiGeometryESModule);

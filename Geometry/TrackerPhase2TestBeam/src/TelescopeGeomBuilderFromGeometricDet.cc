@@ -1,5 +1,6 @@
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeomBuilderFromGeometricDet.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeomBuilderFromGeometricDet.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometry.h"
+
 #include "Geometry/TrackerGeometryBuilder/interface/PlaneBuilderForGluedDet.h"
 #include "Geometry/CommonDetUnit/interface/GeomDet.h"
 #include "Geometry/CommonDetUnit/interface/GluedGeomDet.h"
@@ -10,9 +11,10 @@
 #include "Geometry/TrackerGeometryBuilder/interface/StripGeomDetUnit.h"
 #include "Geometry/TrackerGeometryBuilder/interface/PixelTopologyBuilder.h"
 #include "Geometry/TrackerGeometryBuilder/interface/StripTopologyBuilder.h"
-#include "CondFormats/GeometryObjects/interface/PTrackerParameters.h"
+//#include "CondFormats/GeometryObjects/interface/PTelescopeParameters.h"
+//#include "DataFormats/TrackerCommon/interface/PTelescopeParameters.h"
 #include "DataFormats/DetId/interface/DetId.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "DataFormats/GeometrySurface/interface/MediumProperties.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/Utilities/interface/Exception.h"
@@ -22,8 +24,8 @@
 using std::vector;
 using std::string;
 
-namespace {
-  void verifyDUinTG(TrackerGeometry const & tg) {
+/*namespace {
+  void verifyDUinTG(TelescopeGeometry const & tg) {
     int off=0; int end=0;
     for ( int i=1; i!=7; i++) {
       auto det = GeomDetEnumerators::tkDetEnum[i];
@@ -36,18 +38,17 @@ namespace {
       }
     }
   }
-}
+  }*/
 
-TrackerGeometry*
-TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTrackerParameters& ptp, const TrackerTopology* tTopo )
-{
-  int BIG_PIX_PER_ROC_X = ptp.vpars[2];
-  int BIG_PIX_PER_ROC_Y = ptp.vpars[3];
+//TelescopeGeometry* TelescopeGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTelescopeParameters& ptp, const TelescopeTopology* tTopo ) {
+TelescopeGeometry* TelescopeGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const TelescopeTopology* tTopo) {
+  //int BIG_PIX_PER_ROC_X = ptp.vpars[2];
+  //int BIG_PIX_PER_ROC_Y = ptp.vpars[3];
     
   thePixelDetTypeMap.clear();
   theStripDetTypeMap.clear();
    
-  TrackerGeometry* tracker = new TrackerGeometry(gd);
+  TelescopeGeometry* telescope = new TelescopeGeometry(gd);
   std::vector<const GeometricDet*> comp;
   gd->deepComponents(comp);
  
@@ -55,6 +56,8 @@ TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTracke
 
   //define a vector which associate to the detid subdetector index -1 (from 0 to 5) the GeometridDet enumerator to be able to know which type of subdetector it is
   
+
+  /* ALL THIS IS TO SORT THE GEOMETRICDET BY SUBDETECTOR !!
   std::vector<GeometricDet::GDEnumType> gdsubdetmap(6,GeometricDet::unknown); // hardcoded "6" should not be a surprise... 
   GeometricDet::ConstGeometricDetContainer subdetgd = gd->components();
   
@@ -66,90 +69,130 @@ TrackerGeomBuilderFromGeometricDet::build( const GeometricDet* gd, const PTracke
 					    << " type " << subdetgd[i]->type()
 					    << " detid " <<  subdetgd[i]->geographicalId().rawId()
 					    << " subdetid " <<  subdetgd[i]->geographicalId().subdetId();
+					    }
+*/
+  
+  std::vector<const GeometricDet*> dets[3];
+  std::vector<const GeometricDet*> & armNegSideDets = dets[0]; armNegSideDets.reserve(comp.size());
+  std::vector<const GeometricDet*> & DUTDets = dets[1]; DUTDets.reserve(comp.size());
+  std::vector<const GeometricDet*> & armPosSideDets  = dets[2];  armPosSideDets.reserve(comp.size());
+  
+
+
+
+  
+  for(auto & i : comp) {
+    dets[i->geographicalID().subdetId()-1].emplace_back(i);
   }
   
-  std::vector<const GeometricDet*> dets[6];
-  std::vector<const GeometricDet*> & pixB = dets[0]; pixB.reserve(comp.size());
-  std::vector<const GeometricDet*> & pixF = dets[1]; pixF.reserve(comp.size());
-  std::vector<const GeometricDet*> & tib  = dets[2];  tib.reserve(comp.size());
-  std::vector<const GeometricDet*> & tid  = dets[3];  tid.reserve(comp.size());
-  std::vector<const GeometricDet*> & tob  = dets[4];  tob.reserve(comp.size());
-  std::vector<const GeometricDet*> & tec  = dets[5];  tec.reserve(comp.size());
+ 
 
-  for(auto & i : comp)
-    dets[i->geographicalID().subdetId()-1].emplace_back(i);
-  
   //loop on all the six elements of dets and firstly check if they are from pixel-like detector and call buildPixel, then loop again and check if they are strip and call buildSilicon. "unknown" can be filled either way but the vector of GeometricDet must be empty !!
   // this order is VERY IMPORTANT!!!!! For the moment I (AndreaV) understand that some pieces of code rely on pixel-like being before strip-like 
   
   // now building the Pixel-like subdetectors
+  /*
   for(unsigned int i=0;i<6;++i) {
     if(gdsubdetmap[i] == GeometricDet::PixelBarrel) 
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::PixelBarrel,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::PixelBarrel,
 		 false,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y); 
     if(gdsubdetmap[i] == GeometricDet::PixelPhase1Barrel) 
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::P1PXB,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::P1PXB,
 		 false,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y);
     // Phase2 case
         if(gdsubdetmap[i] == GeometricDet::PixelPhase2Barrel) 
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::P2PXB,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::P2PXB,
 		 true,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y);
 	//
     if(gdsubdetmap[i] == GeometricDet::PixelEndCap)
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::PixelEndcap,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::PixelEndcap,
 		 false,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y); 
     if(gdsubdetmap[i] == GeometricDet::PixelPhase1EndCap)
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::P1PXEC,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::P1PXEC,
 		 false,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y); 
     if(gdsubdetmap[i] == GeometricDet::PixelPhase2EndCap)
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::P2PXEC,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::P2PXEC,
 		 true,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y); 
     if(gdsubdetmap[i] == GeometricDet::OTPhase2Barrel) 
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::P2OTB,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::P2OTB,
 		 true,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y); 
     if(gdsubdetmap[i] == GeometricDet::OTPhase2EndCap) 
-      buildPixel(dets[i],tracker,GeomDetEnumerators::SubDetector::P2OTEC,
+      buildPixel(dets[i],telescope,GeomDetEnumerators::SubDetector::P2OTEC,
 		 true,
 		 BIG_PIX_PER_ROC_X,
 		 BIG_PIX_PER_ROC_Y); 
   }
   //now building Strips
   for(unsigned int i=0;i<6;++i) {
-    if(gdsubdetmap[i] == GeometricDet::TIB)   buildSilicon(dets[i],tracker,GeomDetEnumerators::SubDetector::TIB, "barrel");
-    if(gdsubdetmap[i] == GeometricDet::TID)   buildSilicon(dets[i],tracker,GeomDetEnumerators::SubDetector::TID, "endcap");
-    if(gdsubdetmap[i] == GeometricDet::TOB)   buildSilicon(dets[i],tracker,GeomDetEnumerators::SubDetector::TOB, "barrel");
-    if(gdsubdetmap[i] == GeometricDet::TEC)   buildSilicon(dets[i],tracker,GeomDetEnumerators::SubDetector::TEC, "endcap");
+    if(gdsubdetmap[i] == GeometricDet::TIB)   buildSilicon(dets[i],telescope,GeomDetEnumerators::SubDetector::TIB, "barrel");
+    if(gdsubdetmap[i] == GeometricDet::TID)   buildSilicon(dets[i],telescope,GeomDetEnumerators::SubDetector::TID, "endcap");
+    if(gdsubdetmap[i] == GeometricDet::TOB)   buildSilicon(dets[i],telescope,GeomDetEnumerators::SubDetector::TOB, "barrel");
+    if(gdsubdetmap[i] == GeometricDet::TEC)   buildSilicon(dets[i],telescope,GeomDetEnumerators::SubDetector::TEC, "endcap");
   }  
   // and finally the "empty" subdetectors (maybe it is not needed)
   for(unsigned int i=0;i<6;++i) {
     if(gdsubdetmap[i] == GeometricDet::unknown) {
       if(!dets[i].empty()) throw cms::Exception("NotEmptyUnknownSubDet") << "Subdetector " << i+1 << " is unknown but it is not empty: " << dets[i].size();
-      buildSilicon(dets[i],tracker,GeomDetEnumerators::tkDetEnum[i+1], "barrel"); // "barrel" is used but it is irrelevant
+      buildSilicon(dets[i],telescope,GeomDetEnumerators::tkDetEnum[i+1], "barrel"); // "barrel" is used but it is irrelevant
     }
   }
-  buildGeomDet(tracker);//"GeomDet"
+  */
 
-  verifyDUinTG(*tracker);
 
-  return tracker;
+  int BIG_PIX_PER_ROC_X_Phase1 = 1; // To DO: add in telescope params
+  int BIG_PIX_PER_ROC_Y_Phase1 = 2;
+
+  // Telescope arm, (-Z) side
+  buildPixel(armNegSideDets,telescope,GeomDetEnumerators::SubDetector::P1PXEC,
+	     false,
+	     BIG_PIX_PER_ROC_X_Phase1,
+	     BIG_PIX_PER_ROC_Y_Phase1);
+
+  // Telescope arm, (+Z) side
+  buildPixel(armPosSideDets,telescope,GeomDetEnumerators::SubDetector::P1PXEC,
+	     false,
+	     BIG_PIX_PER_ROC_X_Phase1,
+	     BIG_PIX_PER_ROC_Y_Phase1);
+
+
+  int BIG_PIX_PER_ROC_X_Phase2 = 0; // To DO: add in telescope params
+  int BIG_PIX_PER_ROC_Y_Phase2 = 0;
+
+  // Telescope DUT containers (contains only 1 DUT here) 
+  buildPixel(DUTDets,telescope,GeomDetEnumerators::SubDetector::P2OTB,
+	     true,
+	     BIG_PIX_PER_ROC_X_Phase2,
+	     BIG_PIX_PER_ROC_Y_Phase2); 
+
+ 
+  
+
+
+
+
+  buildGeomDet(telescope);//"GeomDet"
+
+  //verifyDUinTG(*telescope);
+
+  return telescope;
 }
 
-void TrackerGeomBuilderFromGeometricDet::buildPixel(std::vector<const GeometricDet*>  const & gdv, 
-						    TrackerGeometry* tracker,
+void TelescopeGeomBuilderFromGeometricDet::buildPixel(std::vector<const GeometricDet*>  const & gdv, 
+						    TelescopeGeometry* telescope,
 						    GeomDetType::SubDetector det,
 						    bool upgradeGeometry,
 						    int BIG_PIX_PER_ROC_X, // in x direction, rows. BIG_PIX_PER_ROC_X = 0 for SLHC
@@ -161,7 +204,7 @@ void TrackerGeomBuilderFromGeometricDet::buildPixel(std::vector<const GeometricD
 				   << " big pix per ROC x: " << BIG_PIX_PER_ROC_X << " y: " << BIG_PIX_PER_ROC_Y
 				   << " is upgrade: " << upgradeGeometry;
   
-  tracker->setOffsetDU(GeomDetEnumerators::subDetGeom[det]);
+  telescope->setOffsetDU(GeomDetEnumerators::subDetGeom[det]);
 
   for(auto i : gdv){
 
@@ -179,20 +222,20 @@ void TrackerGeomBuilderFromGeometricDet::buildPixel(std::vector<const GeometricD
 				       i->pixROCx(), i->pixROCy());
       
       thePixelDetTypeMap[detName] = new PixelGeomDetType(t,detName,det);
-      tracker->addType(thePixelDetTypeMap[detName]);
+      telescope->addType(thePixelDetTypeMap[detName]);
     }
 
     PlaneBuilderFromGeometricDet::ResultType plane = buildPlaneWithMaterial(i);
     GeomDetUnit* temp =  new PixelGeomDetUnit(&(*plane),thePixelDetTypeMap[detName],i->geographicalID());
 
-    tracker->addDetUnit(temp);
-    tracker->addDetUnitId(i->geographicalID());
+    telescope->addDetUnit(temp);
+    telescope->addDetUnitId(i->geographicalID());
   }
-  tracker->setEndsetDU(GeomDetEnumerators::subDetGeom[det]);
+  telescope->setEndsetDU(GeomDetEnumerators::subDetGeom[det]);
 }
 
-void TrackerGeomBuilderFromGeometricDet::buildSilicon(std::vector<const GeometricDet*>  const & gdv, 
-						      TrackerGeometry* tracker,
+void TelescopeGeomBuilderFromGeometricDet::buildSilicon(std::vector<const GeometricDet*>  const & gdv, 
+						      TelescopeGeometry* telescope,
 						      GeomDetType::SubDetector det,
 						      const std::string& part)
 { 
@@ -201,7 +244,7 @@ void TrackerGeomBuilderFromGeometricDet::buildSilicon(std::vector<const Geometri
 				   << " logical subdetector: " << GeomDetEnumerators::subDetGeom[det]
 				   << " part " << part;
   
-  tracker->setOffsetDU(GeomDetEnumerators::subDetGeom[det]);
+  telescope->setOffsetDU(GeomDetEnumerators::subDetGeom[det]);
 
   for(auto i : gdv){
 
@@ -214,32 +257,32 @@ void TrackerGeomBuilderFromGeometricDet::buildSilicon(std::vector<const Geometri
 				       part);
       theStripDetTypeMap[detName] = new  StripGeomDetType( t,detName,det,
 						   i->stereo());
-      tracker->addType(theStripDetTypeMap[detName]);
+      telescope->addType(theStripDetTypeMap[detName]);
     }
      
-    double scale  = (theTopo->partnerDetId(i->geographicalID())) ? 0.5 : 1.0 ;	
+    double scale  = (theTopo->partnerDetId(i->geographicalID())) ? 0.5 : 1.0 ;
 
     PlaneBuilderFromGeometricDet::ResultType plane = buildPlaneWithMaterial(i,scale);  
     GeomDetUnit* temp = new StripGeomDetUnit(&(*plane), theStripDetTypeMap[detName],i->geographicalID());
     
-    tracker->addDetUnit(temp);
-    tracker->addDetUnitId(i->geographicalID());
+    telescope->addDetUnit(temp);
+    telescope->addDetUnitId(i->geographicalID());
   }  
-  tracker->setEndsetDU(GeomDetEnumerators::subDetGeom[det]);
+  telescope->setEndsetDU(GeomDetEnumerators::subDetGeom[det]);
 
 }
 
 
-void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
+void TelescopeGeomBuilderFromGeometricDet::buildGeomDet(TelescopeGeometry* telescope){
 
   PlaneBuilderForGluedDet gluedplaneBuilder;
-  auto const & gdu = tracker->detUnits();
-  auto const & gduId = tracker->detUnitIds();
+  auto const & gdu = telescope->detUnits();
+  auto const & gduId = telescope->detUnitIds();
 
   for(u_int32_t i=0;i<gdu.size();i++){
 
-    tracker->addDet(gdu[i]);
-    tracker->addDetId(gduId[i]);
+    telescope->addDet(gdu[i]);
+    telescope->addDetId(gduId[i]);
     string gduTypeName = gdu[i]->type().name();
 
     //this step is time consuming >> TO FIX with a MAP?
@@ -247,6 +290,10 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
          gduTypeName.find("Lower")!=std::string::npos) && 
         (theTopo->glued(gduId[i])!=0 || theTopo->stack(gduId[i])!=0 )) {
     
+
+      std::cout << "TelescopeGeomBuilderFromGeometricDet::buildGeomDet  gduId[i].rawId() = " << gduId[i].rawId() << std::endl;
+      std::cout << "TelescopeGeomBuilderFromGeometricDet::buildGeomDet  theTopo->partnerDetId(gduId[i]).rawId() = " << theTopo->partnerDetId(gduId[i]).rawId() << std::endl;
+
 
       int partner_pos=-1;
       for(u_int32_t jj=0;jj<gduId.size();jj++){
@@ -257,7 +304,7 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
       }
       if(partner_pos==-1){
 	  throw cms::Exception("Configuration") <<"Module Type is Stereo or Lower but no partner detector found \n"
-					        <<"There is a problem on Tracker geometry configuration\n";
+					        <<"There is a problem on Telescope geometry configuration\n";
       }
 
       const GeomDetUnit* dus = gdu[i];
@@ -271,8 +318,8 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
         PlaneBuilderForGluedDet::ResultType plane = gluedplaneBuilder.plane(composed);
         composedDetId = theTopo->glued(gduId[i]);
         GluedGeomDet* gluedDet = new GluedGeomDet(&(*plane),dum,dus,composedDetId);
-        tracker->addDet((GeomDet*) gluedDet);
-        tracker->addDetId(composedDetId);
+        telescope->addDet((GeomDet*) gluedDet);
+        telescope->addDetId(composedDetId);
 
       } else if (gduTypeName.find("Lower")!=std::string::npos){
 
@@ -280,8 +327,9 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
         PlaneBuilderForGluedDet::ResultType plane = gluedplaneBuilder.plane(composed);
         composedDetId = theTopo->stack(gduId[i]);
         StackGeomDet* stackDet = new StackGeomDet(&(*plane),dum,dus,composedDetId);
-        tracker->addDet((GeomDet*) stackDet);
-        tracker->addDetId(composedDetId);
+	std::cout << "TelescopeGeomBuilderFromGeometricDet::buildGeomDet  composedDetId.rawId() = " << composedDetId.rawId() << std::endl;
+        telescope->addDet((GeomDet*) stackDet);
+        telescope->addDetId(composedDetId);
 
       } 
 
@@ -290,8 +338,10 @@ void TrackerGeomBuilderFromGeometricDet::buildGeomDet(TrackerGeometry* tracker){
   }
 }
 
+
+
 PlaneBuilderFromGeometricDet::ResultType
-TrackerGeomBuilderFromGeometricDet::buildPlaneWithMaterial(const GeometricDet* gd,
+TelescopeGeomBuilderFromGeometricDet::buildPlaneWithMaterial(const GeometricDet* gd,
 							   double scale) const
 {
   PlaneBuilderFromGeometricDet planeBuilder;

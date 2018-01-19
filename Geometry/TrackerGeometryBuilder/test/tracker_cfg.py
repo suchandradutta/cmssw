@@ -5,10 +5,12 @@ process = cms.Process("GeometryTest")
 process.load("FWCore.MessageLogger.MessageLogger_cfi")
 
 # Choose Tracker Geometry
-process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff") # used to be reco _cff
+process.load("Geometry.TrackerRecoData.trackerRecoGeometryXML_cfi")
+
+process.load("Geometry.TrackerNumberingBuilder.trackerNumberingGeometry_cfi")
 
 process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")
-#process.load("Geometry.TrackerGeometryBuilder.trackerParameters_cfi")
+process.load("Geometry.TrackerGeometryBuilder.trackerParameters_cfi")
 process.trackerGeometry.applyAlignment = cms.bool(False)
 
 process.source = cms.Source("EmptySource")

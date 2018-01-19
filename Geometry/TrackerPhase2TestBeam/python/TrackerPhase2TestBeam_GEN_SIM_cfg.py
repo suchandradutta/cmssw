@@ -19,7 +19,7 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 
 process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff') # Load DDGeometry + telescopeGeometryNumbering_cfi + telescopeParameters_cfi + telescopeTopology_cfi
-process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")  # Rename to pixelTelescopeGeometry_cfi (but this is actually the telescope geometry already)
+process.load("Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi")
 
 
 process.load('Configuration.StandardSequences.MagneticField_cff')  # TO DO: Tune here. #process.load('Configuration.StandardSequences.MagneticField_0T_cff')

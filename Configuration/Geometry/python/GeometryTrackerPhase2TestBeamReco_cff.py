@@ -17,7 +17,7 @@ from Geometry.TrackerGeometryBuilder.idealForDigiTrackerGeometry_cff import *  #
 #from Geometry.TrackerGeometryBuilder.trackerParameters_cfi import *
 #from Geometry.TrackerNumberingBuilder.trackerTopology_cfi import *
 
-#trackerGeometry.applyAlignment = cms.bool(False)
+#telescopeGeometry.applyAlignment = cms.bool(False)
 
 
 

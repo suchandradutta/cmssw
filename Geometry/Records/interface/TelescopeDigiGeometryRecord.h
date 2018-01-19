@@ -1,5 +1,5 @@
-#ifndef RECORDS_TRACKERDIGIGEOMETRYRECORD_H
-#define RECORDS_TRACKERDIGIGEOMETRYRECORD_H
+#ifndef RECORDS_TELESCOPEDIGIGEOMETRYRECORD_H
+#define RECORDS_TELESCOPEDIGIGEOMETRYRECORD_H
 
 #include "FWCore/Framework/interface/EventSetupRecordImplementation.h"
 #include "FWCore/Framework/interface/DependentRecordImplementation.h"
@@ -8,18 +8,18 @@
 #include "CondFormats/AlignmentRecord/interface/TrackerSurfaceDeformationRcd.h"
 #include "CondFormats/AlignmentRecord/interface/GlobalPositionRcd.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
-#include "Geometry/Records/interface/TrackerTopologyRcd.h"
-#include "Geometry/Records/interface/PTrackerParametersRcd.h"
+#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
+#include "Geometry/Records/interface/PTelescopeParametersRcd.h"
 #include "boost/mpl/vector.hpp"
 
-class TrackerDigiGeometryRecord : 
-  public edm::eventsetup::DependentRecordImplementation<TrackerDigiGeometryRecord,
+class TelescopeDigiGeometryRecord : 
+  public edm::eventsetup::DependentRecordImplementation<TelescopeDigiGeometryRecord,
                 boost::mpl::vector<IdealGeometryRecord,
                 TrackerAlignmentRcd, 
                 TrackerAlignmentErrorExtendedRcd,
                 TrackerSurfaceDeformationRcd,
                 GlobalPositionRcd,
-                TrackerTopologyRcd,
-                PTrackerParametersRcd> > {};
+                TelescopeTopologyRcd,
+                PTelescopeParametersRcd> > {};
 
-#endif /* RECORDS_TRACKERDIGIGEOMETRYRECORD_H */
+#endif /* RECORDS_TELESCOPEDIGIGEOMETRYRECORD_H */

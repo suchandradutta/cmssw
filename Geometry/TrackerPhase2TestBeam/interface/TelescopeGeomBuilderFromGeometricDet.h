@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerGeometryBuilder_TrackerGeomBuilderFromGeometricDet_H
-#define Geometry_TrackerGeometryBuilder_TrackerGeomBuilderFromGeometricDet_H
+#ifndef Geometry_TrackerPhase2TestBeam_TelescopeGeomBuilderFromGeometricDet_H
+#define Geometry_TrackerPhase2TestBeam_TelescopeGeomBuilderFromGeometricDet_H
 
 #include <string>
 #include <vector>
@@ -8,34 +8,38 @@
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/CommonDetUnit/interface/GeomDetType.h"
 
-class TrackerGeometry;
-class TrackerTopology;
+#include "DataFormats/DetId/interface/DetId.h"
+#include <iostream>
+
+class TelescopeGeometry;
+class TelescopeTopology;
 class PixelGeomDetType;
 class StripGeomDetType;
-class PTrackerParameters;
+//class PTelescopeParameters;
 
-class TrackerGeomBuilderFromGeometricDet {
+class TelescopeGeomBuilderFromGeometricDet {
 public:
 
-  TrackerGeometry* build(const GeometricDet* gd, const PTrackerParameters & ptp, const TrackerTopology* tTopo);
+  //TelescopeGeometry* build(const GeometricDet* gd, const PTelescopeParameters & ptp, const TelescopeTopology* tTopo);
+  TelescopeGeometry* build(const GeometricDet* gd, const TelescopeTopology* tTopo);
 
 private:
 
   void buildPixel(std::vector<const GeometricDet*> const &,
-		  TrackerGeometry*,GeomDetType::SubDetector det,
+		  TelescopeGeometry*,GeomDetType::SubDetector det,
 		  bool upgradeGeometry,
 		  int BIG_PIX_PER_ROC_X,
 		  int BIG_PIX_PER_ROC_Y);
   void buildSilicon(std::vector<const GeometricDet*> const &,
-		    TrackerGeometry*,GeomDetType::SubDetector det, const std::string& part);
-  void buildGeomDet(TrackerGeometry* );
+		    TelescopeGeometry*,GeomDetType::SubDetector det, const std::string& part);
+  void buildGeomDet(TelescopeGeometry* );
 
   PlaneBuilderFromGeometricDet::ResultType
   buildPlaneWithMaterial(const GeometricDet* gd,double scaleFactor=1.) const;
 
   std::map<std::string,const PixelGeomDetType*> thePixelDetTypeMap;
   std::map<std::string,const StripGeomDetType*> theStripDetTypeMap;
-  const TrackerTopology* theTopo;
+  const TelescopeTopology* theTopo;
 };
 
 #endif

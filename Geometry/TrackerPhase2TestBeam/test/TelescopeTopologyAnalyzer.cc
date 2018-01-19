@@ -9,9 +9,9 @@
 
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometry.h"
 #include "Geometry/CommonDetUnit/interface/TrackingGeometry.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+#include "Geometry/Records/interface/TelescopeDigiGeometryRecord.h"
 #include "Geometry/TrackerPhase2TestBeam/plugins/TelescopeTopologyEP.h"
 
 #include <climits>
@@ -35,8 +35,8 @@ void TelescopeTopologyAnalyzer::analyze( const edm::Event &iEvent, const edm::Ev
 
   typedef std::vector<DetId>                 DetIdContainer;
 
-  edm::ESHandle<TrackerGeometry> geo;
-  iSetup.get<TrackerDigiGeometryRecord>().get(geo);
+  edm::ESHandle<TelescopeGeometry> geo;
+  iSetup.get<TelescopeDigiGeometryRecord>().get(geo);
 
   DetIdContainer allIds=geo->detIds();
  

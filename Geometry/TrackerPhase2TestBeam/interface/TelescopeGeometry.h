@@ -1,5 +1,5 @@
-#ifndef Geometry_TrackerGeometryBuilder_TrackerGeometry_H
-#define Geometry_TrackerGeometryBuilder_TrackerGeometry_H
+#ifndef Geometry_TrackerPhase2TestBeam_TelescopeGeometry_H
+#define Geometry_TrackerPhase2TestBeam_TelescopeGeometry_H
 
 #include "Geometry/CommonDetUnit/interface/TrackingGeometry.h"
 #include "Geometry/CommonDetUnit/interface/GeomDetEnumerators.h"
@@ -8,17 +8,17 @@
 class GeometricDet;
 
 /**
- * A specific Tracker Builder which builds a Tracker from a list of DetUnits. 
+ * A specific Telescope Builder which builds a Telescope from a list of DetUnits. 
  * Pattern recognition is used to discover layers, rings etc.
  */
-class TrackerGeometry final : public TrackingGeometry {
+class TelescopeGeometry final : public TrackingGeometry {
 
-  explicit TrackerGeometry(GeometricDet const* gd=nullptr);  
+  explicit TelescopeGeometry(GeometricDet const* gd=nullptr);  
 
-  friend class TrackerGeomBuilderFromGeometricDet;
+  friend class TelescopeGeomBuilderFromGeometricDet;
 
   void addType(GeomDetType const * p);
-  void addDetUnit(GeomDetUnit const * p);
+  void addDetUnit(GeomDet const * p);
   void addDetUnitId(DetId p);
   void addDet(GeomDet const * p);
   void addDetId(DetId p);
@@ -54,10 +54,10 @@ public:
       Ph2SS
    };
 
-  ~TrackerGeometry() override ;
+  ~TelescopeGeometry() override ;
 
   const DetTypeContainer&  detTypes()         const override {return theDetTypes;}
-  const DetUnitContainer&  detUnits()         const override {return theDetUnits;}
+  const DetContainer&      detUnits()         const override {return theDetUnits;}
   const DetContainer&      dets()             const override {return theDets;}
   const DetIdContainer&    detUnitIds()       const override {return theDetUnitIds;}
   const DetIdContainer&    detIds()           const override { return theDetIds;}
@@ -98,7 +98,7 @@ private:
   friend class GeometryAligner;
 
   DetTypeContainer  theDetTypes;  // owns the DetTypes
-  DetUnitContainer  theDetUnits;  // they're all also into 'theDets', so we assume 'theDets' owns them
+  DetContainer      theDetUnits;  // they're all also into 'theDets', so we assume 'theDets' owns them
   unsigned int      theOffsetDU[6]; // offsets in the above
   unsigned int      theEndsetDU[6]; // end offsets in the above
   DetContainer      theDets;      // owns *ONLY* the GeomDet * corresponding to GluedDets.
@@ -114,9 +114,9 @@ private:
   DetContainer      theTOBDets; // not owned: they're also in 'theDets'
   DetContainer      theTECDets; // not owned: they're also in 'theDets'
 
-  GeomDetEnumerators::SubDetector theSubDetTypeMap[6];
-  unsigned int theNumberOfLayers[6];
-  std::vector< std::tuple< DetId, TrackerGeometry::ModuleType, float> > theDetTypetList; 
+  GeomDetEnumerators::SubDetector theSubDetTypeMap[3];
+  unsigned int theNumberOfLayers[3];
+  std::vector< std::tuple< DetId, TelescopeGeometry::ModuleType, float> > theDetTypetList; 
 };
 
 #endif

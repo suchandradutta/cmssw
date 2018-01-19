@@ -12,8 +12,8 @@
 
 #include "Geometry/TrackerPhase2TestBeam/test/SimHitAnalyzer.h"
 
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+#include "Geometry/Records/interface/TelescopeDigiGeometryRecord.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometry.h" 
 
 
 
@@ -52,9 +52,9 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 
 
   
-  edm::ESHandle<TrackerGeometry> theTrackerGeometry;
-  setup.get<TrackerDigiGeometryRecord> ().get (theTrackerGeometry);
-  const TrackerGeometry &theTracker (*theTrackerGeometry);
+  edm::ESHandle<TelescopeGeometry> theTelescopeGeometry;
+  setup.get<TelescopeDigiGeometryRecord> ().get (theTelescopeGeometry);
+  const TelescopeGeometry &theTelescope (*theTelescopeGeometry);
 
 
 
@@ -69,7 +69,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.entryPoint() = " << simHit.entryPoint() 
 	      << " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
       
-      const GeomDet *theDet = theTracker.idToDet (theDetUnitId);
+      const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
       double x, y, z;
       x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
@@ -90,7 +90,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.entryPoint() = " << simHit.entryPoint() 
 	      << " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
 
-    const GeomDet *theDet = theTracker.idToDet (theDetUnitId);
+    const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
       double x, y, z;
       x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
@@ -111,7 +111,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 		<< " simHit.entryPoint() = " << simHit.entryPoint() 
 		<< " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
       
-      const GeomDet *theDet = theTracker.idToDet (theDetUnitId);
+      const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
       //double x, y, z;
       double y, z;
@@ -131,7 +131,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.entryPoint() = " << simHit.entryPoint() 
 	      << " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
       
-    const GeomDet *theDet = theTracker.idToDet (theDetUnitId);
+    const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
     //double x, y, z;
       double y, z;

@@ -1,6 +1,6 @@
 #include <typeinfo>
 
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometry.h"
 #include "Geometry/TrackerNumberingBuilder/interface/GeometricDet.h"
 #include "Geometry/CommonDetUnit/interface/GeomDet.h"
 #include "Geometry/CommonDetUnit/interface/GeomDetType.h"
@@ -16,8 +16,12 @@
 #include <map>
 
 namespace {
-  GeomDetEnumerators::SubDetector
-  geometricDetToGeomDet(GeometricDet::GDEnumType gdenum) {
+  /*GeomDetEnumerators::SubDetector geometricDetToGeomDet(GeometricDet::GDEnumType gdenum) {
+    // TO DO: Add here telescope arm, DUT container, and remove all the rest.
+    // Obviously this class will be, after adapation, renamed into Telescope Geometry.
+    // That way, we will have a Digitizer for the telescope :)
+    // But first, let's see if things can slightly make sense!
+
     // provide a map between the GeometricDet enumerators and the GeomDet enumerators of the possible tracker subdetectors
     if(gdenum == GeometricDet::GDEnumType::PixelBarrel ) return GeomDetEnumerators::SubDetector::PixelBarrel;
     if(gdenum == GeometricDet::GDEnumType::PixelEndCap) return GeomDetEnumerators::SubDetector::PixelEndcap;
@@ -32,7 +36,7 @@ namespace {
     if(gdenum == GeometricDet::GDEnumType::OTPhase2Barrel) return GeomDetEnumerators::SubDetector::P2OTB;
     if(gdenum == GeometricDet::GDEnumType::OTPhase2EndCap) return GeomDetEnumerators::SubDetector::P2OTEC;
     return GeomDetEnumerators::SubDetector::invalidDet;
-  }
+  }*/
   
   class DetIdComparator {
   public:
@@ -44,15 +48,30 @@ namespace {
   };
 }
 
-TrackerGeometry::TrackerGeometry(GeometricDet const* gd)
-   : theTrackerDet(gd)
-{
-  for(unsigned int i=0;i<6;++i) {
+TelescopeGeometry::TelescopeGeometry(GeometricDet const* gd)
+   : theTrackerDet(gd) { 
+
+  /*
+    for(unsigned int i=0;i<6;++i) {
     theSubDetTypeMap[i] = GeomDetEnumerators::invalidDet;
     theNumberOfLayers[i] = 0;
-  }
+    }
+  */
+  // Telescope arm, (-Z) side
+  theSubDetTypeMap[0] = GeomDetEnumerators::SubDetector::P1PXEC;  // See Geometry/CommonDetUnit/interface/GeomDetEnumerators.h (and its amazing code style lol)
+  theNumberOfLayers[0] = 4;
+
+  // Telescope DUT containers (contains only 1 DUT here)
+  theSubDetTypeMap[1] = GeomDetEnumerators::SubDetector::P2OTB;
+  theNumberOfLayers[1] = 1;
+
+  // Telescope arm, (+Z) side
+  theSubDetTypeMap[2] = GeomDetEnumerators::SubDetector::P1PXEC;  // See Geometry/CommonDetUnit/interface/GeomDetEnumerators.h (and its amazing code style lol)
+  theNumberOfLayers[2] = 4;
+
+
+  /*
   GeometricDet::ConstGeometricDetContainer subdetgd = gd->components();
-  
   LogDebug("BuildingSubDetTypeMap") << "GeometriDet and GeomDetEnumerators enumerator values of the subdetectors";
   for(unsigned int i=0;i<subdetgd.size();++i) {
     assert(subdetgd[i]->geographicalId().subdetId()>0 && subdetgd[i]->geographicalId().subdetId()<7);
@@ -73,6 +92,8 @@ TrackerGeometry::TrackerGeometry(GeometricDet const* gd)
   for(unsigned int i=1;i<7;++i) {
     LogTrace("NumberOfLayers") << " detid subdet "<< i << " number of layers " << numberOfLayers(i); 
   }
+  */
+
   std::vector<const GeometricDet*> deepcomp;
   gd->deepComponents(deepcomp);
    
@@ -87,17 +108,17 @@ TrackerGeometry::TrackerGeometry(GeometricDet const* gd)
   LogDebug("DetTypeList") << " Content of DetTypetList : size " << theDetTypetList.size();
   for (auto iVal : theDetTypetList) {
     LogDebug("DetTypeList") << " DetId " << std::get<0>(iVal)
-			    << " Type " << static_cast<std::underlying_type<TrackerGeometry::ModuleType>::type>(std::get<1>(iVal))
+			    << " Type " << static_cast<std::underlying_type<TelescopeGeometry::ModuleType>::type>(std::get<1>(iVal))
 			    << " Thickness " << std::get<2>(iVal);
   }  
 }
 
-TrackerGeometry::~TrackerGeometry() {
+TelescopeGeometry::~TelescopeGeometry() {
     for (auto d : theDets) delete const_cast<GeomDet*>(d);
     for (auto d : theDetTypes) delete const_cast<GeomDetType*>(d);
 }
 
-void TrackerGeometry::finalize() {
+void TelescopeGeometry::finalize() {
     theDetTypes.shrink_to_fit();  // owns the DetTypes
     theDetUnits.shrink_to_fit();  // they're all also into 'theDets', so we assume 'theDets' owns them
     theDets.shrink_to_fit();     // owns *ONLY* the GeomDet * corresponding to GluedDets.
@@ -112,22 +133,22 @@ void TrackerGeometry::finalize() {
     theTECDets.shrink_to_fit(); // not owned: they're also in 'theDets'
 }
 
-void TrackerGeometry::addType(GeomDetType const * p) {
+void TelescopeGeometry::addType(GeomDetType const * p) {
   theDetTypes.emplace_back(p);  // add to vector
 }
 
-void TrackerGeometry::addDetUnit(GeomDetUnit const * p) {
+void TelescopeGeometry::addDetUnit(GeomDet const * p) {
   // set index
-  const_cast<GeomDetUnit *>(p)->setIndex(theDetUnits.size());
+  const_cast<GeomDet *>(p)->setIndex(theDetUnits.size());
   theDetUnits.emplace_back(p);  // add to vector
   theMapUnit.insert(std::make_pair(p->geographicalId().rawId(),p));
 }
 
-void TrackerGeometry::addDetUnitId(DetId p){
+void TelescopeGeometry::addDetUnitId(DetId p){
   theDetUnitIds.emplace_back(p);
 }
 
-void TrackerGeometry::addDet(GeomDet const * p) {
+void TelescopeGeometry::addDet(GeomDet const * p) {
   // set index
   const_cast<GeomDet *>(p)->setGdetIndex(theDets.size());
   theDets.emplace_back(p);  // add to vector
@@ -153,53 +174,53 @@ void TrackerGeometry::addDet(GeomDet const * p) {
     theTECDets.emplace_back(p);
     break;
   default:
-    edm::LogError("TrackerGeometry")<<"ERROR - I was expecting a Tracker Subdetector, I got a "<<id.subdetId();
+    edm::LogError("TelescopeGeometry")<<"ERROR - I was expecting a Tracker Subdetector, I got a "<<id.subdetId();
   }
 }
 
-void TrackerGeometry::addDetId(DetId p){
+void TelescopeGeometry::addDetId(DetId p){
   theDetIds.emplace_back(p);
 }
 
 
-const TrackerGeometry::DetContainer&
-TrackerGeometry::detsPXB() const
+const TelescopeGeometry::DetContainer&
+TelescopeGeometry::detsPXB() const
 {
   return thePXBDets;
 }
 
-const TrackerGeometry::DetContainer&
-TrackerGeometry::detsPXF() const
+const TelescopeGeometry::DetContainer&
+TelescopeGeometry::detsPXF() const
 {
   return thePXFDets;
 }
 
-const TrackerGeometry::DetContainer&
-TrackerGeometry::detsTIB() const
+const TelescopeGeometry::DetContainer&
+TelescopeGeometry::detsTIB() const
 {
   return theTIBDets;
 }
 
-const TrackerGeometry::DetContainer&
-TrackerGeometry::detsTID() const
+const TelescopeGeometry::DetContainer&
+TelescopeGeometry::detsTID() const
 {
   return theTIDDets;
 }
 
-const TrackerGeometry::DetContainer&
-TrackerGeometry::detsTOB() const
+const TelescopeGeometry::DetContainer&
+TelescopeGeometry::detsTOB() const
 {
   return theTOBDets;
 }
 
-const TrackerGeometry::DetContainer&
-TrackerGeometry::detsTEC() const
+const TelescopeGeometry::DetContainer&
+TelescopeGeometry::detsTEC() const
 {
   return theTECDets;
 }
 
-const TrackerGeomDet * 
-TrackerGeometry::idToDetUnit(DetId s)const
+const TelescopeGeomDet * 
+TelescopeGeometry::idToDetUnit(DetId s)const
 {
   mapIdToDetUnit::const_iterator p=theMapUnit.find(s.rawId());
   if (p != theMapUnit.end()) {
@@ -210,8 +231,8 @@ TrackerGeometry::idToDetUnit(DetId s)const
   }
 }
 
-const TrackerGeomDet* 
-TrackerGeometry::idToDet(DetId s)const
+const TelescopeGeomDet* 
+TelescopeGeometry::idToDet(DetId s)const
 {
   mapIdToDet::const_iterator p=theMap.find(s.rawId());
   if (p != theMap.end()) {
@@ -223,7 +244,7 @@ TrackerGeometry::idToDet(DetId s)const
 }
 
 const GeomDetEnumerators::SubDetector 
-TrackerGeometry::geomDetSubDetector(int subdet) const {
+TelescopeGeometry::geomDetSubDetector(int subdet) const {
   if(subdet>=1 && subdet<=6) {
     return theSubDetTypeMap[subdet-1];
   } else {
@@ -232,7 +253,7 @@ TrackerGeometry::geomDetSubDetector(int subdet) const {
 }
 
 unsigned int
-TrackerGeometry::numberOfLayers(int subdet) const {
+TelescopeGeometry::numberOfLayers(int subdet) const {
   if(subdet>=1 && subdet<=6) {
     return theNumberOfLayers[subdet-1];
   } else {
@@ -241,21 +262,21 @@ TrackerGeometry::numberOfLayers(int subdet) const {
 }
 
 bool
-TrackerGeometry::isThere(GeomDetEnumerators::SubDetector subdet) const {
+TelescopeGeometry::isThere(GeomDetEnumerators::SubDetector subdet) const {
   for(unsigned int i=1;i<7;++i) {
     if(subdet == geomDetSubDetector(i)) return true;
   }
   return false;
 }
 
-void TrackerGeometry::fillTestMap(const GeometricDet* gd) {
+void TelescopeGeometry::fillTestMap(const GeometricDet* gd) {
     
   std::string temp = gd->name();
   std::string name = temp.substr(temp.find(":")+1); 
   DetId detid = gd->geographicalId();
   float thickness = gd->bounds()->thickness();
   std::string nameTag;  
-  TrackerGeometry::ModuleType mtype = moduleType(name);
+  TelescopeGeometry::ModuleType mtype = moduleType(name);
   if (theDetTypetList.empty()) {
     theDetTypetList.emplace_back(detid, mtype, thickness);
   } else {
@@ -267,16 +288,16 @@ void TrackerGeometry::fillTestMap(const GeometricDet* gd) {
   }
 }
 
-TrackerGeometry::ModuleType TrackerGeometry::getDetectorType(DetId detid) const {
+TelescopeGeometry::ModuleType TelescopeGeometry::getDetectorType(DetId detid) const {
   for (auto iVal : theDetTypetList) {
     DetId detid_max = std::get<0>(iVal);
-    TrackerGeometry::ModuleType mtype =  std::get<1>(iVal);     
+    TelescopeGeometry::ModuleType mtype =  std::get<1>(iVal);     
     if (detid.rawId() <=  detid_max.rawId()) return mtype;
   }
-  return TrackerGeometry::ModuleType::UNKNOWN;
+  return TelescopeGeometry::ModuleType::UNKNOWN;
 }
 
-float TrackerGeometry::getDetectorThickness(DetId detid) const {
+float TelescopeGeometry::getDetectorThickness(DetId detid) const {
   for (auto iVal : theDetTypetList) {
     DetId detid_max = std::get<0>(iVal);
     if (detid.rawId() <=  detid_max.rawId()) 
@@ -285,7 +306,7 @@ float TrackerGeometry::getDetectorThickness(DetId detid) const {
   return -1.0;
 }
 
-TrackerGeometry::ModuleType TrackerGeometry::moduleType(const std::string& name) const {
+TelescopeGeometry::ModuleType TelescopeGeometry::moduleType(const std::string& name) const {
   if ( name.find("Pixel") != std::string::npos ){
     if ( name.find("BarrelActive") != std::string::npos) return ModuleType::Ph1PXB;
     else if ( name.find("ForwardSensor") != std::string::npos) return ModuleType::Ph1PXF;

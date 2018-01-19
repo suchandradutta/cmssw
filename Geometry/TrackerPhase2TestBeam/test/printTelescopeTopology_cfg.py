@@ -5,9 +5,9 @@ process = cms.Process("NumberingTest")
 #process.load("Configuration.Geometry.GeometryReco_cff")
 #process.load("Geometry.CMSCommonData.cmsExtendedGeometryXML_cfi")
 process.load("Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff")
-process.load("Geometry.TrackerGeometryBuilder.trackerGeometry_cfi")  
+process.load("Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi")
 
-process.trackerGeometry.applyAlignment = cms.bool(False)
+process.telescopeGeometry.applyAlignment = cms.bool(False)
 
 process.source = cms.Source("EmptySource")
 
