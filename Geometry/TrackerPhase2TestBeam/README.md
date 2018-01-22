@@ -33,7 +33,7 @@
   <tr>
     <td> Geometry.TrackerGeometryBuilder.trackerGeometry_cfi     </td>
     <td>  Geometry.TrackerPhase2TestBeam.telescopeGeometry_cfi          </td>
-    <td>  Full geometry, as used by the Digitizer. NB: Already operational on telescope geometry, but needs to be renamed to telescopeGeometry_cfi and moved to Phase2TestBeam package. </td>
+    <td>  Full geometry, as used by the Digitizer. </td>
   </tr>
 
   <tr>
