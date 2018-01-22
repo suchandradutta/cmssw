@@ -73,7 +73,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.particleType() = " << simHit.particleType()
 	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
 	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"
-	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << " simHit.energyLoss() (GeV) = " << simHit.energyLoss()
 	      << std::endl;
       
       double x, y, z;
@@ -100,7 +100,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.particleType() = " << simHit.particleType()
 	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
 	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"
-	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << " simHit.energyLoss() (GeV) = " << simHit.energyLoss() 
 	      << std::endl;
 
     double x, y, z;
@@ -127,7 +127,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.particleType() = " << simHit.particleType() 
 	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
 	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"  
-	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << " simHit.energyLoss() (GeV) = " << simHit.energyLoss() 
 	      << std::endl;
 
     //double x, y, z;
@@ -153,7 +153,7 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 	      << " simHit.particleType() = " << simHit.particleType()
 	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
 	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"
-	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << " simHit.energyLoss() (GeV) = " << simHit.energyLoss() 
 	      << std::endl;
 
     //double x, y, z;
