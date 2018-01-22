@@ -1,6 +1,11 @@
 # NB: Single Pion, 120 GeV. Straight beam.
+# It's either Pi+ or Pi-. But we could also have e- of mu- or even protons (400 GeV). 
+# 120 GeV is a good staring point but this may vary.
+# The list of possible observed processes is described at SimG4Core/Physics/src/G4ProcessTypeEnumerator.cc
+
 # This does not pretend to be realistic for the moment, but is there to check that SimHits can be produced on the telescope geometry.
 # Conditions will need to be tuned obviously.
+
 
 
 import FWCore.ParameterSet.Config as cms
@@ -21,7 +26,9 @@ process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.Geometry.GeometryTrackerPhase2TestBeam_cff') # Load DDGeometry + telescopeGeometryNumbering_cfi + telescopeParameters_cfi + telescopeTopology_cfi + telescopeGeometry_cfi
 
 
-process.load('Configuration.StandardSequences.MagneticField_cff')  # TO DO: Tune here. #process.load('Configuration.StandardSequences.MagneticField_0T_cff')
+#process.load('Configuration.StandardSequences.MagneticField_cff')  # TO DO: Tune here. But according to Nikkie: Around the telescope there is no magnetic field. 
+process.load('Configuration.StandardSequences.MagneticField_0T_cff')
+
 process.load('Configuration.StandardSequences.Generator_cff')
 process.load('IOMC.EventVertexGenerators.VtxSmearedFlat_cfi')  #process.load('IOMC.EventVertexGenerators.VtxSmearedHLLHC_cfi')
 process.load('GeneratorInterface.Core.genFilterSummary_cff')
@@ -33,7 +40,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #process.load('SimG4CMS.HGCalTestBeam.HGCalTBAnalyzer_cfi')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(30000)
+    input = cms.untracked.int32(50000)
 )
 
 # Input source
@@ -45,7 +52,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('SinglePionE120GeV_cfi nevts:30000'),
+    annotation = cms.untracked.string('SinglePionE120GeV_cfi nevts:50000'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -78,7 +85,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_mc', '')  # TO DO: C
 # 'auto:phase2_realistic'
 
 process.generator = cms.EDProducer("FlatRandomEThetaGunProducer",
-    AddAntiParticle = cms.bool(True),
+    AddAntiParticle = cms.bool(False),
     PGunParameters = cms.PSet(
         MinE = cms.double(119.99),
         MaxE = cms.double(120.01),                   # In GeV!

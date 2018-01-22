@@ -61,16 +61,21 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 
 
   for (const auto &simHit : *simHitsBarrelHighTof) {
+    DetId theDetUnitId (simHit.detUnitId ());
+    const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
-      DetId theDetUnitId (simHit.detUnitId ());
-      std::cout << "SimHitAnalyzer::analyze simHitsBarrelHighTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
+    const Global3DPoint& entry = theDet->surface().toGlobal(simHit.entryPoint());
+    const Global3DPoint& exit = theDet->surface().toGlobal(simHit.exitPoint());
+    std::cout << "SimHitAnalyzer::analyze simHitsBarrelHighTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
 	      << " simHit.trackId() = " << simHit.trackId()
+	      << " simHit.timeOfFlight() (ns) = " << simHit.timeOfFlight()
+	      << " simHit.processType() = " << simHit.processType()
+	      << " simHit.particleType() = " << simHit.particleType()
+	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
+	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"
 	      << " simHit.energyLoss() = " << simHit.energyLoss() 
-	      << " simHit.entryPoint() = " << simHit.entryPoint() 
-	      << " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
+	      << std::endl;
       
-      const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
-
       double x, y, z;
       x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
       y = theDet->surface ().toGlobal (simHit.localPosition ()).y ();
@@ -84,15 +89,21 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 
   for (const auto &simHit : *simHitsBarrelLowTof) {
     DetId theDetUnitId (simHit.detUnitId ());
-    std::cout << "SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
-	      << " simHit.trackId() = " << simHit.trackId()
-	      << " simHit.energyLoss() = " << simHit.energyLoss() 
-	      << " simHit.entryPoint() = " << simHit.entryPoint() 
-	      << " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
-
     const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
-      double x, y, z;
+    const Global3DPoint& entry = theDet->surface().toGlobal(simHit.entryPoint());
+    const Global3DPoint& exit = theDet->surface().toGlobal(simHit.exitPoint());
+    std::cout << "SimHitAnalyzer::analyze simHitsBarrelLowTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
+	      << " simHit.trackId() = " << simHit.trackId()
+	      << " simHit.timeOfFlight() (ns) = " << simHit.timeOfFlight()
+	      << " simHit.processType() = " << simHit.processType()
+	      << " simHit.particleType() = " << simHit.particleType()
+	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
+	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"
+	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << std::endl;
+
+    double x, y, z;
       x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
       y = theDet->surface ().toGlobal (simHit.localPosition ()).y ();
       z = theDet->surface ().toGlobal (simHit.localPosition ()).z ();
@@ -104,43 +115,55 @@ void SimHitAnalyzer::analyze (const edm::Event &event, const edm::EventSetup &se
 
 
   for (const auto &simHit : *simHitsEndcapHighTof) {
-      DetId theDetUnitId (simHit.detUnitId ());
-      std::cout << "SimHitAnalyzer::analyze simHitsEndcapHighTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
-		<< " simHit.trackId() = " << simHit.trackId()
-		<< " simHit.energyLoss() = " << simHit.energyLoss() 
-		<< " simHit.entryPoint() = " << simHit.entryPoint() 
-		<< " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
-      
-      const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
+    DetId theDetUnitId (simHit.detUnitId ());
+    const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
-      //double x, y, z;
-      double y, z;
-      //x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
-      y = theDet->surface ().toGlobal (simHit.localPosition ()).y ();
-      z = theDet->surface ().toGlobal (simHit.localPosition ()).z ();
+    const Global3DPoint& entry = theDet->surface().toGlobal(simHit.entryPoint());
+    const Global3DPoint& exit = theDet->surface().toGlobal(simHit.exitPoint());
+    std::cout << "SimHitAnalyzer::analyze simHitsEndcapHighTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
+	      << " simHit.trackId() = " << simHit.trackId()
+	      << " simHit.timeOfFlight() (ns) = " << simHit.timeOfFlight()
+	      << " simHit.processType() = " << simHit.processType()
+	      << " simHit.particleType() = " << simHit.particleType() 
+	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
+	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"  
+	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << std::endl;
 
-      twoDHists_.at ("ZY")->Fill (z, y);
+    //double x, y, z;
+    double y, z;
+    //x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
+    y = theDet->surface ().toGlobal (simHit.localPosition ()).y ();
+    z = theDet->surface ().toGlobal (simHit.localPosition ()).z ();
+
+    twoDHists_.at ("ZY")->Fill (z, y);
   }
 
 
   for (const auto &simHit : *simHitsEndcapLowTof) {
     DetId theDetUnitId (simHit.detUnitId ());
-    std::cout << "SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
-	      << " simHit.trackId() = " << simHit.trackId()
-	      << " simHit.energyLoss() = " << simHit.energyLoss() 
-	      << " simHit.entryPoint() = " << simHit.entryPoint() 
-	      << " simHit.exitPoint() = " << simHit.exitPoint() << std::endl;
-      
     const GeomDet *theDet = theTelescope.idToDet (theDetUnitId);
 
-    //double x, y, z;
-      double y, z;
-      //x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
-      y = theDet->surface ().toGlobal (simHit.localPosition ()).y ();
-      z = theDet->surface ().toGlobal (simHit.localPosition ()).z ();
+    const Global3DPoint& entry = theDet->surface().toGlobal(simHit.entryPoint());
+    const Global3DPoint& exit = theDet->surface().toGlobal(simHit.exitPoint());
+    std::cout << "SimHitAnalyzer::analyze simHitsEndcapLowTof  theDetUnitId.rawId() = " << theDetUnitId.rawId()
+	      << " simHit.trackId() = " << simHit.trackId()
+	      << " simHit.timeOfFlight() (ns) = " << simHit.timeOfFlight()
+	      << " simHit.processType() = " << simHit.processType()
+	      << " simHit.particleType() = " << simHit.particleType()
+	      << " simHit.entryPoint() (cm) = LOCAL: " << simHit.entryPoint() << " GLOBAL: (" << entry.x() << "," << entry.y() << "," << entry.z() << ")"
+	      << " simHit.exitPoint() (cm) = LOCAL: " << simHit.exitPoint() << " GLOBAL: (" << exit.x() << "," << exit.y() << "," << exit.z() << ")"
+	      << " simHit.energyLoss() = " << simHit.energyLoss() 
+	      << std::endl;
 
-      twoDHists_.at ("ZY")->Fill (z, y);
-    }
+    //double x, y, z;
+    double y, z;
+    //x = theDet->surface ().toGlobal (simHit.localPosition ()).x ();
+    y = theDet->surface ().toGlobal (simHit.localPosition ()).y ();
+    z = theDet->surface ().toGlobal (simHit.localPosition ()).z ();
+
+    twoDHists_.at ("ZY")->Fill (z, y);
+  }
 }
 
 #include "FWCore/Framework/interface/MakerMacros.h"
