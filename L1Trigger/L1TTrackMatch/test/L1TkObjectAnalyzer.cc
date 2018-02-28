@@ -165,7 +165,6 @@ L1TkObjectAnalyzer::L1TkObjectAnalyzer(const edm::ParameterSet& iConfig) :
   genToken(consumes < reco::GenParticleCollection > (iConfig.getParameter<edm::InputTag>("GenParticleInputTag")))
 {
 
-  edm::Service<TFileService> fs;
   analysisOption_ = iConfig.getParameter<std::string>("AnalysisOption");
   objectType_ = iConfig.getParameter<std::string>("ObjectType");
   etaCutoff_ = iConfig.getParameter<double>("EtaCutOff");
