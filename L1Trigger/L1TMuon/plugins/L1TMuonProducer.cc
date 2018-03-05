@@ -42,6 +42,7 @@
 
 #include "DataFormats/Math/interface/LorentzVector.h"
 #include "DataFormats/L1Trigger/interface/Muon.h"
+#include "DataFormats/L1Trigger/interface/MuonPhase2.h"
 #include "DataFormats/L1TMuon/interface/RegionalMuonCand.h"
 
 #include "CondFormats/L1TObjects/interface/L1TMuonGlobalParams.h"
@@ -99,6 +100,7 @@ using namespace l1t;
         bool m_autoBxRange;
         int m_bxMin;
         int m_bxMax;
+        bool m_runPhase2;
         std::bitset<72> m_inputsToDisable;
         std::bitset<28> m_caloInputsToDisable;
         std::bitset<12> m_bmtfInputsToDisable;
@@ -152,6 +154,7 @@ L1TMuonProducer::L1TMuonProducer(const edm::ParameterSet& iConfig) : m_debugOut(
   m_autoBxRange = iConfig.getParameter<bool>("autoBxRange");
   m_bxMin = iConfig.getParameter<int>("bxMin");
   m_bxMax = iConfig.getParameter<int>("bxMax");
+  m_runPhase2 = iConfig.getParameter<bool>("runPhase2");
 
   m_barrelTfInputToken = consumes<MicroGMTConfiguration::InputCollection>(m_barrelTfInputTag);
   m_overlapTfInputToken = consumes<MicroGMTConfiguration::InputCollection>(m_overlapTfInputTag);
@@ -165,6 +168,8 @@ L1TMuonProducer::L1TMuonProducer(const edm::ParameterSet& iConfig) : m_debugOut(
   produces<MuonBxCollection>("imdMuonsEMTFNeg");
   produces<MuonBxCollection>("imdMuonsOMTFPos");
   produces<MuonBxCollection>("imdMuonsOMTFNeg");
+  if (m_runPhase2)
+    produces<MuonPhase2BxCollection>();
 }
 
 L1TMuonProducer::~L1TMuonProducer()
@@ -191,6 +196,8 @@ L1TMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   std::unique_ptr<MuonBxCollection> imdMuonsOMTFPos (new MuonBxCollection());
   std::unique_ptr<MuonBxCollection> imdMuonsOMTFNeg (new MuonBxCollection());
 
+  // Phase2
+  std::unique_ptr<MuonPhase2BxCollection> outMuonsPhase2 (new MuonPhase2BxCollection());
 
   Handle<MicroGMTConfiguration::InputCollection> bmtfMuons;
   Handle<MicroGMTConfiguration::InputCollection> emtfMuons;
@@ -243,6 +250,7 @@ L1TMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   // set BX range for outputs
   outMuons->setBXRange(m_bxMin, m_bxMax);
+  outMuonsPhase2->setBXRange(m_bxMin, m_bxMax);
   imdMuonsBMTF->setBXRange(m_bxMin, m_bxMax);
   imdMuonsEMTFPos->setBXRange(m_bxMin, m_bxMax);
   imdMuonsEMTFNeg->setBXRange(m_bxMin, m_bxMax);
@@ -336,6 +344,8 @@ L1TMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
         outMu.setPhiAtVtx(MicroGMTConfiguration::calcMuonPhiExtra(outMu));
         m_debugOut << mu->hwCaloPhi() << " " << mu->hwCaloEta() << std::endl;
         outMuons->push_back(bx, outMu);
+	 if (m_runPhase2)
+	  outMuonsPhase2->push_back(bx, MuonPhase2(outMu));
       }
     }
   }
@@ -346,6 +356,8 @@ L1TMuonProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup)
   iEvent.put(std::move(imdMuonsEMTFNeg), "imdMuonsEMTFNeg");
   iEvent.put(std::move(imdMuonsOMTFPos), "imdMuonsOMTFPos");
   iEvent.put(std::move(imdMuonsOMTFNeg), "imdMuonsOMTFNeg");
+  if (m_runPhase2)
+    iEvent.put(std::move(outMuonsPhase2));
 }
 
 
