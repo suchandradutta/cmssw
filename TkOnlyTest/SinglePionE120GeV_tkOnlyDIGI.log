@@ -1,0 +1,36 @@
+!!! Customised Digitizer to Digitize only Tracker Hits !!!
+06-Mar-2018 08:56:38 CET  Initiating request to open file file:SinglePionE120GeV_GEN_SIM.root
+06-Mar-2018 08:56:40 CET  Successfully opened file file:SinglePionE120GeV_GEN_SIM.root
+Begin processing the 1st record. Run 1, Event 1, LumiSection 1 at 06-Mar-2018 08:57:13.583 CET
+----- Begin Fatal Exception 06-Mar-2018 08:57:23 CET-----------------------
+An exception of category 'GeometryMismatch' occurred while
+   [0] Processing  Event run: 1 lumi: 1 event: 1 stream: 0
+   [1] Running path 'tkonlyDigitization_step'
+   [2] Calling method for module MixingModule/'mix'
+   [3] Using EventSetup component TrackerDigiGeometryESModule/'trackerGeometryDB' to make data TrackerGeometry/'' in record TrackerDigiGeometryRecord
+Exception Message:
+Size mismatch between geometry (size=44240) and alignments (size=19876)
+----- End Fatal Exception -------------------------------------------------
+06-Mar-2018 08:57:23 CET  Closed file file:SinglePionE120GeV_GEN_SIM.root
+
+=============================================
+
+MessageLogger Summary
+
+ type     category        sev    module        subroutine        count    total
+ ---- -------------------- -- ---------------- ----------------  -----    -----
+    1 Fatal Exception      -s PostProcessPath                        1        1
+    2 fileAction           -s file_close                             1        1
+    3 fileAction           -s file_open                              2        2
+
+ type    category    Examples: run/evt        run/evt          run/evt
+ ---- -------------------- ---------------- ---------------- ----------------
+    1 Fatal Exception      1/1                               
+    2 fileAction           PostGlobalEndRun                  
+    3 fileAction           pre-events       pre-events       
+
+Severity    # Occurrences   Total Occurrences
+--------    -------------   -----------------
+System                  4                   4
+
+dropped waiting message count 0

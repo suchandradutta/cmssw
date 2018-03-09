@@ -5,7 +5,6 @@
 
 
 // forward declarations
-class TrackerTopology;
 
 class SSDigitizerAlgorithm :public Phase2TrackerDigitizerAlgorithm {
  public:

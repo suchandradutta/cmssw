@@ -48,7 +48,8 @@
 #include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
 
 #include "Geometry/CommonDetUnit/interface/GeomDet.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+#include "Geometry/Records/interface/TelescopeDigiGeometryRecord.h"
+#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
 #include "Geometry/TrackerGeometryBuilder/interface/PixelGeomDetUnit.h"
 
 #include "Geometry/CommonTopologies/interface/PixelTopology.h"
@@ -104,11 +105,13 @@ namespace cms
     }
     rndEngine_ = &(rng->getEngine(lumi.index()));
 
+    std::cout << " I am here 1" << std::endl;
     iSetup.get<IdealMagneticFieldRecord>().get(pSetup_);
-    iSetup.get<TrackerTopologyRcd>().get(tTopoHand);
+    iSetup.get<TelescopeTopologyRcd>().get(tTopoHand);
+    std::cout << " I am here 2" << std::endl;
     
     if (theTkDigiGeomWatcher.check(iSetup)) {
-      iSetup.get<TrackerDigiGeometryRecord>().get(geometryType_, pDD_);
+      iSetup.get<TelescopeDigiGeometryRecord>().get(pDD_);
       //reset cache
       ModuleTypeCache().swap(moduleTypeCache_);
       detectorUnits_.clear();
@@ -126,10 +129,13 @@ namespace cms
     // one type of Digi and DigiSimLink suffices 
     // changes in future: InnerPixel -> Tracker
     // creating algorithm objects and pushing them into the map
+    std::cout << " I am here 3" << std::endl;
     algomap_[AlgorithmType::InnerPixel] = std::unique_ptr<Phase2TrackerDigitizerAlgorithm>(new PixelDigitizerAlgorithm(iconfig_, (*rndEngine_)));
     algomap_[AlgorithmType::PixelinPS]  = std::unique_ptr<Phase2TrackerDigitizerAlgorithm>(new PSPDigitizerAlgorithm(iconfig_, (*rndEngine_)));
     algomap_[AlgorithmType::StripinPS]  = std::unique_ptr<Phase2TrackerDigitizerAlgorithm>(new PSSDigitizerAlgorithm(iconfig_, (*rndEngine_)));
     algomap_[AlgorithmType::TwoStrip]   = std::unique_ptr<Phase2TrackerDigitizerAlgorithm>(new SSDigitizerAlgorithm(iconfig_, (*rndEngine_)));
+    std::cout << " I am here 4" << std::endl;
+
   }
 
   void Phase2TrackerDigitizer::endLuminosityBlock(edm::LuminosityBlock const& lumi, edm::EventSetup const& iSetup) {
@@ -145,6 +151,8 @@ namespace cms
       std::set<unsigned int> detIds;
       std::vector<PSimHit> const& simHits = *hSimHits.product();
       int indx = 0;
+      std::cout << " I am here 5" << std::endl;
+    
       for (auto it = simHits.begin(), itEnd = simHits.end(); it != itEnd; ++it, ++globalSimHitIndex) {
 	unsigned int detId_raw = (*it).detUnitId();
         if (detectorUnits_.find(detId_raw) == detectorUnits_.end()) continue;
@@ -224,7 +232,7 @@ namespace cms
     AlgorithmType algotype = AlgorithmType::Unknown;
     
     //get mType either from the geometry or from our cache (faster)
-    TrackerGeometry::ModuleType mType = TrackerGeometry::ModuleType::UNKNOWN;
+    TelescopeGeometry::ModuleType mType = TelescopeGeometry::ModuleType::UNKNOWN;
     auto itr = moduleTypeCache_.find(detId_raw);
     if( itr != moduleTypeCache_.end() ) {
       mType = itr->second; 
@@ -235,25 +243,25 @@ namespace cms
     
     switch(mType){
 
-    case TrackerGeometry::ModuleType::Ph1PXB:
+    case TelescopeGeometry::ModuleType::Ph1PXB:
       algotype = AlgorithmType::InnerPixel;
       break;
-    case TrackerGeometry::ModuleType::Ph1PXF:
+    case TelescopeGeometry::ModuleType::Ph1PXF:
       algotype = AlgorithmType::InnerPixel;
       break;
-    case TrackerGeometry::ModuleType::Ph2PXB:
+    case TelescopeGeometry::ModuleType::Ph2PXB:
       algotype = AlgorithmType::InnerPixel;
       break;
-    case TrackerGeometry::ModuleType::Ph2PXF:
+    case TelescopeGeometry::ModuleType::Ph2PXF:
       algotype = AlgorithmType::InnerPixel;
       break;
-    case TrackerGeometry::ModuleType::Ph2PSP:
+    case TelescopeGeometry::ModuleType::Ph2PSP:
       algotype = AlgorithmType::PixelinPS;
       break;
-    case TrackerGeometry::ModuleType::Ph2PSS:
+    case TelescopeGeometry::ModuleType::Ph2PSS:
       algotype = AlgorithmType::StripinPS;
       break;
-    case TrackerGeometry::ModuleType::Ph2SS:
+    case TelescopeGeometry::ModuleType::Ph2SS:
       algotype = AlgorithmType::TwoStrip;
       break;
     default:
@@ -263,7 +271,7 @@ namespace cms
     return algotype;
   }
   void Phase2TrackerDigitizer::addPixelCollection(edm::Event& iEvent, const edm::EventSetup& iSetup, const bool ot_analog) {
-    const TrackerTopology* tTopo = tTopoHand.product();
+    const TelescopeTopology* tTopo = tTopoHand.product();
     std::vector<edm::DetSet<PixelDigi> > digiVector;
     std::vector<edm::DetSet<PixelDigiSimLink> > digiLinkVector;
     for (auto const & det_u : pDD_->detUnits()) {
@@ -301,7 +309,7 @@ namespace cms
     iEvent.put(std::move(outputlink), "Pixel");
   }
   void Phase2TrackerDigitizer::addOuterTrackerCollection(edm::Event& iEvent, const edm::EventSetup& iSetup) {
-    const TrackerTopology* tTopo = tTopoHand.product();
+    const TelescopeTopology* tTopo = tTopoHand.product();
     std::vector<edm::DetSet<Phase2TrackerDigi> > digiVector;
     std::vector<edm::DetSet<PixelDigiSimLink> > digiLinkVector;
     for (auto const & det_u : pDD_->detUnits()) {

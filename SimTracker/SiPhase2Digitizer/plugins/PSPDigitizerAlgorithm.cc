@@ -18,14 +18,14 @@
 
 // Geometry
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+#include "Geometry/Records/interface/TelescopeDigiGeometryRecord.h"
 #include "Geometry/TrackerGeometryBuilder/interface/PixelGeomDetUnit.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
 
 using namespace edm;
 
 void PSPDigitizerAlgorithm::init(const edm::EventSetup& es) {
-  es.get<TrackerDigiGeometryRecord>().get(geom_);
+  es.get<TelescopeDigiGeometryRecord>().get(geom_);
 }
 PSPDigitizerAlgorithm::PSPDigitizerAlgorithm(const edm::ParameterSet& conf, CLHEP::HepRandomEngine& eng):
   Phase2TrackerDigitizerAlgorithm(conf.getParameter<ParameterSet>("AlgorithmCommon"),

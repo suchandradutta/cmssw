@@ -18,11 +18,11 @@
 #include "SimGeneral/MixingModule/interface/DigiAccumulatorMixMod.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "DataFormats/DetId/interface/DetId.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "SimTracker/SiPhase2Digitizer/plugins/Phase2TrackerDigitizerFwd.h"
 #include "FWCore/Framework/interface/ESWatcher.h"
 #include "FWCore/Framework/interface/stream/EDProducerBase.h"
-#include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
+#include "Geometry/TrackerPhase2TestBeam/interface/TelescopeGeometry.h"
 
 #include <unordered_map>
 
@@ -43,14 +43,14 @@ class MagneticField;
 class PileUpEventPrincipal;
 class PSimHit;
 class Phase2TrackerDigitizerAlgorithm;
-class TrackerDigiGeometryRecord;
+class TelescopeDigiGeometryRecord;
 
 namespace cms 
 {
   class Phase2TrackerDigitizer: public DigiAccumulatorMixMod {
 
   public:
-    typedef std::unordered_map<unsigned, TrackerGeometry::ModuleType>  ModuleTypeCache;
+    typedef std::unordered_map<unsigned, TelescopeGeometry::ModuleType>  ModuleTypeCache;
 
     explicit Phase2TrackerDigitizer(const edm::ParameterSet& iConfig, edm::stream::EDProducerBase& mixMod, edm::ConsumesCollector& iC);
     ~Phase2TrackerDigitizer() override;
@@ -101,12 +101,12 @@ namespace cms
     const std::string hitsProducer_;
     const vstring trackerContainers_;
     const std::string geometryType_;
-    edm::ESHandle<TrackerGeometry> pDD_;
+    edm::ESHandle<TelescopeGeometry> pDD_;
     edm::ESHandle<MagneticField> pSetup_;
     std::map<unsigned int, const Phase2TrackerGeomDetUnit*> detectorUnits_;
     CLHEP::HepRandomEngine* rndEngine_;
-    edm::ESHandle<TrackerTopology> tTopoHand;
-    edm::ESWatcher<TrackerDigiGeometryRecord> theTkDigiGeomWatcher;
+    edm::ESHandle<TelescopeTopology> tTopoHand;
+    edm::ESWatcher<TelescopeDigiGeometryRecord> theTkDigiGeomWatcher;
     const edm::ParameterSet& iconfig_;
 
     // cache for detector types

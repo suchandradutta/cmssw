@@ -40,7 +40,7 @@ class SiPixelGainCalibrationOfflineSimService;
 class SiPixelLorentzAngle;
 class SiPixelQuality;
 class TrackerGeometry;
-class TrackerTopology;
+class TelescopeTopology;
 
 class Phase2TrackerDigitizerAlgorithm  {
  public:
@@ -61,7 +61,7 @@ class Phase2TrackerDigitizerAlgorithm  {
 				 const GlobalVector& bfield) = 0;
  virtual void digitize(const Phase2TrackerGeomDetUnit* pixdet,
 		       std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
-		       const TrackerTopology* tTopo);
+		       const TelescopeTopology* tTopo);
 
  protected:
   // Accessing Lorentz angle from DB:
@@ -182,9 +182,9 @@ class Phase2TrackerDigitizerAlgorithm  {
 		      float length, int NumberOfSegments,
 		      std::vector<float> & elossVector) const;
   virtual void add_noise(const Phase2TrackerGeomDetUnit* pixdet, float thePixelThreshold);
-  virtual void pixel_inefficiency(const SubdetEfficiencies& eff,
+  /*  virtual void pixel_inefficiency(const SubdetEfficiencies& eff,
 				  const Phase2TrackerGeomDetUnit* pixdet,
-				  const TrackerTopology* tTopo);
+				  const TelescopeTopology* tTopo);*/
   
   virtual void pixel_inefficiency_db(uint32_t detID);
 

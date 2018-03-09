@@ -5,7 +5,7 @@
 #include "SimTracker/Common/interface/SiG4UniversalFluctuation.h"
 #include "SimGeneral/NoiseGenerators/interface/GaussianTailNoiseGenerator.h"
 
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "Geometry/Records/interface/TelescopeTopologyRcd.h"
 #include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
 
 #include "FWCore/Utilities/interface/RandomNumberGenerator.h"
@@ -38,7 +38,7 @@
 
 // Geometry
 #include "Geometry/TrackerGeometryBuilder/interface/TrackerGeometry.h"
-#include "Geometry/Records/interface/TrackerDigiGeometryRecord.h"
+#include "Geometry/Records/interface/TelescopeDigiGeometryRecord.h"
 #include "Geometry/TrackerGeometryBuilder/interface/PixelGeomDetUnit.h"
 #include "Geometry/CommonTopologies/interface/PixelTopology.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
@@ -58,7 +58,7 @@ void PixelDigitizerAlgorithm::init(const edm::EventSetup& es) {
 
   // gets the map and geometry from the DB (to kill ROCs)
   es.get<SiPixelFedCablingMapRcd>().get(map_);
-  es.get<TrackerDigiGeometryRecord>().get(geom_);
+  es.get<TelescopeDigiGeometryRecord>().get(geom_);
 }
 
 PixelDigitizerAlgorithm::PixelDigitizerAlgorithm(const edm::ParameterSet& conf, CLHEP::HepRandomEngine& eng) :

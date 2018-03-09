@@ -15,7 +15,7 @@
 //#include "PixelIndices.h"
 #include "DataFormats/SiPixelDetId/interface/PixelSubdetector.h"
 #include "DataFormats/SiStripDetId/interface/StripSubdetector.h"
-#include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
+#include "DataFormats/TrackerCommon/interface/TelescopeTopology.h"
 #include "Geometry/Records/interface/IdealGeometryRecord.h"
 
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
@@ -693,9 +693,9 @@ void Phase2TrackerDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* 
 //
 // Simulate the readout inefficiencies.
 // Delete a selected number of single pixels, dcols and rocs.
-void Phase2TrackerDigitizerAlgorithm::pixel_inefficiency(const SubdetEfficiencies& eff,
+/*void Phase2TrackerDigitizerAlgorithm::pixel_inefficiency(const SubdetEfficiencies& eff,
 			                           const Phase2TrackerGeomDetUnit* pixdet,
-						   const TrackerTopology *tTopo) {
+						   const TelescopeTopology *tTopo) {
 
   uint32_t detID = pixdet->geographicalId().rawId();
 
@@ -725,7 +725,7 @@ void Phase2TrackerDigitizerAlgorithm::pixel_inefficiency(const SubdetEfficiencie
       s.second.set(0.); // reset amplitude,
     }
   } 
-} 
+  } */
 // =======================================================================================
 //
 // Set the drift direction accoring to the Bfield in local det-unit frame
@@ -905,7 +905,7 @@ void Phase2TrackerDigitizerAlgorithm::module_killing_DB(uint32_t detID) {
 }
 void Phase2TrackerDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* pixdet,
 	std::map<int, DigitizerUtility::DigiSimInfo> & digi_map,
-	     const TrackerTopology* tTopo) 
+	     const TelescopeTopology* tTopo) 
 {
   uint32_t detID = pixdet->geographicalId().rawId();
   auto it = _signal.find(detID);
@@ -932,12 +932,12 @@ void Phase2TrackerDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* p
   if (addNoise) add_noise(pixdet, theThresholdInE/theNoiseInElectrons);  // generate noise
   
   // Do only if needed
-  if (AddPixelInefficiency && !theSignal.empty()) {
+  /*  if (AddPixelInefficiency && !theSignal.empty()) {
     if (use_ineff_from_db_) 
       pixel_inefficiency_db(detID);
     else                    
       pixel_inefficiency(subdetEfficiencies_, pixdet, tTopo);
-  }
+      }*/
   if (use_module_killing_) {
     if (use_deadmodule_DB_)     // remove dead modules using DB
       module_killing_DB(detID);
