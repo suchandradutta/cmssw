@@ -84,9 +84,9 @@ Phase2TrackerDigitizerAlgorithm::Phase2TrackerDigitizerAlgorithm(const edm::Para
 
   // Allowed modes of readout which has following values :
   // 0          ---> Digital or binary readout 
-  // Analog readout with different slope parameters [Linear Slope (1), Dual Slope I (1/4), Dual Slope (1/8)]
-  // -1, -2, -3 ---> Don't subtract threshold if value is negative
-  //  1,  2,  3 ---> Subtract threshold if value is positive
+  // Analog readout with different slope parameters [Linear Slope (1), Dual Slopes  (1/2**(n-1) n=2,3,4]
+  // -1, -2, -3, -4 ---> Don't subtract threshold if value is negative
+  //  1,  2,  3, 4 ---> Subtract threshold if value is positive
   theReadoutMode(conf_specific.getParameter<int>("ReadoutMode")), 
 
   // ADC calibration 1adc count(135e.
