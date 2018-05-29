@@ -987,21 +987,28 @@ void Phase2TrackerDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* p
 //
 int Phase2TrackerDigitizerAlgorithm::convertSignalToAdc(float signal_in_elec,float threshold) {
   int signal_in_adc;
+  float signal_above_thr;
   if (theReadoutMode == 0) signal_in_adc = theAdcFullScale;
   else { 
     
     // subtract threshold if the readout mode is +ve;
-    if (theReadoutMode > 0) signal_in_elec -= threshold;
+    if (theReadoutMode > 0) signal_above_thr = signal_in_elec - threshold;
+    else signal_above_thr = signal_in_elec;
 
     // calculate the kink point and the slope
     const int dualslope_param = std::min(abs(theReadoutMode), 10);
-    const int dual_slope = int(1 / (pow(2, dualslope_param-1)));
     const int kink_point = int(theAdcFullScale/2) +1;
 
-    int temp_count = int(signal_in_elec / theElectronPerADC);
-    if ( temp_count > kink_point) temp_count = (temp_count - kink_point)*dual_slope + kink_point;
+    int temp_count = std::floor(signal_above_thr / theElectronPerADC) + 1;
+    if ( temp_count > kink_point) temp_count = std::floor((temp_count - kink_point)/(pow(2, dualslope_param-1))) + kink_point;
      
-    signal_in_adc = (temp_count & theAdcFullScale);
+    //    signal_in_adc = (temp_count & theAdcFullScale);
+    signal_in_adc = std::min(temp_count, theAdcFullScale );
+    LogInfo("Phase2TrackerDigitizerAlgorithm") << " signal_in_elec " << signal_in_elec 
+					       << " threshold " << threshold << " signal_above_thr " 
+					       << signal_above_thr << " temp conversion " << int(signal_above_thr / theElectronPerADC) 
+					       << " signal after slope correction " << temp_count 
+					       << " signal_in_adc " << signal_in_adc;
   } 
   return signal_in_adc; 
 }
