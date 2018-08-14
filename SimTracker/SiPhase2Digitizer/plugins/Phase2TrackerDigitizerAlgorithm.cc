@@ -587,16 +587,9 @@ void Phase2TrackerDigitizerAlgorithm::induce_signal(const PSimHit& hit,
 //  Add electronic noise to pixel charge
 //
 // ======================================================================
-void Phase2TrackerDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* pixdet,
-						float thePixelThreshold) {
-  LogDebug("Phase2TrackerDigitizerAlgorithm") << " enter add_noise " << theNoiseInElectrons;
+void Phase2TrackerDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* pixdet) {
   uint32_t detID = pixdet->geographicalId().rawId();
   signal_map_type& theSignal = _signal[detID];
-  const Phase2TrackerTopology* topol = &pixdet->specificTopology();
-  int numColumns = topol->ncolumns();  // det module number of cols&rows
-  int numRows = topol->nrows();
-
-  // First add Readout noise to hit cells
   for (auto & s : theSignal) {
     float noise  = gaussDistribution_->fire();
     if ((s.second.ampl() + noise) < 0.)
@@ -604,45 +597,64 @@ void Phase2TrackerDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* 
     else
       s.second += noise;
   }
-  
-  if (addXtalk) {
-    signal_map_type signalNew;
-    for (auto const & s : theSignal) {
-      float signalInElectrons = s.second.ampl();   // signal in electrons
-      std::pair<int,int> hitChan;
-      if (pixelFlag) hitChan = PixelDigi::channelToPixel(s.first);
-      else hitChan = Phase2TrackerDigi::channelToPixel(s.first);
-      
-      float signalInElectrons_Xtalk = signalInElectrons * interstripCoupling;     
-      
-      if (hitChan.first != 0) {	
-	std::pair<int,int> XtalkPrev = std::pair<int,int>(hitChan.first-1, hitChan.second);
-	int chanXtalkPrev = (pixelFlag) ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
-	  : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
-	signalNew.insert(std::pair<int,DigitizerUtility::Amplitude>(chanXtalkPrev, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0)));
-      }
-      if (hitChan.first < (numRows-1)) {
-	std::pair<int,int> XtalkNext = std::pair<int,int>(hitChan.first+1, hitChan.second);
-        int chanXtalkNext = (pixelFlag) ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
-	  : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
-	signalNew.insert(std::pair<int,DigitizerUtility::Amplitude>(chanXtalkNext, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0)));
-      }
-    }
-    for (auto const & l : signalNew) {
-      int chan = l.first;
-      auto iter = theSignal.find(chan);
-      if (iter != theSignal.end()) {
-	theSignal[chan] += l.second.ampl();
-      }  else {
-        theSignal.insert(std::pair<int,DigitizerUtility::Amplitude>(chan, DigitizerUtility::Amplitude(l.second.ampl(), nullptr, -1.0)));
-      }
-    } 
-  } 
-  if (!addNoisyPixels)  // Option to skip noise in non-hit pixels
-    return;
+}
+// ======================================================================
+//
+//  Add  Cross-talk contribution
+//
+// ======================================================================
+void Phase2TrackerDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pixdet) {
+  uint32_t detID = pixdet->geographicalId().rawId();
+  signal_map_type& theSignal = _signal[detID];
+  signal_map_type signalNew;
+  const Phase2TrackerTopology* topol = &pixdet->specificTopology();
+  int numRows = topol->nrows();
 
-  // Add noise on non-hit pixels
-  // Use here the pixel noise
+  for (auto & s : theSignal) {
+    float signalInElectrons = s.second.ampl();   // signal in electrons
+    std::pair<int,int> hitChan;
+    if (pixelFlag) hitChan = PixelDigi::channelToPixel(s.first);
+    else hitChan = Phase2TrackerDigi::channelToPixel(s.first);
+    
+    float signalInElectrons_Xtalk = signalInElectrons * interstripCoupling;     
+    //subtract the charge which will be shared 
+    s.second.set(signalInElectrons-signalInElectrons_Xtalk);
+         
+    if (hitChan.first != 0) {	
+      std::pair<int,int> XtalkPrev = std::pair<int,int>(hitChan.first-1, hitChan.second);
+      int chanXtalkPrev = (pixelFlag) ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
+	: Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
+      signalNew.insert(std::pair<int,DigitizerUtility::Amplitude>(chanXtalkPrev, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0)));
+    }
+    if (hitChan.first < (numRows-1)) {
+      std::pair<int,int> XtalkNext = std::pair<int,int>(hitChan.first+1, hitChan.second);
+      int chanXtalkNext = (pixelFlag) ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
+	: Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
+      signalNew.insert(std::pair<int,DigitizerUtility::Amplitude>(chanXtalkNext, DigitizerUtility::Amplitude(signalInElectrons_Xtalk, nullptr, -1.0)));
+    }
+  }
+  for (auto const & l : signalNew) {
+    int chan = l.first;
+    auto iter = theSignal.find(chan);
+    if (iter != theSignal.end()) {
+      theSignal[chan] += l.second.ampl();
+    }  else {
+      theSignal.insert(std::pair<int,DigitizerUtility::Amplitude>(chan, DigitizerUtility::Amplitude(l.second.ampl(), nullptr, -1.0)));
+    }
+  } 
+}
+// ======================================================================
+//
+//  Add noise on non-hit cells
+//
+// ======================================================================
+void Phase2TrackerDigitizerAlgorithm::add_noisy_cells(const Phase2TrackerGeomDetUnit* pixdet,float thePixelThreshold) {
+  uint32_t detID = pixdet->geographicalId().rawId();
+  signal_map_type& theSignal = _signal[detID];
+  const Phase2TrackerTopology* topol = &pixdet->specificTopology();
+  int numColumns = topol->ncolumns();  // det module number of cols&rows
+  int numRows = topol->nrows();
+
   int numberOfPixels = numRows * numColumns;
   std::map<int,float, std::less<int> > otherPixels;
   std::map<int,float, std::less<int> >::iterator mapI;
@@ -682,7 +694,6 @@ void Phase2TrackerDigitizerAlgorithm::add_noise(const Phase2TrackerGeomDetUnit* 
     }
   }
 }
-
 // ============================================================================
 //
 // Simulate the readout inefficiencies.
@@ -951,7 +962,9 @@ void Phase2TrackerDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* p
     theHIPThresholdInE = theHIPThresholdInE_Endcap;
   }
 
-  if (addNoise) add_noise(pixdet, theThresholdInE/theNoiseInElectrons);  // generate noise
+  if (addNoise) add_noise(pixdet);  // generate noise
+  if (addXtalk) add_cross_talk(pixdet);
+  if (addNoisyPixels)  add_noisy_cells(pixdet, theHIPThresholdInE/theElectronPerADC);
   
   // Do only if needed
   if (AddPixelInefficiency && !theSignal.empty()) {
