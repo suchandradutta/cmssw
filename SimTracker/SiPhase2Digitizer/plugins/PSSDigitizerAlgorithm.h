@@ -22,5 +22,7 @@ public:
                          const unsigned int tofBin,
                          const Phase2TrackerGeomDetUnit* pixdet,
                          const GlobalVector& bfield) override;
+  bool select_hit(const PSimHit& hit, double tCorr) override;
+
 };
 #endif

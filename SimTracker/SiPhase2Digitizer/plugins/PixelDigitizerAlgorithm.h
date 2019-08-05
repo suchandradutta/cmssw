@@ -22,6 +22,8 @@ public:
                          const unsigned int tofBin,
                          const Phase2TrackerGeomDetUnit* pixdet,
                          const GlobalVector& bfield) override;
+  bool select_hit(const PSimHit& hit, double tCorr) override;
+
   void add_cross_talk(const Phase2TrackerGeomDetUnit* pixdet) override;
   // Addition four xtalk-related parameters to PixelDigitizerAlgorithm specific parameters initialized in Phase2TrackerDigitizerAlgorithm
   const double odd_row_interchannelCoupling_next_row;

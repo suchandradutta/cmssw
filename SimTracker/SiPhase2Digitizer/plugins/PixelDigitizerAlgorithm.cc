@@ -107,9 +107,7 @@ void PixelDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
     std::vector<DigitizerUtility::SignalPoint> collection_points;
 
     // fill collection_points for this SimHit, indpendent of topology
-    // Check the TOF cut
-    if (((*it).tof() - pixdet->surface().toGlobal((*it).localPosition()).mag() / 30.) >= theTofLowerCut &&
-        ((*it).tof() - pixdet->surface().toGlobal((*it).localPosition()).mag() / 30.) <= theTofUpperCut) {
+    if (select_hit(*it, (pixdet->surface().toGlobal((*it).localPosition()).mag()/30.))) {
       primary_ionization(*it, ionization_points);  // fills _ionization_points
       // transforms _ionization_points to collection_points
       drift(*it, pixdet, bfield, ionization_points, collection_points);
@@ -119,6 +117,17 @@ void PixelDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
       induce_signal(*it, simHitGlobalIndex, tofBin, pixdet, collection_points);
     }
   }
+}
+//
+// -- Select the Hit for Digitization
+//
+bool PixelDigitizerAlgorithm::select_hit(const PSimHit& hit, double tCorr) {
+  bool result = false; 
+  if ((hit.tof() - tCorr) >= theTofLowerCut &&
+      (hit.tof() - tCorr) <= theTofUpperCut) {
+    result = true;
+  }
+  return result;
 }
 // ======================================================================
 //
