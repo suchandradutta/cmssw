@@ -171,7 +171,7 @@ phase2TrackerDigitizer = cms.PSet(
       EfficiencyFactors_Endcap = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 
       0.999, 0.999 ),#Efficiencies kept as Side2Disk1,Side1Disk1 and so on
       CellsToKill = cms.VPSet(),
-      HitDetectionMode = cms.int32(2),  # (0/1/2/3/4 => SquareWindow/SampledMode/HitDetectMode/SampledOrHitDetectMode/HIPFindingMode)
+      HitDetectionMode = cms.int32(1),  # (0/1/2/3/4 => SquareWindow/SampledMode/HitDetectMode/SampledOrHitDetectMode/HIPFindingMode)
       PulseShapeParameters = cms.vdouble(17.709809, 16.043703, 99.999857, 40.571650, 2.0, 1.2459094)
 
     )

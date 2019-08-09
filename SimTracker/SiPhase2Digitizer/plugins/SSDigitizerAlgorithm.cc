@@ -106,17 +106,15 @@ bool SSDigitizerAlgorithm::select_hit(const PSimHit& hit, double tCorr) {
 //
 bool SSDigitizerAlgorithm::select_hit_sampledMode(const PSimHit& hit, double tCorr)  {
   double toa = hit.tof() - tCorr;
-  toa -= hit.eventId().bunchCrossing()*bx_time; 
 
   double sampling_time = bx_time;
-  sampling_time -= hit.eventId().bunchCrossing()*bx_time; 
 
   float theThresholdInE = 0.;
   DetId det_id = DetId(hit.detUnitId());
   if (det_id.subdetId() == StripSubdetector::TOB) theThresholdInE = theThresholdInE_Barrel;
   else theThresholdInE = theThresholdInE_Endcap;
   
-  double scale = getSignalScale(sampling_time+toa); 
+  double scale = getSignalScale(sampling_time-toa); 
   if (scale*hit.energyLoss()/GeVperElectron  > theThresholdInE) return true;
   else return false;;
 }
