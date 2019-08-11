@@ -35,7 +35,7 @@ SSDigitizerAlgorithm::SSDigitizerAlgorithm(const edm::ParameterSet& conf) :
   Phase2TrackerDigitizerAlgorithm(conf.getParameter<ParameterSet>("AlgorithmCommon"),
 				  conf.getParameter<ParameterSet>("SSDigitizerAlgorithm")),
   hitDetectionMode_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<int>("HitDetectionMode")),
-  pulseShapeParameters_(conf.getParameter<std::vector<double> >("PulseShapeParameters"))
+  pulseShapeParameters_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<std::vector<double> >("PulseShapeParameters"))
 {
   pixelFlag = false;
   LogInfo("SSDigitizerAlgorithm ") << "SSDigitizerAlgorithm constructed "
@@ -48,6 +48,7 @@ SSDigitizerAlgorithm::SSDigitizerAlgorithm(const edm::ParameterSet& conf) :
 				   <<" " << theElectronPerADC << " " << theAdcFullScale
 				   << " The delta cut-off is set to " << tMax
 				   << " pix-inefficiency "<<AddPixelInefficiency;
+
 
   storeSignalShape();
 }
