@@ -25,7 +25,7 @@ class SSDigitizerAlgorithm :public Phase2TrackerDigitizerAlgorithm {
   bool select_hit(const PSimHit& hit, double tCorr) override;
 
 private:
-  enum { SquareWindow, SampledMode, HitDetectMode, SampledOrHitDetectMode, HIPFindingMode};
+  enum { SquareWindow, SampledMode, LachedMode, SampledOrLachedMode, HIPFindingMode};
   double nFactorial(int n);
   double aScalingConstant( int N , int i);
   double cbc3PulsePolarExpansion(double x);
@@ -33,11 +33,12 @@ private:
   double getSignalScale(double xval);
   void storeSignalShape();
   bool select_hit_sampledMode(const PSimHit& hit, double tCorr);
-  bool select_hit_hitDetectMode(const PSimHit& hit, double tCorr);
+  bool select_hit_lachedMode(const PSimHit& hit, double tCorr);
 
   int hitDetectionMode_;
   std::vector<double> pulseShapeVec_;
   std::vector<double> pulseShapeParameters_;
+  float deadTime_;
   static constexpr float bx_time{25};
 
 };

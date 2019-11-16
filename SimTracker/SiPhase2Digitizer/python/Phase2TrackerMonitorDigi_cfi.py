@@ -10,8 +10,8 @@ digiMon = DQMEDAnalyzer('Phase2TrackerMonitorDigi',
     GeometryType = cms.string('idealForDigi'),
     NumberOfDigisPerDetH = cms.PSet(
            Nbins = cms.int32(100),
-           xmin = cms.double(-0.5),
-           xmax = cms.double(99.5)
+           xmin = cms.double(0.0),
+           xmax = cms.double(500.)
     ),
     DigiOccupancySH = cms.PSet(
            Nbins = cms.int32(51),

@@ -35,7 +35,8 @@ SSDigitizerAlgorithm::SSDigitizerAlgorithm(const edm::ParameterSet& conf) :
   Phase2TrackerDigitizerAlgorithm(conf.getParameter<ParameterSet>("AlgorithmCommon"),
 				  conf.getParameter<ParameterSet>("SSDigitizerAlgorithm")),
   hitDetectionMode_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<int>("HitDetectionMode")),
-  pulseShapeParameters_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<std::vector<double> >("PulseShapeParameters"))
+  pulseShapeParameters_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<std::vector<double> >("PulseShapeParameters")),
+  deadTime_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<double>("CBCDeadTime"))
 {
   pixelFlag = false;
   LogInfo("SSDigitizerAlgorithm ") << "SSDigitizerAlgorithm constructed "
@@ -96,7 +97,7 @@ void SSDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iterato
 bool SSDigitizerAlgorithm::select_hit(const PSimHit& hit, double tCorr) {
   bool result = false; 
   if (hitDetectionMode_ == SSDigitizerAlgorithm::SampledMode) result = select_hit_sampledMode(hit, tCorr);
-  else if (hitDetectionMode_ == SSDigitizerAlgorithm::HitDetectMode) result = select_hit_hitDetectMode(hit, tCorr);
+  else if (hitDetectionMode_ == SSDigitizerAlgorithm::LachedMode) result = select_hit_lachedMode(hit, tCorr);
   else {
     if ((hit.tof() - tCorr) >= theTofLowerCut && (hit.tof() - tCorr) <= theTofUpperCut) result = true;
   }
@@ -119,30 +120,27 @@ bool SSDigitizerAlgorithm::select_hit_sampledMode(const PSimHit& hit, double tCo
   if (scale*hit.energyLoss()/GeVperElectron  > theThresholdInE) return true;
   else return false;;
 }
-
 //
 // -- Select Hits in Hit Detection Mode
 //
-bool SSDigitizerAlgorithm::select_hit_hitDetectMode(const PSimHit& hit, double tCorr) {
+bool SSDigitizerAlgorithm::select_hit_lachedMode(const PSimHit& hit, double tCorr) {
+  float toa = hit.tof() - tCorr;
+  toa -= hit.eventId().bunchCrossing() * bx_time;
 
-  if (hit.eventId().bunchCrossing() > 0.0 ) return false;
-  double toa = hit.tof() - tCorr;
-  toa -= hit.eventId().bunchCrossing()*bx_time; 
-
-  int sampling_time = -1.0*(hit.eventId().bunchCrossing()+1) * 25.0;
+  float sampling_time = (-1)*(hit.eventId().bunchCrossing()+1) * bx_time ;
 
   float theThresholdInE = 0.;
   DetId det_id = DetId(hit.detUnitId());
   if (det_id.subdetId() == StripSubdetector::TOB) theThresholdInE = theThresholdInE_Barrel;
   else theThresholdInE = theThresholdInE_Endcap;
-
-  bool aboveThr = false;
   bool lastPulse = true;
-  for (unsigned int i = 0; i < bx_time; i++) {
-    double scale = getSignalScale(sampling_time + i + toa); 
-    if (scale*hit.energyLoss()/GeVperElectron  > theThresholdInE) aboveThr = true;
+  bool aboveThr = false;
+  for (float i = deadTime_; i <= bx_time; i++) {
+    double scale = getSignalScale(sampling_time -toa + i ); 
+
+    if (scale*hit.energyLoss()/GeVperElectron > theThresholdInE) aboveThr = true;
     else aboveThr = false;
-    if (!lastPulse && aboveThr) return true; 
+    if (!lastPulse && aboveThr) return true;
     lastPulse = aboveThr;
   }
   return  false;
@@ -205,9 +203,15 @@ void SSDigitizerAlgorithm::storeSignalShape() {
   } 
 }
 double SSDigitizerAlgorithm::getSignalScale(double xval) {
+  double res =0.0;
+  int len = pulseShapeVec_.size();
+
+  if (xval*10 >= len) return res;
+  if (xval < 0.0) return res;
+
   unsigned int lower = std::floor(xval) * 10;
   unsigned int upper = std::ceil(xval) * 10;
-  double res =0.0;
+
   for (size_t i = lower+1; i < upper*10; i++) {
     float val = i*0.1;
     if (val > xval) {
