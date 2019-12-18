@@ -7,6 +7,8 @@
 *
 ****************************************************************************/
 
+#include <utility>
+
 #include "Geometry/VeryForwardGeometryBuilder/interface/DetGeomDesc.h"
 
 #include "DetectorDescription/Core/interface/DDFilteredView.h"
@@ -19,7 +21,7 @@ using namespace std;
 
 //----------------------------------------------------------------------------------------------------
 
-DetGeomDesc::DetGeomDesc(nav_type navtype, GeometricEnumType type) : _ddd(navtype), _type(type)
+DetGeomDesc::DetGeomDesc(nav_type navtype, GeometricEnumType type) : _ddd(std::move(navtype)), _type(type)
 { 
 	DDCompactView cpv;
 	DDExpandedView ev(cpv);
@@ -28,13 +30,13 @@ DetGeomDesc::DetGeomDesc(nav_type navtype, GeometricEnumType type) : _ddd(navtyp
 	_trans = ev.translation();
 	_rot = ev.rotation();
 	_shape = ((ev.logicalPart()).solid()).shape();
-	_ddname = ((ev.logicalPart()).ddname()).name();
+	_name = ((ev.logicalPart()).ddname()).name();
 	_parents = ev.geoHistory();
 	_volume   = ((ev.logicalPart()).solid()).volume();
 	_density  = ((ev.logicalPart()).material()).density();
 	_weight   = _density * ( _volume / 1000.); // volume mm3->cm3
 	_copy     = ev.copyno();
-	_material = ((ev.logicalPart()).material()).name();
+	_material = ((ev.logicalPart()).material()).name().fullname();
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -46,13 +48,13 @@ DetGeomDesc::DetGeomDesc(DDExpandedView* fv, GeometricEnumType type) : _type(typ
 	_trans = fv->translation();
 	_rot = fv->rotation();
 	_shape = ((fv->logicalPart()).solid()).shape();
-	_ddname = ((fv->logicalPart()).ddname()).name();
+	_name = ((fv->logicalPart()).ddname()).name();
 	_parents = fv->geoHistory();
 	_volume   = ((fv->logicalPart()).solid()).volume();  
 	_density  = ((fv->logicalPart()).material()).density();
 	_weight   = _density * ( _volume / 1000.); // volume mm3->cm3
 	_copy     = fv->copyno();
-	_material = ((fv->logicalPart()).material()).name();
+	_material = ((fv->logicalPart()).material()).name().fullname();
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -64,13 +66,13 @@ DetGeomDesc::DetGeomDesc(DDFilteredView* fv, GeometricEnumType type) : _type(typ
 	_trans = fv->translation();
 	_rot = fv->rotation();
 	_shape = ((fv->logicalPart()).solid()).shape();
-	_ddname = ((fv->logicalPart()).ddname()).name();
+	_name = ((fv->logicalPart()).ddname()).name();
 	_parents = fv->geoHistory();
 	_volume   = ((fv->logicalPart()).solid()).volume();
 	_density  = ((fv->logicalPart()).material()).density();
 	_weight   = _density * ( _volume / 1000.); // volume mm3->cm3
 	_copy     = fv->copyno();
-	_material = ((fv->logicalPart()).material()).name();
+	_material = ((fv->logicalPart()).material()).name().fullname();
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -89,7 +91,7 @@ DetGeomDesc& DetGeomDesc::operator= (const DetGeomDesc &ref)
 	_trans			= ref._trans;
 	_rot			= ref._rot;
 	_shape			= ref._shape;
-	_ddname			= ref._ddname;
+	_name			= ref._name;
 	_parents		= ref._parents;
 	_volume			= ref._volume;
 	_density		= ref._density;
@@ -121,8 +123,8 @@ DetGeomDesc::Container DetGeomDesc::components()
 DetGeomDesc::ConstContainer DetGeomDesc::components() const
 {
 	ConstContainer _temp;
-	for (Container::const_iterator it = _container.begin(); it != _container.end(); it++) {
-		_temp.push_back(*it);
+	for (auto it : _container) {
+		_temp.emplace_back(it);
 	}
 	return _temp;
 }
@@ -133,11 +135,10 @@ DetGeomDesc::ConstContainer DetGeomDesc::deepComponents() const
 {
   ConstContainer _temp;
   if (isLeaf())
-    _temp.push_back(const_cast<DetGeomDesc*>(this));
+    _temp.emplace_back(const_cast<DetGeomDesc*>(this));
   else {
-    for (Container::const_iterator it = _container.begin();
-	 it != _container.end(); it++){
-      ConstContainer _temp2 =  (**it).deepComponents();
+    for (auto it : _container){
+      ConstContainer _temp2 =  (*it).deepComponents();
       copy(_temp2.begin(), _temp2.end(), back_inserter(_temp));
     }
   }
@@ -149,8 +150,8 @@ DetGeomDesc::ConstContainer DetGeomDesc::deepComponents() const
 
 void DetGeomDesc::addComponents(Container cont)
 {
-	for( Container::iterator ig = cont.begin(); ig != cont.end();ig++) {
-		_container.push_back(*ig);
+	for(auto & ig : cont) {
+		_container.emplace_back(ig);
 	}
 }
 
@@ -158,7 +159,7 @@ void DetGeomDesc::addComponents(Container cont)
 
 void DetGeomDesc::addComponent(DetGeomDesc* det)
 {
-	_container.push_back(det);
+	_container.emplace_back(det);
 }
 
 //----------------------------------------------------------------------------------------------------
@@ -172,9 +173,9 @@ void DetGeomDesc::deleteComponents()
 
 void DetGeomDesc::deepDeleteComponents()
 {
-	for (Container::iterator it = _container.begin(); it != _container.end(); it++) {
-		( const_cast<DetGeomDesc*>(*it) )->deepDeleteComponents();
-		delete (*it);
+	for (auto & it : _container) {
+		( const_cast<DetGeomDesc*>(it) )->deepDeleteComponents();
+		delete it;
 	}
 	clearComponents();  
 }

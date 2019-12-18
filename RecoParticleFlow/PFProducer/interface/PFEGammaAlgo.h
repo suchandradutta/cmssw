@@ -80,7 +80,7 @@ class PFEGammaAlgo {
     float > KFValMap;  
     
   struct ProtoEGObject {
-    ProtoEGObject() : parentSC(NULL) {}
+    ProtoEGObject() : parentSC(nullptr) {}
     reco::PFBlockRef parentBlock;
     const PFSCElement* parentSC; // if ECAL driven
     reco::ElectronSeedRef electronSeed; // if there is one
@@ -109,28 +109,11 @@ class PFEGammaAlgo {
   
   struct PFEGConfigInfo {
     double mvaEleCut;
-    std::string  mvaWeightFileEleID;
-    std::shared_ptr<PFSCEnergyCalibration> thePFSCEnergyCalibration;
     std::shared_ptr<PFEnergyCalibration> thePFEnergyCalibration;
     bool applyCrackCorrections;
-    bool usePFSCEleCalib;
-    bool useEGElectrons;
-    bool useEGammaSupercluster;
     bool produceEGCandsWithNoSuperCluster;
-    double sumEtEcalIsoForEgammaSC_barrel;
-    double sumEtEcalIsoForEgammaSC_endcap;
-    double coneEcalIsoForEgammaSC;
-    double sumPtTrackIsoForEgammaSC_barrel;
-    double sumPtTrackIsoForEgammaSC_endcap;
-    unsigned int nTrackIsoForEgammaSC;
-    double coneTrackIsoForEgammaSC;
-    std::string mvaweightfile ;
     double mvaConvCut;
-    bool useReg;
-    std::string X0_Map;
     const reco::Vertex* primaryVtx;
-    double sumPtTrackIsoForPhoton;
-    double sumPtTrackIsoSlopeForPhoton;
   };
 
   //constructor
@@ -167,7 +150,7 @@ class PFEGammaAlgo {
                           const reco::PFBlockRef&  blockRef,
                           std::vector< bool >&  active){
     RunPFEG(hoc,blockRef,active);
-    return (egCandidate_.size()>0);
+    return (!egCandidate_.empty());
   };
   
   //get PFCandidate collection
@@ -358,8 +341,6 @@ private:
   const GBRForest *ReaderGCEElR9_;
   
 //  boost::shared_ptr<PFEnergyCalibration> thePFEnergyCalibration_;
-  double sumPtTrackIsoForPhoton_;
-  double sumPtTrackIsoSlopeForPhoton_;
   std::vector<int>match_ind;
   //std::auto_ptr< reco::PFCandidateCollection > permElectronCandidates_;
 
@@ -385,12 +366,6 @@ private:
   float dEta_, dPhi_, LowClusE_, RMSAll_, RMSMust_, nPFClus_;
   float TotPS1_, TotPS2_;
   float nVtx_;
-  //for Material Map
-  TH2D* X0_sum;
-  TH2D* X0_inner;
-  TH2D* X0_middle;
-  TH2D* X0_outer;
-  float x0inner_, x0middle_, x0outer_;
   //for PileUP
   float excluded_, Mustache_EtRatio_, Mustache_Et_out_;
   const ESChannelStatus* channelStatus_;

@@ -26,7 +26,8 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
-
+#include "DataFormats/TCDS/interface/BSTRecord.h"
+#include "DataFormats/TCDS/interface/TCDSRecord.h"
 //
 // class declaration
 //
@@ -40,22 +41,32 @@ public:
 
 
 private:
-    virtual void beginJob() ;
-    virtual void bookHistograms(DQMStore::IBooker &, edm::Run const &, edm::EventSetup const &);   
-    virtual void analyze(const edm::Event&, const edm::EventSetup&) ;
-    virtual void endJob() ;
+    void beginJob() override;
+    void bookHistograms(DQMStore::IBooker &, edm::Run const &, edm::EventSetup const &) override;   
+    void analyze(const edm::Event&, const edm::EventSetup&) override ;
+    void endJob() override;
 
-    edm::InputTag digiTagEB_;
-    edm::InputTag digiTagEE_;
+
     edm::EDGetTokenT<EBDigiCollection> digiTokenEB_; 
     edm::EDGetTokenT<EEDigiCollection> digiTokenEE_; 
+    edm::EDGetTokenT<TCDSRecord>       tcdsToken_; 
 
     std::vector<MonitorElement *> meEB_;
     std::vector<MonitorElement *> meEE_;
 
-    static const int kPedestalSamples = 3;
-    static const int kThreshold = 10; // threshold (in adc count) above which we'll assume 
-                                      // there's signal and not just pedestal
+    uint32_t pedestalSamples_ ; // number of presamples to be used for pedestal determination    
+    bool     checkSignal_;      // avoid frames containing a signal
+    uint32_t  sThresholdEB_  ;  // if checkSignal = true threshold (in adc count) above which we'll assume 
+                                // there's signal and not just pedestal
+
+    uint32_t  sThresholdEE_  ;
+
+    bool dynamicBooking_;       // use old pedestal to book histograms
+    int fixedBookingCenterBin_; // if dynamicBooking_ = false, use this as bin center
+    int nBins_ ;                // number of bins per histogram
+    std::string dqmDir_;         // DQM directory where histograms are stored
+    
+    bool requireStableBeam_;
 
     // compare ADC values  
     static bool adc_compare(uint16_t a, uint16_t b) { return ( a&0xFFF )  < (b&0xFFF);}

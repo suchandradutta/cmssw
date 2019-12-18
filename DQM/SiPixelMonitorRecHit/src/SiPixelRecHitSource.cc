@@ -43,7 +43,7 @@
 
 //
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 using namespace std;
 using namespace edm;
@@ -79,7 +79,7 @@ SiPixelRecHitSource::~SiPixelRecHitSource()
   std::map<uint32_t,SiPixelRecHitModule*>::iterator struct_iter;
   for (struct_iter = thePixelStructure.begin() ; struct_iter != thePixelStructure.end() ; struct_iter++){
     delete struct_iter->second;
-    struct_iter->second = 0;
+    struct_iter->second = nullptr;
   }
 }
 
@@ -190,7 +190,7 @@ void SiPixelRecHitSource::buildStructure(const edm::EventSetup& iSetup){
   
   for(TrackerGeometry::DetContainer::const_iterator it = pDD->dets().begin(); it != pDD->dets().end(); it++){
     
-    if(dynamic_cast<PixelGeomDetUnit const *>((*it))!=0){
+    if(dynamic_cast<PixelGeomDetUnit const *>((*it))!=nullptr){
 
       DetId detId = (*it)->geographicalId();
       
@@ -198,11 +198,11 @@ void SiPixelRecHitSource::buildStructure(const edm::EventSetup& iSetup){
 	 (detId.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap))){ 
 
 	uint32_t id = detId();
-	SiPixelRecHitModule* theModule = new SiPixelRecHitModule(id);
 
 	if(detId.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)) {
 	  if(isPIB) continue;
 	  LogDebug ("PixelDQM") << " ---> Adding Barrel Module " <<  detId.rawId() << endl;
+	  SiPixelRecHitModule* theModule = new SiPixelRecHitModule(id);
 	  thePixelStructure.insert(pair<uint32_t,SiPixelRecHitModule*> (id,theModule));
 		
 	} else if( (detId.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap)) ) {
@@ -228,6 +228,7 @@ void SiPixelRecHitSource::buildStructure(const edm::EventSetup& iSetup){
 	    disk_str.find("Disk_2")!=string::npos;
 	  if(isPIB && mask) continue;
 	
+	  SiPixelRecHitModule* theModule = new SiPixelRecHitModule(id);
 	  thePixelStructure.insert(pair<uint32_t,SiPixelRecHitModule*> (id,theModule));
 	}
 

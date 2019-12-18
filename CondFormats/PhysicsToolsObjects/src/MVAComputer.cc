@@ -14,7 +14,6 @@
 // Author:      Christophe Saout
 // Created:     Sat Apr 24 15:18 CEST 2007
 //
-#include <functional>
 #include <algorithm>
 #include <typeinfo>
 #include <iostream>
@@ -35,7 +34,7 @@ std::string VarProcessor::getInstanceName() const
 {
 	static const char prefix[] = "PhysicsTools::Calibration::";
         edm::TypeID typeID(typeid(*this));
-	std::string type(typeID.className());
+	const std::string& type(typeID.className());
 	if (type.size() <= sizeof prefix - 1 ||
 	    type.substr(0, sizeof prefix - 1) != prefix)
 		throw cms::Exception("MVAComputerCalibration")
@@ -205,25 +204,11 @@ MVAComputer &MVAComputerContainer::add(const std::string &label)
 	return entries.back().second;
 }
 
-namespace {
-	struct Comparator :
-		public std::unary_function<const std::string&, bool> {
-
-		inline Comparator(const std::string &label) : label(label) {}
-
-		inline bool
-		operator () (const MVAComputerContainer::Entry &entry) const
-		{ return entry.first == label; }
-
-		const std::string &label;
-	};
-}
-
 const MVAComputer &MVAComputerContainer::find(const std::string &label) const
 {
 	std::vector<Entry>::const_iterator pos =
 				std::find_if(entries.begin(), entries.end(),
-				             Comparator(label));
+                             [&label](const MVAComputerContainer::Entry &entry){return entry.first == label;});
 
 	if (pos == entries.end())
 		throw cms::Exception("MVAComputerCalibration")
@@ -237,7 +222,7 @@ bool MVAComputerContainer::contains(const std::string &label) const
 {
 	std::vector<Entry>::const_iterator pos =
 				std::find_if(entries.begin(), entries.end(),
-				             Comparator(label));
+                             [&label](const MVAComputerContainer::Entry &entry){return entry.first == label;});
 	if (pos == entries.end()) return false;
 	return true;
 }

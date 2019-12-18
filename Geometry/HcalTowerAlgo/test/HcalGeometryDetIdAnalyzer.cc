@@ -13,18 +13,18 @@
 class HcalGeometryDetIdAnalyzer : public edm::one::EDAnalyzer<> {
 public:
   explicit HcalGeometryDetIdAnalyzer( const edm::ParameterSet& );
-  ~HcalGeometryDetIdAnalyzer( void );
-    
+  ~HcalGeometryDetIdAnalyzer( void ) override;
+
   void beginJob() override {}
   void analyze(edm::Event const& iEvent, edm::EventSetup const&) override;
   void endJob() override {}
 
 private:
-  edm::ParameterSet ps0_;
+
   bool              useOld_;
 };
 
-HcalGeometryDetIdAnalyzer::HcalGeometryDetIdAnalyzer(const edm::ParameterSet& iConfig ) : ps0_(iConfig) {
+HcalGeometryDetIdAnalyzer::HcalGeometryDetIdAnalyzer(const edm::ParameterSet& iConfig ) {
   useOld_ = iConfig.getParameter<bool>("UseOldLoader");
 }
 
@@ -39,12 +39,12 @@ HcalGeometryDetIdAnalyzer::analyze( const edm::Event& /*iEvent*/, const edm::Eve
   iSetup.get<HcalRecNumberingRecord>().get( topologyHandle );
   const HcalTopology topology = (*topologyHandle);
 
-  CaloSubdetectorGeometry* caloGeom(0);
+  CaloSubdetectorGeometry* caloGeom(nullptr);
   if (useOld_) {
-    HcalHardcodeGeometryLoader m_loader(ps0_);
+    HcalHardcodeGeometryLoader m_loader;
     caloGeom = m_loader.load(topology);
   } else {
-    HcalFlexiHardcodeGeometryLoader m_loader(ps0_);
+    HcalFlexiHardcodeGeometryLoader m_loader;
     caloGeom = m_loader.load(topology, hcons);
   }
   const std::vector<DetId>& ids = caloGeom->getValidDetIds();
@@ -55,8 +55,8 @@ HcalGeometryDetIdAnalyzer::analyze( const edm::Event& /*iEvent*/, const edm::Eve
     HcalDetId hid = (*i);
     unsigned int did = topology.detId2denseId(*i);
     HcalDetId rhid = topology.denseId2detId(did);
-	
-    std::cout << counter << ": din " << std::hex << did << std::dec << ": " 
+
+    std::cout << counter << ": din " << std::hex << did << std::dec << ": "
 	      << hid << " == " << rhid << std::endl;
     assert(hid == rhid);
   }

@@ -43,7 +43,7 @@
 class HGCGeometryTester : public edm::one::EDAnalyzer<> {
 public:
   explicit HGCGeometryTester( const edm::ParameterSet& );
-  ~HGCGeometryTester();
+  ~HGCGeometryTester() override;
 
   void beginJob() override {}
   void analyze(edm::Event const& iEvent, edm::EventSetup const&) override;
@@ -70,7 +70,7 @@ void HGCGeometryTester::analyze( const edm::Event& iEvent,
   std::map<std::string, std::pair<double,double> > svPars;
   do {
     const DDLogicalPart &logPart=eview.logicalPart();
-    std::string name=logPart.name();
+    const std::string & name=logPart.name().fullname();
 
     //only EE sensitive volumes for the moment
     if ((name.find("HGCal") != std::string::npos) &&

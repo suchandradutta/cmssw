@@ -30,6 +30,7 @@ namespace edm {
   class BranchIDListHelper;
   class HistoryAppender;
   class IOVSyncValue;
+  class MergeableRunProductMetadata;
   class ParameterSet;
   class ProductRegistry;
   class PreallocationConfiguration;
@@ -55,7 +56,7 @@ namespace edm {
                PreallocationConfiguration const& preallocConfig,
                ProcessContext const* parentProcessContext);
 
-    virtual ~SubProcess();
+    ~SubProcess() override;
 
     SubProcess(SubProcess const&) = delete; // Disallow copying
     SubProcess& operator=(SubProcess const&) = delete; // Disallow copying
@@ -75,36 +76,32 @@ namespace edm {
     void doEventAsync(WaitingTaskHolder iHolder,
                       EventPrincipal const& principal);
 
-    void doBeginRun(RunPrincipal const& principal, IOVSyncValue const& ts);
+    void doBeginRunAsync(WaitingTaskHolder iHolder, RunPrincipal const& principal, IOVSyncValue const& ts);
 
-    void doEndRun(RunPrincipal const& principal, IOVSyncValue const& ts, bool cleaningUpAfterException);
+    void doEndRunAsync(WaitingTaskHolder iHolder, RunPrincipal const& principal, IOVSyncValue const& ts, bool cleaningUpAfterException);
 
-    void doBeginLuminosityBlock(LuminosityBlockPrincipal const& principal, IOVSyncValue const& ts);
+    void doBeginLuminosityBlockAsync(WaitingTaskHolder iHolder, LuminosityBlockPrincipal const& principal, IOVSyncValue const& ts);
 
-    void doEndLuminosityBlock(LuminosityBlockPrincipal const& principal, IOVSyncValue const& ts, bool cleaningUpAfterException);
+    void doEndLuminosityBlockAsync(WaitingTaskHolder iHolder, LuminosityBlockPrincipal const& principal, IOVSyncValue const& ts, bool cleaningUpAfterException);
 
 
     void doBeginStream(unsigned int);
     void doEndStream(unsigned int);
-    void doStreamBeginRun(unsigned int iID, RunPrincipal const& principal, IOVSyncValue const& ts);
     void doStreamBeginRunAsync(WaitingTaskHolder iHolder,
                                unsigned int iID,
                                RunPrincipal const& principal,
                                IOVSyncValue const& ts);
 
-    void doStreamEndRun(unsigned int iID, RunPrincipal const& principal, IOVSyncValue const& ts, bool cleaningUpAfterException);
     void doStreamEndRunAsync(WaitingTaskHolder iHolder,
                              unsigned int iID, RunPrincipal const& principal,
                              IOVSyncValue const& ts,
                              bool cleaningUpAfterException);
 
-    void doStreamBeginLuminosityBlock(unsigned int iID, LuminosityBlockPrincipal const& principal, IOVSyncValue const& ts);
     void doStreamBeginLuminosityBlockAsync(WaitingTaskHolder iHolder,
                                            unsigned int iID,
                                            LuminosityBlockPrincipal const& principal,
                                            IOVSyncValue const& ts);
 
-    void doStreamEndLuminosityBlock(unsigned int iID, LuminosityBlockPrincipal const& principal, IOVSyncValue const& ts, bool cleaningUpAfterException);
     void doStreamEndLuminosityBlockAsync(WaitingTaskHolder iHolder,
                                          unsigned int iID,
                                          LuminosityBlockPrincipal const& principal,
@@ -113,12 +110,12 @@ namespace edm {
 
 
     // Write the luminosity block
-    void writeLumi(ProcessHistoryID const& parentPhID, int runNumber, int lumiNumber);
+    void writeLumiAsync(WaitingTaskHolder, LuminosityBlockPrincipal&);
 
-    void deleteLumiFromCache(ProcessHistoryID const& parentPhID, int runNumber, int lumiNumber);
+    void deleteLumiFromCache(LuminosityBlockPrincipal&);
 
     // Write the run
-    void writeRun(ProcessHistoryID const& parentPhID, int runNumber);
+    void writeRunAsync(WaitingTaskHolder, ProcessHistoryID const& parentPhID, int runNumber, MergeableRunProductMetadata const*);
 
     void deleteRunFromCache(ProcessHistoryID const& parentPhID, int runNumber);
 
@@ -127,13 +124,6 @@ namespace edm {
       ServiceRegistry::Operate operate(serviceToken_);
       schedule_->closeOutputFiles();
       for_all(subProcesses_, [](auto& subProcess) { subProcess.closeOutputFiles(); });
-    }
-
-    // Call openNewFileIfNeeded() on all OutputModules
-    void openNewOutputFilesIfNeeded() {
-      ServiceRegistry::Operate operate(serviceToken_);
-      schedule_->openNewOutputFilesIfNeeded();
-      for_all(subProcesses_, [](auto& subProcess) { subProcess.openNewOutputFilesIfNeeded(); });
     }
 
     // Call openFiles() on all OutputModules
@@ -167,18 +157,6 @@ namespace edm {
         }
       }
       return false;
-    }
-
-    void preForkReleaseResources() {
-      ServiceRegistry::Operate operate(serviceToken_);
-      schedule_->preForkReleaseResources();
-      for_all(subProcesses_, [](auto& subProcess){ subProcess.preForkReleaseResources(); });
-    }
-
-    void postForkReacquireResources(unsigned int iChildIndex, unsigned int iNumberOfChildren) {
-      ServiceRegistry::Operate operate(serviceToken_);
-      schedule_->postForkReacquireResources(iChildIndex, iNumberOfChildren);
-      for_all(subProcesses_, [iChildIndex, iNumberOfChildren](auto& subProcess){ subProcess.postForkReacquireResources(iChildIndex, iNumberOfChildren); });
     }
 
     /// Return a vector allowing const access to all the ModuleDescriptions for this SubProcess
@@ -293,6 +271,8 @@ namespace edm {
     std::vector<ProcessHistoryRegistry>           processHistoryRegistries_;
     std::vector<HistoryAppender>                  historyAppenders_;
     PrincipalCache                                principalCache_;
+    //vector index is principal lumi's index value
+    std::vector<std::shared_ptr<LuminosityBlockPrincipal>> inUseLumiPrincipals_;
     edm::propagate_const<std::shared_ptr<eventsetup::EventSetupProvider>> esp_;
     edm::propagate_const<std::unique_ptr<Schedule>> schedule_;
     std::map<ProcessHistoryID, ProcessHistoryID>  parentToChildPhID_;

@@ -1,11 +1,13 @@
-# /dev/CMSSW_9_0_1/Fake1/V1 (CMSSW_9_0_0_pre6)
+# hltGetConfiguration --cff --data /dev/CMSSW_10_3_0/Fake1 --type Fake1
+
+# /dev/CMSSW_10_3_0/Fake1/V2 (CMSSW_10_3_X_2018-10-01-2300)
 
 import FWCore.ParameterSet.Config as cms
 
 fragment = cms.ProcessFragment( "HLT" )
 
 fragment.HLTConfigVersion = cms.PSet(
-  tableName = cms.string('/dev/CMSSW_9_0_1/Fake1/V1')
+  tableName = cms.string('/dev/CMSSW_10_3_0/Fake1/V2')
 )
 
 fragment.streams = cms.PSet(  A = cms.vstring( 'InitialPD' ) )
@@ -55,10 +57,12 @@ fragment.hltCaloStage1Digis = cms.EDProducer( "L1TRawToDigi",
     lenSlinkHeader = cms.untracked.int32( 8 ),
     MTF7 = cms.untracked.bool( False ),
     FWId = cms.uint32( 4294967295 ),
+    TMTCheck = cms.bool( True ),
+    lenAMCTrailer = cms.untracked.int32( 0 ),
     debug = cms.untracked.bool( False ),
     FedIds = cms.vint32( 1352 ),
     lenAMCHeader = cms.untracked.int32( 8 ),
-    lenAMCTrailer = cms.untracked.int32( 0 ),
+    DmxFWId = cms.uint32( 0 ),
     FWOverride = cms.bool( False )
 )
 fragment.hltCaloStage1LegacyFormatDigis = cms.EDProducer( "L1TCaloUpgradeToGCTConverter",
@@ -158,7 +162,8 @@ fragment.hltFEDSelector = cms.EDProducer( "EvFFEDSelector",
 fragment.hltTriggerSummaryAOD = cms.EDProducer( "TriggerSummaryProducerAOD",
     moduleLabelPatternsToSkip = cms.vstring(  ),
     processName = cms.string( "@" ),
-    moduleLabelPatternsToMatch = cms.vstring( 'hlt*' )
+    moduleLabelPatternsToMatch = cms.vstring( 'hlt*' ),
+    throw = cms.bool( False )
 )
 fragment.hltTriggerSummaryRAW = cms.EDProducer( "TriggerSummaryProducerRAW",
     processName = cms.string( "@" )
@@ -179,7 +184,7 @@ fragment.hltTrigReport = cms.EDAnalyzer( "HLTrigReport",
     serviceBy = cms.untracked.string( "never" ),
     resetBy = cms.untracked.string( "never" ),
     reportBy = cms.untracked.string( "job" ),
-    HLTriggerResults = cms.InputTag( 'TriggerResults','','HLT' )
+    HLTriggerResults = cms.InputTag( 'TriggerResults','','@currentProcess' )
 )
 
 fragment.HLTL1UnpackerSequence = cms.Sequence( fragment.hltGtDigis + fragment.hltCaloStage1Digis + fragment.hltCaloStage1LegacyFormatDigis + fragment.hltL1GtObjectMap + fragment.hltL1extraParticles )

@@ -40,17 +40,14 @@ class FastTimeNumberingInitialization : public edm::ESProducer {
 
 public:
   FastTimeNumberingInitialization(const edm::ParameterSet&);
-  ~FastTimeNumberingInitialization();
+  ~FastTimeNumberingInitialization() override;
 
-  typedef std::shared_ptr<FastTimeDDDConstants> ReturnType;
+  using ReturnType = std::unique_ptr<FastTimeDDDConstants>;
 
   ReturnType produce(const IdealGeometryRecord&);
-
-private:
-  FastTimeDDDConstants* fastTimeDDDConst_;
 };
 
-FastTimeNumberingInitialization::FastTimeNumberingInitialization(const edm::ParameterSet&) : fastTimeDDDConst_(0) {
+FastTimeNumberingInitialization::FastTimeNumberingInitialization(const edm::ParameterSet&) {
 #ifdef EDM_ML_DEBUG
   std::cout <<"constructing FastTimeNumberingInitialization" << std::endl;
 #endif
@@ -66,12 +63,9 @@ FastTimeNumberingInitialization::produce(const IdealGeometryRecord& iRecord) {
 #ifdef EDM_ML_DEBUG
   std::cout << "in FastTimeNumberingInitialization::produce" << std::endl;
 #endif
-  if (fastTimeDDDConst_ == 0) {
-    edm::ESHandle<FastTimeParameters>  pFTpar;
-    iRecord.get(pFTpar);
-    fastTimeDDDConst_ = new FastTimeDDDConstants(&(*pFTpar));
-  }
-  return std::shared_ptr<FastTimeDDDConstants> (fastTimeDDDConst_) ;
+  edm::ESHandle<FastTimeParameters>  pFTpar;
+  iRecord.get(pFTpar);
+  return std::make_unique<FastTimeDDDConstants>(&(*pFTpar));
 }
 
 //define this as a plug-in

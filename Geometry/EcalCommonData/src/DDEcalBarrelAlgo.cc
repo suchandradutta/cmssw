@@ -11,7 +11,7 @@
 #include "DetectorDescription/Core/interface/DDLogicalPart.h"
 #include "DetectorDescription/Core/interface/DDSolid.h"
 #include "DetectorDescription/Core/interface/DDCurrentNamespace.h"
-#include "DetectorDescription/Base/interface/DDTranslation.h"
+#include "DetectorDescription/Core/interface/DDTranslation.h"
 #include "Geometry/EcalCommonData/interface/DDEcalBarrelAlgo.h"
 #include "CLHEP/Units/GlobalSystemOfUnits.h"
 
@@ -741,20 +741,6 @@ void DDEcalBarrelAlgo::execute(DDCompactView& cpv)
 				   vecSpmZPts().front() + zExp ) ;
       const DDLogicalPart expLog ( expName, spmMat(), spmExpBox ) ;
 
-/*      const DDName unionName ( ddname( m_SpmName + "UNI" ) ) ;
-      if( 0 != spmCutShow() )
-      {
-	 cpv.position( expLog, spmName(), copyOne, expTra, DDRotation() ) ;
-      }
-      else
-      {
-	 const DDSolid unionSolid ( DDSolidFactory::unionSolid(
-				       unionName,
-				       spmcut1ddname, expName,
-				       expTra, DDRotation() ) ) ;
-				       }*/
-
-
       // Supermodule side platess
       const DDSolid sideSolid ( DDSolidFactory::box(
 				   spmSideName(), 
@@ -1108,12 +1094,12 @@ void DDEcalBarrelAlgo::execute(DDCompactView& cpv)
       std::vector<double> cri;
       std::vector<double> cro;
       std::vector<double> czz;
-      czz.push_back( vecSpmZPts()[1] ) ;
-      cri.push_back( vecSpmRMin()[0] ) ;
-      cro.push_back( vecSpmRMin()[0] + 25*mm ) ;
-      czz.push_back( vecSpmZPts()[2] ) ;
-      cri.push_back( vecSpmRMin()[2] ) ;
-      cro.push_back( vecSpmRMin()[2] + 10*mm ) ;
+      czz.emplace_back( vecSpmZPts()[1] ) ;
+      cri.emplace_back( vecSpmRMin()[0] ) ;
+      cro.emplace_back( vecSpmRMin()[0] + 25*mm ) ;
+      czz.emplace_back( vecSpmZPts()[2] ) ;
+      cri.emplace_back( vecSpmRMin()[2] ) ;
+      cro.emplace_back( vecSpmRMin()[2] + 10*mm ) ;
       const DDSolid clyrSolid ( DDSolidFactory::polycone( clyrName, -9.5*deg,  19*deg, czz,cri,cro) ) ;
       const DDLogicalPart clyrLog ( clyrName, ddmat(vecIlyMat()[4]), clyrSolid ) ;
       cpv.position( clyrLog, spmLog, copyOne, DDTranslation(0,0,0), DDRotation() ) ;
@@ -2671,7 +2657,7 @@ DDRotation
 DDEcalBarrelAlgo::myrot( const std::string&      s,
 			 const CLHEP::HepRotation& r ) const 
 {
-  return DDrot( ddname( m_idNameSpace + ":" + s ), new DDRotationMatrix( r.xx(), r.xy(), r.xz(), r.yx(), r.yy(), r.yz(), r.zx(), r.zy(), r.zz() ) ) ; 
+  return DDrot( ddname( m_idNameSpace + ":" + s ), std::make_unique<DDRotationMatrix>( r.xx(), r.xy(), r.xz(), r.yx(), r.yy(), r.yz(), r.zx(), r.zy(), r.zz() ) ) ; 
 }
 
  
@@ -2685,7 +2671,7 @@ DDName
 DDEcalBarrelAlgo::ddname( const std::string& s ) const
 { 
    const pair<std::string,std::string> temp ( DDSplit(s) ) ;
-   if ( temp.second == "" ) {
+   if ( temp.second.empty() ) {
      return DDName( temp.first,
 		    m_idNameSpace ) ;
    } else {
@@ -2718,7 +2704,7 @@ DDEcalBarrelAlgo::web( unsigned int        iWeb,
 		       double              LWeb,
 		       double              theta,
 		       const HepGeom::Point3D<double> &   corner,
-		       const DDLogicalPart logPar,
+		       const DDLogicalPart& logPar,
 		       double&             zee,
 		       double              side,
 		       double              front,

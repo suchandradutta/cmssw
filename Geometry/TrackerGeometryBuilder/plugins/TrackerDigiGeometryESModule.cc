@@ -18,7 +18,7 @@
 #include "CondFormats/AlignmentRecord/interface/TrackerAlignmentRcd.h"
 #include "CondFormats/AlignmentRecord/interface/TrackerAlignmentErrorExtendedRcd.h"
 #include "CondFormats/AlignmentRecord/interface/TrackerSurfaceDeformationRcd.h"
-#include "Geometry/TrackingGeometryAligner/interface/GeometryAligner.h"
+#include "Geometry/CommonTopologies/interface/GeometryAligner.h"
 
 #include "FWCore/Framework/interface/EventSetup.h"
 #include "FWCore/Framework/interface/ESHandle.h"
@@ -67,7 +67,7 @@ TrackerDigiGeometryESModule::fillDescriptions(edm::ConfigurationDescriptions & d
 }
 
 //__________________________________________________________________
-std::shared_ptr<TrackerGeometry> 
+std::unique_ptr<TrackerGeometry> 
 TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
 { 
   //
@@ -84,7 +84,7 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
   iRecord.getRecord<PTrackerParametersRcd>().get( ptp );
   
   TrackerGeomBuilderFromGeometricDet builder;
-  _tracker  = std::shared_ptr<TrackerGeometry>(builder.build(&(*gD), *ptp, tTopo));
+  std::unique_ptr<TrackerGeometry> tracker(builder.build(&(*gD), *ptp, tTopo));
 
   if (applyAlignment_) {
     // Since fake is fully working when checking for 'empty', we should get rid of applyAlignment_!
@@ -102,7 +102,7 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
 			     << "'" << myLabel_ << "') assumes fake and does not apply.";
     } else {
       GeometryAligner ali;
-      ali.applyAlignments<TrackerGeometry>(&(*_tracker), &(*alignments), &(*alignmentErrors),
+      ali.applyAlignments<TrackerGeometry>(&(*tracker), &(*alignments), &(*alignmentErrors),
                                            align::DetectorGlobalPosition(*globalPosition,
                                                                          DetId(DetId::Tracker)));
     }
@@ -117,11 +117,11 @@ TrackerDigiGeometryESModule::produce(const TrackerDigiGeometryRecord & iRecord)
 			     << "'" << myLabel_ << "') assumes fake and does not apply.";
     } else {
       GeometryAligner ali;
-      ali.attachSurfaceDeformations<TrackerGeometry>(&(*_tracker), &(*surfaceDeformations));
+      ali.attachSurfaceDeformations<TrackerGeometry>(&(*tracker), &(*surfaceDeformations));
     }
   }
   
-  return _tracker;
+  return tracker;
 }
 
 DEFINE_FWK_EVENTSETUP_MODULE(TrackerDigiGeometryESModule);

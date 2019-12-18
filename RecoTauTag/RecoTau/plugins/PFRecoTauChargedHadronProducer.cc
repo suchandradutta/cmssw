@@ -39,7 +39,6 @@
 
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/ptr_container/ptr_list.hpp>
-#include <boost/foreach.hpp>
 
 #include <string>
 #include <vector>
@@ -47,7 +46,7 @@
 #include <set>
 #include <algorithm>
 #include <functional>
-#include <math.h>
+#include <cmath>
 
 class PFRecoTauChargedHadronProducer : public edm::stream::EDProducer<> 
 {
@@ -56,8 +55,8 @@ public:
   typedef reco::tau::PFRecoTauChargedHadronQualityPlugin Ranker;
 
   explicit PFRecoTauChargedHadronProducer(const edm::ParameterSet& cfg);
-  ~PFRecoTauChargedHadronProducer() {}
-  void produce(edm::Event& evt, const edm::EventSetup& es);
+  ~PFRecoTauChargedHadronProducer() override {}
+  void produce(edm::Event& evt, const edm::EventSetup& es) override;
   template <typename T>
   void print(const T& chargedHadrons);
 
@@ -126,7 +125,7 @@ PFRecoTauChargedHadronProducer::PFRecoTauChargedHadronProducer(const edm::Parame
   // check if we want to apply a final output selection
   if ( cfg.exists("outputSelection") ) {
     std::string selection = cfg.getParameter<std::string>("outputSelection");
-    if ( selection != "" ) {
+    if ( !selection.empty() ) {
       outputSelector_.reset(new StringCutObjectSelector<reco::PFRecoTauChargedHadron>(selection));
     }
   }
@@ -142,7 +141,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
   }
 
   // give each of our plugins a chance at doing something with the edm::Event
-  BOOST_FOREACH( Builder& builder, builders_ ) {
+  for(auto& builder : builders_ ) {
     builder.setup(evt, es);
   }
   
@@ -157,7 +156,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
   std::unique_ptr<reco::PFJetChargedHadronAssociation> pfJetChargedHadronAssociations;
 
 
-  if ( pfJets.size() ) {
+  if ( !pfJets.empty() ) {
     edm::Handle<reco::PFJetCollection> pfJetCollectionHandle;
     evt.get(pfJets.id(), pfJetCollectionHandle);
     pfJetChargedHadronAssociations = std::make_unique<reco::PFJetChargedHadronAssociation>(reco::PFJetRefProd(pfJetCollectionHandle));
@@ -166,7 +165,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
   }
 
   // loop over our jets
-  BOOST_FOREACH( const reco::PFJetRef& pfJet, pfJets ) {
+  for(auto const& pfJet : pfJets ) {
     
     if(pfJet->pt() - minJetPt_ < 1e-5) continue;
     if(std::abs(pfJet->eta()) - maxJetAbsEta_ > -1e-5) continue;
@@ -175,7 +174,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
     ChargedHadronList uncleanedChargedHadrons;
 
     // merge candidates reconstructed by all desired algorithm plugins
-    BOOST_FOREACH( const Builder& builder, builders_ ) {
+    for(auto const& builder : builders_ ) {
       try {
         ChargedHadronVector result(builder(*pfJet));
 	if ( verbosity_ ) {
@@ -202,7 +201,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
     std::list<etaPhiPair> tracksInCleanCollection;
     std::set<reco::PFCandidatePtr> neutralPFCandsInCleanCollection;
 
-    while ( uncleanedChargedHadrons.size() >= 1 ) {
+    while ( !uncleanedChargedHadrons.empty() ) {
       
       // get next best ChargedHadron candidate
       std::auto_ptr<reco::PFRecoTauChargedHadron> nextChargedHadron(uncleanedChargedHadrons.pop_front().release());
@@ -214,7 +213,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
       // discard candidates which fail final output selection
       if ( !(*outputSelector_)(*nextChargedHadron) ) continue;
 
-      const reco::Track* track = 0;
+      const reco::Track* track = nullptr;
       if ( nextChargedHadron->getChargedPFCandidate().isNonnull() ) {
 	const reco::PFCandidatePtr& chargedPFCand = nextChargedHadron->getChargedPFCandidate();
 	if ( chargedPFCand->trackRef().isNonnull() ) track = chargedPFCand->trackRef().get();
@@ -273,7 +272,7 @@ void PFRecoTauChargedHadronProducer::produce(edm::Event& evt, const edm::EventSe
 	cleanedChargedHadrons.push_back(*nextChargedHadron);
       } else { // remove overlapping neutral PFCandidates, reevaluate ranking criterion and process ChargedHadron candidate again
 	nextChargedHadron->neutralPFCandidates_.clear();
-	BOOST_FOREACH( const reco::PFCandidatePtr& neutralPFCand, uniqueNeutralPFCands ) {
+    for(auto const& neutralPFCand : uniqueNeutralPFCands ) {
           nextChargedHadron->neutralPFCandidates_.push_back(neutralPFCand);
         }
 	// update ChargedHadron four-momentum

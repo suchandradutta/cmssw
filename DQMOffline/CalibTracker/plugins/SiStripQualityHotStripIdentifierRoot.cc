@@ -13,6 +13,8 @@
 #include <fstream>
 #include <sstream>
 
+#include "TH1F.h"
+
 //Insert here the include to the algos
 #include "CalibTracker/SiStripQuality/interface/SiStripHotStripAlgorithmFromClusterOccupancy.h"
 #include "CalibTracker/SiStripQuality/interface/SiStripBadAPVAlgorithmFromClusterOccupancy.h"
@@ -24,8 +26,7 @@ SiStripQualityHotStripIdentifierRoot::SiStripQualityHotStripIdentifierRoot(const
   dataLabel_(iConfig.getUntrackedParameter<std::string>("dataLabel","")),
   UseInputDB_(iConfig.getUntrackedParameter<bool>("UseInputDB",false)),
   conf_(iConfig),
-  fp_(iConfig.getUntrackedParameter<edm::FileInPath>("file",edm::FileInPath("CalibTracker/SiStripCommon/data/SiStripDetInfo.dat"))),
-  _tracker(nullptr),
+  tracker_(nullptr),
   tTopo(nullptr),
   filename(iConfig.getUntrackedParameter<std::string>("rootFilename","CondDB_TKCC_20X_v3_hlt_50822.root")),
   dirpath(iConfig.getUntrackedParameter<std::string>("rootDirPath","")),
@@ -33,14 +34,12 @@ SiStripQualityHotStripIdentifierRoot::SiStripQualityHotStripIdentifierRoot(const
   MeanNumberOfCluster(0),
   calibrationthreshold(iConfig.getUntrackedParameter<uint32_t>("CalibrationThreshold",10000))
 {
-  reader = new SiStripDetInfoFileReader(fp_.fullPath());  
-  
   dqmStore_ = edm::Service<DQMStore>().operator->(); 
   dqmStore_->setVerbose(iConfig.getUntrackedParameter<uint32_t>("verbosity",0)); 
 
-  if(filename!=""){
+  if(!filename.empty()){
     edm::LogInfo("SiStripQualityHotStripIdentifierRoot") << " before opening file " << filename.c_str();  
-    dqmStore_->open(filename.c_str(), false); 
+    dqmStore_->open(filename, false); 
     edm::LogInfo("SiStripQualityHotStripIdentifierRoot") << " after opening file ";  
   }
 }
@@ -49,11 +48,11 @@ SiStripQualityHotStripIdentifierRoot::SiStripQualityHotStripIdentifierRoot(const
 SiStripQualityHotStripIdentifierRoot::~SiStripQualityHotStripIdentifierRoot(){
 }
 
-SiStripBadStrip* SiStripQualityHotStripIdentifierRoot::getNewObject(){
+std::unique_ptr<SiStripBadStrip> SiStripQualityHotStripIdentifierRoot::getNewObject(){
 
   edm::LogInfo("SiStripQualityHotStripIdentifierRoot") <<"SiStripQualityHotStripIdentifierRoot::getNewObject called"<<std::endl;
 
-  SiStripBadStrip* obj=new SiStripBadStrip();
+  auto obj = std::make_unique<SiStripBadStrip>();
 
   edm::ParameterSet parameters=conf_.getParameter<edm::ParameterSet>("AlgoParameters");
   std::string AlgoName = parameters.getParameter<std::string>("AlgoName");
@@ -79,7 +78,7 @@ SiStripBadStrip* SiStripQualityHotStripIdentifierRoot::getNewObject(){
 	      theIdentifier->setOccupancyThreshold(parameters.getUntrackedParameter<double>("OccupancyThreshold",1.E-5));
 	      theIdentifier->setNumberOfEvents(TotNumberOfEvents);
 	      theIdentifier->setOutputFileName(conf_.getUntrackedParameter<std::string>("OccupancyRootFile","Occupancy.root"),conf_.getUntrackedParameter<bool>("WriteOccupancyRootFile",false));
-	      theIdentifier->setTrackerGeometry(_tracker);
+	      theIdentifier->setTrackerGeometry(tracker_);
 	      
 	      SiStripQuality* qobj = new SiStripQuality();
 	      theIdentifier->extractBadStrips(qobj,ClusterPositionHistoMap,SiStripQuality_);//here I insert SiStripQuality as input and get qobj as output
@@ -113,7 +112,7 @@ SiStripBadStrip* SiStripQualityHotStripIdentifierRoot::getNewObject(){
 	      theIdentifier2->setNumberOfEvents(TotNumberOfEvents);
 	      theIdentifier2->setMinNumOfEvents();
 	      theIdentifier2->setOutputFileName(conf_.getUntrackedParameter<std::string>("OccupancyRootFile","Occupancy.root"),conf_.getUntrackedParameter<bool>("WriteOccupancyRootFile",false));
-	      theIdentifier2->setTrackerGeometry(_tracker);
+	      theIdentifier2->setTrackerGeometry(tracker_);
 	      
 	      SiStripQuality* qobj = new SiStripQuality();
 	      theIdentifier2->extractBadAPVs(qobj,ClusterPositionHistoMap,SiStripQuality_);
@@ -146,7 +145,7 @@ SiStripBadStrip* SiStripQualityHotStripIdentifierRoot::getNewObject(){
 	      theIdentifier3->setMinNumEntriesPerStrip(parameters.getUntrackedParameter<uint32_t>("MinNumEntriesPerStrip",5));
 	      theIdentifier3->setNumberOfEvents(TotNumberOfEvents);
 	      theIdentifier3->setOutputFileName(conf_.getUntrackedParameter<std::string>("OccupancyRootFile","Occupancy.root"),conf_.getUntrackedParameter<bool>("WriteOccupancyRootFile",false),conf_.getUntrackedParameter<std::string>("DQMHistoOutputFile","DQMHistos.root"),conf_.getUntrackedParameter<bool>("WriteDQMHistoOutputFile",false));
-	      theIdentifier3->setTrackerGeometry(_tracker);
+	      theIdentifier3->setTrackerGeometry(tracker_);
 	      theIdentifier3->setLowOccupancyThreshold(parameters.getUntrackedParameter<double>("LowOccupancyThreshold",5));
 	      theIdentifier3->setHighOccupancyThreshold(parameters.getUntrackedParameter<double>("HighOccupancyThreshold",10));
 	      theIdentifier3->setAbsoluteLowThreshold(parameters.getUntrackedParameter<double>("AbsoluteLowThreshold",0));
@@ -205,7 +204,7 @@ void SiStripQualityHotStripIdentifierRoot::algoBeginRun(const edm::Run& iRun,con
   tTopo = tTopoHandle.product();
  
   iSetup.get<TrackerDigiGeometryRecord> ().get (theTrackerGeom);
-  _tracker=&(* theTrackerGeom);
+  tracker_=&(* theTrackerGeom);
 
   if(UseInputDB_){
     unsigned long long cacheID = iSetup.get<SiStripQualityRcd>().cacheIdentifier();
@@ -248,7 +247,7 @@ void SiStripQualityHotStripIdentifierRoot::bookHistos(){
   for (; iter!=iterEnd;++iter) {
     std::string me_name = (*iter)->getName();
     
-    if (!gotNentries && strstr(me_name.c_str(),"TotalNumberOfCluster__T")!=NULL && strstr(me_name.c_str(),"Profile")==NULL ){
+    if (!gotNentries && strstr(me_name.c_str(),"TotalNumberOfCluster__T")!=nullptr && strstr(me_name.c_str(),"Profile")==nullptr ){
 
       TotNumberOfEvents = ((TH1F*)(*iter)->getTH1F())->GetEntries();
       MeanNumberOfCluster = ((TH1F*)(*iter)->getTH1F())->GetMean();
@@ -265,7 +264,7 @@ void SiStripQualityHotStripIdentifierRoot::bookHistos(){
   for (; iter!=iterEnd;++iter) {
     std::string me_name = (*iter)->getName();
     
-    if (strstr(me_name.c_str(),(parameters.getUntrackedParameter<std::string>("OccupancyHisto")).c_str())==NULL)
+    if (strstr(me_name.c_str(),(parameters.getUntrackedParameter<std::string>("OccupancyHisto")).c_str())==nullptr)
       continue;
 
     unsigned int detid=0;
@@ -273,12 +272,12 @@ void SiStripQualityHotStripIdentifierRoot::bookHistos(){
     sprintf(title,"%s",me_name.c_str());
     char *ptr=strtok(title,"__");
     int c=0;
-    while (ptr!=NULL){
+    while (ptr!=nullptr){
       if (c==2){
 	detid=atol(ptr);
 	break;
       }
-      ptr=strtok(NULL,"_");
+      ptr=strtok(nullptr,"_");
       c++;
     }
     LogDebug("SiStripQualityHotStripIdentifierRoot") <<" [SiStripQualityHotStripIdentifierRoot::bookHistos] detid " << detid<< std::endl;

@@ -1,15 +1,10 @@
-#ifndef DD_DividedGeometryObject_H
-#define DD_DividedGeometryObject_H
-//
-// ********************************************************************
-// 25.04.04 - M.Case ported algorithm from G4VDivisionParameterisation.hh. to 
-//            DDD version
-//---------------------------------------------------------------------
+#ifndef DETECTOR_DESCRIPTION_PARSER_DD_DIVIDED_GEOMETRY_OBJECT_H
+#define DETECTOR_DESCRIPTION_PARSER_DD_DIVIDED_GEOMETRY_OBJECT_H
 
 #include <string>
 
-#include "DetectorDescription/Base/interface/DDRotationMatrix.h"
-#include "DetectorDescription/Base/interface/DDTranslation.h"
+#include "DetectorDescription/Core/interface/DDRotationMatrix.h"
+#include "DetectorDescription/Core/interface/DDTranslation.h"
 #include "DetectorDescription/Core/interface/DDAxes.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "DetectorDescription/Core/interface/DDDivision.h"
@@ -30,9 +25,9 @@ public:
   
   virtual ~DDDividedGeometryObject( void ) = default; // inline
   
-  virtual DDTranslation makeDDTranslation( const int copyNo ) const;
-  virtual DDRotation    makeDDRotation   ( const int copyNo ) const;
-  virtual DDLogicalPart makeDDLogicalPart( const int copyNo ) const;
+  virtual DDTranslation makeDDTranslation( int copyNo ) const;
+  virtual DDRotation    makeDDRotation   ( int copyNo ) const;
+  virtual DDLogicalPart makeDDLogicalPart( int copyNo ) const;
 
   virtual const std::string& getType( void ) const;
 
@@ -46,7 +41,7 @@ public:
   
 protected:
   
-  DDRotationMatrix* changeRotMatrix( double rotZ = 0. ) const;
+  std::unique_ptr<DDRotationMatrix> changeRotMatrix( double rotZ = 0. ) const;
   int calculateNDiv( double motherDim, double width,
 		     double offset ) const;
   double calculateWidth( double motherDim, int nDiv,

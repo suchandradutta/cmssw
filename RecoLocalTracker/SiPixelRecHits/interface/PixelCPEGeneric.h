@@ -36,8 +36,8 @@
 
 // The template header files
 //#include "RecoLocalTracker/SiPixelRecHits/interface/SiPixelTemplateReco.h"
-#include "RecoLocalTracker/SiPixelRecHits/interface/SiPixelTemplate.h"
-#include "RecoLocalTracker/SiPixelRecHits/interface/SiPixelGenError.h"
+#include "CondFormats/SiPixelTransient/interface/SiPixelTemplate.h"
+#include "CondFormats/SiPixelTransient/interface/SiPixelGenError.h"
 
 
 #include <utility>
@@ -51,7 +51,7 @@
 #endif
 
 class MagneticField;
-class PixelCPEGeneric : public PixelCPEBase
+class PixelCPEGeneric final : public PixelCPEBase
 {
 public:
    struct ClusterParamGeneric : ClusterParam
@@ -61,7 +61,7 @@ public:
       // individual pixel signals. It should be applied to all pixels in the
       // cluster [signal_i = fminf(signal_i, pixmax)] before the column and row
       // sums are made. Morris
-      float pixmx;
+      int pixmx;
       
       // These are errors predicted by PIXELAV
       float sigmay; // CPE Generic y-error for multi-pixel cluster
@@ -84,23 +84,23 @@ public:
                    const TrackerGeometry&, const TrackerTopology&, const SiPixelLorentzAngle *,
                    const SiPixelGenErrorDBObject *, const SiPixelLorentzAngle *);
    
-   ~PixelCPEGeneric() {;}
+   ~PixelCPEGeneric() override {;}
    
    
    
 private:
-   ClusterParam * createClusterParam(const SiPixelCluster & cl) const;
+   ClusterParam * createClusterParam(const SiPixelCluster & cl) const override;
    
-   LocalPoint localPosition (DetParam const & theDetParam, ClusterParam & theClusterParam) const;
-   LocalError localError   (DetParam const & theDetParam, ClusterParam & theClusterParam) const;
+   LocalPoint localPosition (DetParam const & theDetParam, ClusterParam & theClusterParam) const override;
+   LocalError localError   (DetParam const & theDetParam, ClusterParam & theClusterParam) const override;
    
    //--------------------------------------------------------------------
    //  Methods.
    //------------------------------------------------------------------
    float
    generic_position_formula( int size,                //!< Size of this projection.
-                            float Q_f,              //!< Charge in the first pixel.
-                            float Q_l,              //!< Charge in the last pixel.
+                            int Q_f,              //!< Charge in the first pixel.
+                            int Q_l,              //!< Charge in the last pixel.
                             float upper_edge_first_pix, //!< As the name says.
                             float lower_edge_last_pix,  //!< As the name says.
                             float lorentz_shift,   //!< L-width
@@ -116,10 +116,10 @@ private:
    
    void
    collect_edge_charges(ClusterParam & theClusterParam,  //!< input, the cluster
-                        float & Q_f_X,              //!< output, Q first  in X
-                        float & Q_l_X,              //!< output, Q last   in X
-                        float & Q_f_Y,              //!< output, Q first  in Y
-                        float & Q_l_Y               //!< output, Q last   in Y
+                        int & Q_f_X,              //!< output, Q first  in X
+                        int & Q_l_X,              //!< output, Q last   in X
+                        int & Q_f_Y,              //!< output, Q first  in Y
+                        int & Q_l_Y               //!< output, Q last   in Y
    ) const;
    
    

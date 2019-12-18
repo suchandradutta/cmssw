@@ -6,7 +6,7 @@
 #include <sys/socket.h>
 #include <netinet/tcp.h>
 #include <netinet/in.h>
-#include <stdio.h>
+#include <cstdio>
 #include <netdb.h>
 
 class DTtcpExcp
@@ -45,7 +45,6 @@ class DTCtcp
     unsigned long addr();
     int Send(char * buffer,int size); 
     int Receive(char *buffer,int size);
-    int WaitData(int timeout);
 
 };
 

@@ -20,12 +20,12 @@
 class HLTScoutingPrimaryVertexProducer : public edm::global::EDProducer<> {
 public:
   explicit HLTScoutingPrimaryVertexProducer(const edm::ParameterSet&);
-  ~HLTScoutingPrimaryVertexProducer();
+  ~HLTScoutingPrimaryVertexProducer() override;
   
   static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
   
 private:
-  virtual void produce(edm::StreamID sid, edm::Event & iEvent, edm::EventSetup const & setup) const override final;
+  void produce(edm::StreamID sid, edm::Event & iEvent, edm::EventSetup const & setup) const final;
   const edm::EDGetTokenT<reco::VertexCollection> vertexCollection_;
 };
 
@@ -40,8 +40,7 @@ HLTScoutingPrimaryVertexProducer::HLTScoutingPrimaryVertexProducer(const edm::Pa
   
 }
 
-HLTScoutingPrimaryVertexProducer::~HLTScoutingPrimaryVertexProducer()
-{ }
+HLTScoutingPrimaryVertexProducer::~HLTScoutingPrimaryVertexProducer() = default;
 
 // ------------ method called to produce the data  ------------
 void
@@ -75,5 +74,5 @@ HLTScoutingPrimaryVertexProducer::fillDescriptions(edm::ConfigurationDescription
 
 }
 
-//define this as a plug-in
+// declare this class as a framework plugin
 DEFINE_FWK_MODULE(HLTScoutingPrimaryVertexProducer);

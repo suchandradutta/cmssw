@@ -29,6 +29,12 @@ parseHFPhase1AlgoDescription(const edm::ParameterSet& ps)
             ps.getParameter<double>("tfallIfNoTDC");
         const bool rejectAllFailures =
             ps.getParameter<bool>("rejectAllFailures");
+        const float minChargeForUndershoot =
+            ps.getParameter<double>("minChargeForUndershoot");
+        const float minChargeForOvershoot =
+            ps.getParameter<double>("minChargeForOvershoot");
+        const bool alwaysCalculateQAsymmetry =
+            ps.getParameter<bool>("alwaysCalculateQAsymmetry");
 
         float energyWeights[2*HFAnodeStatus::N_POSSIBLE_STATES-1][2];
         const unsigned sz = sizeof(energyWeights)/sizeof(energyWeights[0][0]);
@@ -66,14 +72,38 @@ parseHFPhase1AlgoDescription(const edm::ParameterSet& ps)
                 algo = std::unique_ptr<AbsHFPhase1Algo>(
                     new HFSimpleTimeCheck(tlimits, energyWeights, soiPhase,
                                           timeShift, triseIfNoTDC, tfallIfNoTDC,
-                                          rejectAllFailures));
+                                          minChargeForUndershoot, minChargeForOvershoot,
+                                          rejectAllFailures, alwaysCalculateQAsymmetry));
             else
                 algo = std::unique_ptr<AbsHFPhase1Algo>(
                     new HFFlexibleTimeCheck(tlimits, energyWeights, soiPhase,
                                             timeShift, triseIfNoTDC, tfallIfNoTDC,
-                                            rejectAllFailures));
+                                            minChargeForUndershoot, minChargeForOvershoot,
+                                            rejectAllFailures, alwaysCalculateQAsymmetry));
         }
     }
 
     return algo;
+}
+
+edm::ParameterSetDescription fillDescriptionForParseHFPhase1AlgoDescription()
+{
+    edm::ParameterSetDescription desc;
+
+    std::vector<double> allPass{-10000.0, 10000.0, -10000.0, 10000.0};
+    desc.add<std::vector<double> >("tlimits", allPass);
+    desc.add<std::vector<double> >("energyWeights");
+    desc.add<unsigned>("soiPhase", 1U);
+    desc.add<double>("timeShift", 0.0);
+    desc.add<double>("triseIfNoTDC", -100.0);
+    desc.add<double>("tfallIfNoTDC", -101.0);
+    desc.add<double>("minChargeForUndershoot", 1.0e10);
+    desc.add<double>("minChargeForOvershoot", 1.0e10);
+    desc.add<bool>("alwaysCalculateQAsymmetry", true);
+
+    desc.ifValue(edm::ParameterDescription<std::string>("Class", "HFSimpleTimeCheck", true),
+                 "HFSimpleTimeCheck" >> edm::ParameterDescription<bool>("rejectAllFailures", false, true) or
+                 "HFFlexibleTimeCheck" >> edm::ParameterDescription<bool>("rejectAllFailures", true, true));
+
+    return desc;
 }

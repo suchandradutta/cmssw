@@ -10,7 +10,7 @@ namespace edm {
 
   ParameterSetEntry::ParameterSetEntry()
   : isTracked_(false),
-    thePSet_(0),
+    thePSet_(nullptr),
     theID_()
   {
   }
@@ -44,8 +44,6 @@ namespace edm {
     theID_.swap(newID);
   }
     
-  ParameterSetEntry::~ParameterSetEntry() {}
-
   void
   ParameterSetEntry::toString(std::string& result) const {
     result += isTracked() ? "+Q(" : "-Q(";

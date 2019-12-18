@@ -501,9 +501,9 @@ PFMuonAlgo::isTightMuonPOG(const reco::MuonRef& muonRef) {
 bool 
 PFMuonAlgo::hasValidTrack(const reco::MuonRef& muonRef,bool loose) {
   if(loose)
-    return muonTracks(muonRef).size()>0;
+    return !muonTracks(muonRef).empty();
   else
-    return goodMuonTracks(muonRef).size()>0;
+    return !goodMuonTracks(muonRef).empty();
 
 }
 
@@ -661,18 +661,18 @@ std::vector<reco::Muon::MuonTrackTypePair> PFMuonAlgo::muonTracks(const reco::Mu
   
   if(muon->globalTrack().isNonnull() && muon->globalTrack()->pt()>0) 
     if(muon->globalTrack()->ptError()/muon->globalTrack()->pt()<dpt)
-      out.push_back(std::make_pair(muon->globalTrack(),reco::Muon::CombinedTrack));
+      out.emplace_back(muon->globalTrack(),reco::Muon::CombinedTrack);
 
   if(muon->innerTrack().isNonnull() && muon->innerTrack()->pt()>0) 
     if(muon->innerTrack()->ptError()/muon->innerTrack()->pt()<dpt)//Here Loose!@
-      out.push_back(std::make_pair(muon->innerTrack(),reco::Muon::InnerTrack));
+      out.emplace_back(muon->innerTrack(),reco::Muon::InnerTrack);
 
   bool pickyExists=false; 
   double pickyDpt=99999.; 
   if(muon->pickyTrack().isNonnull() && muon->pickyTrack()->pt()>0) {
     pickyDpt = muon->pickyTrack()->ptError()/muon->pickyTrack()->pt(); 
     if(pickyDpt<dpt) 
-      out.push_back(std::make_pair(muon->pickyTrack(),reco::Muon::Picky));
+      out.emplace_back(muon->pickyTrack(),reco::Muon::Picky);
     pickyExists=true;
   }
 
@@ -681,7 +681,7 @@ std::vector<reco::Muon::MuonTrackTypePair> PFMuonAlgo::muonTracks(const reco::Mu
   if(muon->dytTrack().isNonnull() && muon->dytTrack()->pt()>0) {
     dytDpt = muon->dytTrack()->ptError()/muon->dytTrack()->pt(); 
     if(dytDpt<dpt) 
-      out.push_back(std::make_pair(muon->dytTrack(),reco::Muon::DYT));
+      out.emplace_back(muon->dytTrack(),reco::Muon::DYT);
     dytExists=true;
   }
 
@@ -694,12 +694,12 @@ std::vector<reco::Muon::MuonTrackTypePair> PFMuonAlgo::muonTracks(const reco::Mu
     if( ( (pickyExists && tpfmsDpt<pickyDpt) || (!pickyExists) ) && 
 	( (dytExists   && tpfmsDpt<dytDpt)   || (!dytExists)   ) && 
 	tpfmsDpt<dpt )
-      out.push_back(std::make_pair(muon->tpfmsTrack(),reco::Muon::TPFMS));
+      out.emplace_back(muon->tpfmsTrack(),reco::Muon::TPFMS);
   }
 
   if(includeSA && muon->outerTrack().isNonnull())
     if(muon->outerTrack()->ptError()/muon->outerTrack()->pt()<dpt)
-      out.push_back(std::make_pair(muon->outerTrack(),reco::Muon::OuterTrack));
+      out.emplace_back(muon->outerTrack(),reco::Muon::OuterTrack);
 
   return out;
 
@@ -749,7 +749,7 @@ bool PFMuonAlgo::reconstructMuon(reco::PFCandidate& candidate, const reco::MuonR
     else
       validTracks = muonTracks(muon);
 
-    if( validTracks.size() ==0)
+    if( validTracks.empty())
       return false;
 
 
@@ -914,7 +914,7 @@ void PFMuonAlgo::postClean(reco::PFCandidateCollection*  cands) {
   for(unsigned int i=0;i<muons.size();++i) {
     const PFCandidate& pfc = cands->at(muons[i]);
     double origin=0.0;
-    if(vertices_->size()>0&& vertices_->at(0).isValid() && ! vertices_->at(0).isFake())
+    if(!vertices_->empty()&& vertices_->at(0).isValid() && ! vertices_->at(0).isFake())
       origin = pfc.muonRef()->muonBestTrack()->dxy(vertices_->at(0).position());
 
     if( origin> cosmicRejDistance_) {
@@ -999,16 +999,16 @@ void PFMuonAlgo::addMissingMuons(edm::Handle<reco::MuonCollection> muons, reco::
   
     std::vector<reco::Muon::MuonTrackTypePair> tracks  = goodMuonTracks(muonRef,true);
     //If there is at least 1 track choice  try to change the track 
-    if(tracks.size()>0) {
+    if(!tracks.empty()) {
 
     //Find tracks that change dramatically MET or Pt
     std::vector<reco::Muon::MuonTrackTypePair> tracksThatChangeMET = tracksPointingAtMET(tracks);
     //From those tracks get the one with smallest MET 
-    if (tracksThatChangeMET.size()>0) {
+    if (!tracksThatChangeMET.empty()) {
       reco::Muon::MuonTrackTypePair bestTrackType = *std::min_element(tracksThatChangeMET.begin(),tracksThatChangeMET.end(),comparator);
 
       //Make sure it is not cosmic
-      if((vertices_->size()==0) ||bestTrackType.first->dz(vertices_->at(0).position())<cosmicRejDistance_){
+      if((vertices_->empty()) ||bestTrackType.first->dz(vertices_->at(0).position())<cosmicRejDistance_){
 	
 	//make a pfcandidate
 	int charge = bestTrackType.first->charge()>0 ? 1 : -1;
@@ -1081,7 +1081,7 @@ bool PFMuonAlgo::cleanMismeasured(reco::PFCandidate& pfc,unsigned int i ){
     //Find tracks that change dramatically MET or Pt
     std::vector<reco::Muon::MuonTrackTypePair> tracksThatChangeMET = tracksWithBetterMET(tracks,pfc);
     //From those tracks get the one with smallest MET 
-    if (tracksThatChangeMET.size()>0) {
+    if (!tracksThatChangeMET.empty()) {
       reco::Muon::MuonTrackTypePair bestTrackType = *std::min_element(tracksThatChangeMET.begin(),tracksThatChangeMET.end(),comparator);
       changeTrack(pfc,bestTrackType);
 
@@ -1205,7 +1205,7 @@ bool PFMuonAlgo::cleanPunchThroughAndFakes(reco::PFCandidate&pfc,reco::PFCandida
   if(fake1 || fake2||punchthrough) {
     // Find the block of the muon
     const PFCandidate::ElementsInBlocks& eleInBlocks = pfc.elementsInBlocks();
-    if ( eleInBlocks.size() ) { 
+    if ( !eleInBlocks.empty() ) { 
       PFBlockRef blockRefMuon = eleInBlocks[0].first;
       unsigned indexMuon = eleInBlocks[0].second;
       if (eleInBlocks.size()>1)
@@ -1217,7 +1217,7 @@ bool PFMuonAlgo::cleanPunchThroughAndFakes(reco::PFCandidate&pfc,reco::PFCandida
       for ( unsigned i = imu+1; i < cands->size(); ++i ) { 
 	const PFCandidate& pfcn = cands->at(i);
 	    const PFCandidate::ElementsInBlocks& ele = pfcn.elementsInBlocks();
-	    if ( !ele.size() ) { 
+	    if ( ele.empty() ) { 
 	      continue;
 	    }
 	    PFBlockRef blockRefHadron = ele[0].first;

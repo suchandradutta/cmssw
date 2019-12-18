@@ -15,7 +15,7 @@
 #include "DataFormats/EcalRecHit/interface/EcalUncalibratedRecHit.h"
 
 EcalUncalibRecHitWorkerWeights::EcalUncalibRecHitWorkerWeights(const edm::ParameterSet&ps, edm::ConsumesCollector& c) :
-  EcalUncalibRecHitWorkerBaseClass(ps,c)
+  EcalUncalibRecHitWorkerRunOneDigiBase(ps,c),testbeamEEShape(EEShape(true)), testbeamEBShape(EBShape(true))
 {
 }
 
@@ -26,6 +26,9 @@ EcalUncalibRecHitWorkerWeights::set(const edm::EventSetup& es)
         es.get<EcalPedestalsRcd>().get(peds);
         es.get<EcalWeightXtalGroupsRcd>().get(grps);
         es.get<EcalTBWeightsRcd>().get(wgts);
+
+	testbeamEEShape.setEventSetup(es);
+	testbeamEBShape.setEventSetup(es);
 }
 
 
@@ -36,9 +39,9 @@ EcalUncalibRecHitWorkerWeights::run( const edm::Event & evt,
 {
         DetId detid(itdg->id());
 
-        const EcalPedestals::Item * aped = 0;
-        const EcalMGPAGainRatio * aGain = 0;
-        const EcalXtalGroupId * gid = 0;
+        const EcalPedestals::Item * aped = nullptr;
+        const EcalMGPAGainRatio * aGain = nullptr;
+        const EcalXtalGroupId * gid = nullptr;
         EcalTBWeights::EcalTDCId tdcid(1);
 
         if (detid.subdetId()==EcalEndcap) {

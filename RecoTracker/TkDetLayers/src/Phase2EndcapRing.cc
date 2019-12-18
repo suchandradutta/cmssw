@@ -6,7 +6,6 @@
 #include "TrackingTools/DetLayers/interface/MeasurementEstimator.h"
 #include "TrackingTools/GeomPropagators/interface/HelixForwardPlaneCrossing.h"
 #include "TrackingTools/DetLayers/interface/rangesIntersect.h"
-#include "TrackingTools/DetLayers/interface/PhiLess.h"
 #include "TrackingTools/DetLayers/interface/ForwardRingDiskBuilderFromDet.h"
 
 #include "LayerCrossingSide.h"
@@ -252,7 +251,7 @@ void Phase2EndcapRing::searchNeighbors( const TrajectoryStateOnSurface& tsos,
 				     vector<DetGroup>& brotherresult,
 				     bool checkClosest) const
 {
-  GlobalPoint gCrossingPos = crossing.position();
+  const GlobalPoint& gCrossingPos = crossing.position();
 
   const vector<const GeomDet*>& sLayer( subLayer( crossing.subLayerIndex()));
   // It assumes that what is ok for the front modules in the pt modules is ok also for the back module

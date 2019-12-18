@@ -87,28 +87,28 @@ void DDTIDAxialCableAlgo::execute(DDCompactView& cpv) {
       thktot += thk;
       z       = zposWheel[k] + zposRing[i] - 0.5*thk;
       if (i != 0) {
-	pconZ.push_back(z);
-	pconRmin.push_back(r);
-	pconRmax.push_back(rMax);
+	pconZ.emplace_back(z);
+	pconRmin.emplace_back(r);
+	pconRmax.emplace_back(rMax);
       }
       r       = rMin;
-      pconZ.push_back(z);
-      pconRmin.push_back(r);
-      pconRmax.push_back(rMax);
+      pconZ.emplace_back(z);
+      pconRmin.emplace_back(r);
+      pconRmax.emplace_back(rMax);
       z      += thk;
-      pconZ.push_back(z);
-      pconRmin.push_back(r);
-      pconRmax.push_back(rMax);
+      pconZ.emplace_back(z);
+      pconRmin.emplace_back(r);
+      pconRmax.emplace_back(rMax);
       r       = rMax - thktot;
-      pconZ.push_back(z);
-      pconRmin.push_back(r);
-      pconRmax.push_back(rMax);
+      pconZ.emplace_back(z);
+      pconRmin.emplace_back(r);
+      pconRmax.emplace_back(rMax);
     }
     if (k >= ((int)(zposWheel.size())-1)) z = zBend;
     else z = zposWheel[k+1] + zposRing[0] - 0.5*thk;
-    pconZ.push_back(z);
-    pconRmin.push_back(r);
-    pconRmax.push_back(rMax);
+    pconZ.emplace_back(z);
+    pconRmin.emplace_back(r);
+    pconRmax.emplace_back(rMax);
     
     std::string name = childName + std::to_string(k);
     DDSolid solid = DDSolidFactory::polycone(DDName(name, idNameSpace),
@@ -128,7 +128,7 @@ void DDTIDAxialCableAlgo::execute(DDCompactView& cpv) {
     DDName mat(DDSplit(matIn).first, DDSplit(matIn).second); 
     DDMaterial matter(mat);
     DDLogicalPart genlogic(DDName(name, idNameSpace), matter, solid);
-    logs.push_back(DDName(name, idNameSpace));
+    logs.emplace_back(DDName(name, idNameSpace));
   }
 
   //Cable in the vertical part
@@ -138,16 +138,16 @@ void DDTIDAxialCableAlgo::execute(DDCompactView& cpv) {
   LogDebug("TIDGeom") << "DDTIDAxialCableAlgo test: Thk " << thk 
 		      << " Total " << thktot << " rMax " << rMax 
 		      << " rTop " << rTop << " dR " << r << " z " << z;
-  pconZ.push_back(z);
-  pconRmin.push_back(rMax);
-  pconRmax.push_back(rMax);
+  pconZ.emplace_back(z);
+  pconRmin.emplace_back(rMax);
+  pconRmax.emplace_back(rMax);
   z = zBend - r;
-  pconZ.push_back(z);
-  pconRmin.push_back(rMax);
-  pconRmax.push_back(rTop);
-  pconZ.push_back(zBend);
-  pconRmin.push_back(rMax);
-  pconRmax.push_back(rTop);
+  pconZ.emplace_back(z);
+  pconRmin.emplace_back(rMax);
+  pconRmax.emplace_back(rTop);
+  pconZ.emplace_back(zBend);
+  pconRmin.emplace_back(rMax);
+  pconRmax.emplace_back(rTop);
 
   std::string name = childName + std::to_string(zposWheel.size());
   DDSolid solid = DDSolidFactory::polycone(DDName(name, idNameSpace),
@@ -164,10 +164,9 @@ void DDTIDAxialCableAlgo::execute(DDCompactView& cpv) {
 			<< "\tRmin = "<< pconRmin[i] << "\tRmax = " 
 			<< pconRmax[i];
 
-  DDName mat(DDSplit(matIn).first, DDSplit(matIn).second); 
-  DDMaterial matter(mat);
+  DDMaterial matter(DDName(DDSplit(matIn).first, DDSplit(matIn).second));
   DDLogicalPart genlogic(DDName(name, idNameSpace), matter, solid);
-  logs.push_back(DDName(name, idNameSpace));
+  logs.emplace_back(DDName(name, idNameSpace));
 
   //Cable in the outer part
   name = childName + std::to_string(zposWheel.size()+1);
@@ -179,10 +178,9 @@ void DDTIDAxialCableAlgo::execute(DDCompactView& cpv) {
 		      << matOut << " from " << -0.5*width/CLHEP::deg << " to " 
 		      << 0.5*width/CLHEP::deg << " with Rin " << r << " Rout " 
 		      << rTop << " ZHalf " << 0.5*(zEnd-zBend);
-  mat    = DDName(DDSplit(matOut).first, DDSplit(matOut).second);
-  matter = DDMaterial(mat);
+  matter = DDMaterial(DDName(DDSplit(matOut).first, DDSplit(matOut).second));
   genlogic = DDLogicalPart(DDName(name, idNameSpace), matter, solid);
-  logs.push_back(DDName(name, idNameSpace));
+  logs.emplace_back(DDName(name, idNameSpace));
 
   //Position the cables
   double theta = 90.*CLHEP::deg;

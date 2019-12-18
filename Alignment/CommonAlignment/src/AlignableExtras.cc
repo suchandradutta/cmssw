@@ -10,16 +10,11 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/Utilities/interface/Exception.h"
 
-// Geometry
-#include "Geometry/CommonDetUnit/interface/GeomDet.h"
-#include "Geometry/CommonDetUnit/interface/GeomDetUnit.h"
-
 // Alignment
 #include "Alignment/CommonAlignment/interface/AlignableBeamSpot.h"
 
 #include "CondFormats/Alignment/interface/Alignments.h"
 #include "CondFormats/Alignment/interface/AlignmentErrorsExtended.h"
-#include "CondFormats/Alignment/interface/AlignmentSorter.h"
 
 #include "Alignment/CommonAlignment/interface/AlignableExtras.h"
 
@@ -59,8 +54,8 @@ Alignments* AlignableExtras::alignments( void ) const
 	  delete tmpAlignments;
     }
 
-  std::sort( m_alignments->m_align.begin(), m_alignments->m_align.end(), 
-	     lessAlignmentDetId<AlignTransform>() );
+  // sort by rawId
+  std::sort( m_alignments->m_align.begin(), m_alignments->m_align.end());
 
   return m_alignments;
 }
@@ -80,8 +75,8 @@ AlignmentErrorsExtended* AlignableExtras::alignmentErrors( void ) const
 	  delete tmpAlignmentErrorsExtended;
     }
   
-  std::sort( m_alignmentErrors->m_alignError.begin(), m_alignmentErrors->m_alignError.end(), 
-	     lessAlignmentDetId<AlignTransformErrorExtended>() );
+  // sort by rawId
+  std::sort( m_alignmentErrors->m_alignError.begin(), m_alignmentErrors->m_alignError.end());
 
   return m_alignmentErrors;
 }

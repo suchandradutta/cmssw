@@ -29,13 +29,13 @@ const PixelToLNKAssociateFromAscii::CablingRocId * PixelToLNKAssociateFromAscii:
       return &(im->second);  
     }
   }
-  return 0;
+  return nullptr;
 }
 
 // This is where the reading and interpretation of the ascci cabling input file is
 void PixelToLNKAssociateFromAscii::init(const string & cfg_name) {
 
-  edm::LogInfo(" init, input file: ") << cfg_name.c_str();
+  edm::LogInfo(" init, input file: ") << cfg_name;
 
   std::ifstream file( cfg_name.c_str() );
   if ( !file ) {
@@ -190,7 +190,9 @@ void PixelToLNKAssociateFromAscii::addConnections(
     
     
      int rocLnkId = 0; 
+     bool loopExecuted = false;
      for (int rocDetId=rocDetIds.min(); rocDetId <= rocDetIds.max(); rocDetId++) {
+       loopExecuted = true;
        rocLnkId++;
        DetectorRocId  detectorRocId;
        //detectorRocId.module = name0;
@@ -204,7 +206,7 @@ void PixelToLNKAssociateFromAscii::addConnections(
        // fix for type-B modules in barrel
        edm::LogInfo(" roc ")<<rocDetId<<" "<<rocLnkId<<" "<<name->isHalfModule()<<endl;
        if (name->isHalfModule() && (rocDetIds.min()>7)  
-           && (part==PixelBarrelName::mO || PixelBarrelName::mI) ) {
+           && (part==PixelBarrelName::mO || part==PixelBarrelName::mI) ) {
 	 //cablingRocId.rocLinkId = 9-rocLnkId;
 	 // rocDetId=8,...,15
 	 edm::LogInfo(" special for half modules ");
@@ -213,7 +215,9 @@ void PixelToLNKAssociateFromAscii::addConnections(
        }
        theConnection.push_back( make_pair(detectorRocId,cablingRocId));
      } 
+     if (!loopExecuted) delete name;
   }
+
 
   // check for endcap modules
   pos = module.find("FPix");
@@ -398,7 +402,9 @@ void PixelToLNKAssociateFromAscii::addConnections(
        //       Range rocs = Range(0, 15); 
        //       for (int rocDetId=rocs.min(); rocDetId <= rocs.max(); rocDetId++) {
        PixelEndcapName * name = new PixelEndcapName(part, disk, blade, pannel, ring, phase1_); 
+       bool loopExecuted = false;
        for (int rocDetId=rocDetIds.min(); rocDetId <= rocDetIds.max(); rocDetId++) {
+           loopExecuted = true;
 	 rocLnkId++;
 	 DetectorRocId  detectorRocId;
 	 detectorRocId.module = name;
@@ -421,6 +427,9 @@ void PixelToLNKAssociateFromAscii::addConnections(
 	 //      << " name = " << name0->name()
 	 //      << endl;
        } // end for 
+       if (!loopExecuted) {
+           delete name;
+       }
        
      } // end of type
 

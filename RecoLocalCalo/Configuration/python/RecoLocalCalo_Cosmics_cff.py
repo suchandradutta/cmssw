@@ -23,12 +23,15 @@ def hbheCosmic(module):
         tsFromDB = cms.bool(False),
         recoParamsFromDB = cms.bool(False),
         algorithm = dict(
+            useMahi = cms.bool(False),
             useM2 = cms.bool(False),
             useM3 = cms.bool(False),
             firstSampleShift = cms.int32(-1000),
             samplesToAdd = cms.int32(10),
             correctForPhaseContainment = cms.bool(False),
-        )
+        ),
+        sipmQTSShift = cms.int32(-100),
+        sipmQNTStoSum = cms.int32(200),
     )
 
 hbhereco = hbheCosmic(_hcalLocalReco_cff.hbheprereco)
@@ -90,6 +93,13 @@ _plan1_hcalLocalRecoSequence.insert(0,hbheprereco)
 from Configuration.Eras.Modifier_run2_HEPlan1_2017_cff import run2_HEPlan1_2017
 run2_HEPlan1_2017.toReplaceWith(hbhereco, hbheplan1)
 run2_HEPlan1_2017.toReplaceWith(hcalLocalRecoSequence, _plan1_hcalLocalRecoSequence)
+
+hbhecollapse = hbheplan1.clone()
+_collapse_hcalLocalRecoSequence = _phase1_hcalLocalRecoSequence.copy()
+_collapse_hcalLocalRecoSequence.insert(0,hbheprereco)
+from Configuration.ProcessModifiers.run2_HECollapse_2018_cff import run2_HECollapse_2018
+run2_HECollapse_2018.toReplaceWith(hbhereco, hbhecollapse)
+run2_HECollapse_2018.toReplaceWith(hcalLocalRecoSequence, _collapse_hcalLocalRecoSequence)
 
 calolocalrecoCosmics = cms.Sequence(ecalLocalRecoSequenceCosmics+hcalLocalRecoSequence)
 

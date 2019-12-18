@@ -6,11 +6,11 @@
 #include "L1Trigger/L1THGCal/interface/HGCalTriggerGeometryBase.h"
 
 #include "DataFormats/L1THGCal/interface/HGCFETriggerDigi.h"
-#include "DataFormats/L1THGCal/interface/HGCFETriggerDigiFwd.h"
+#include "DataFormats/L1THGCal/interface/HGCFETriggerDigiDefs.h"
 
 #include "DataFormats/HGCDigi/interface/HGCDigiCollections.h"
 
-#include "FWCore/Framework/interface/EDProducer.h"
+#include "FWCore/Framework/interface/stream/EDProducer.h"
 #include "FWCore/Framework/interface/Event.h"
 
 #include <memory>
@@ -42,11 +42,11 @@ class HGCalTriggerBackendAlgorithmBase {
   virtual void setGeometry(const HGCalTriggerGeometryBase* const geom) {geometry_ = geom;}
     
   //runs the trigger algorithm, storing internally the results
-  virtual void setProduces(edm::EDProducer& prod) const = 0;
+  virtual void setProduces(edm::stream::EDProducer<>& prod) const = 0;
 
   virtual void run(const l1t::HGCFETriggerDigiCollection& coll, 
 		   const edm::EventSetup& es,
-		   const edm::Event &e
+		   edm::Event &e
 		   ) = 0;
 
   virtual void putInEvent(edm::Event& evt) = 0;
@@ -70,7 +70,7 @@ namespace HGCalTriggerBackend {
     	HGCalTriggerBackendAlgorithmBase(conf, cc), 
     	codec_(conf.getParameterSet("FECodec")){ }
 
-    virtual void setGeometry(const HGCalTriggerGeometryBase* const geom) override final {
+    void setGeometry(const HGCalTriggerGeometryBase* const geom) final {
       HGCalTriggerBackendAlgorithmBase::setGeometry(geom);
       codec_.setGeometry(geom);
     }

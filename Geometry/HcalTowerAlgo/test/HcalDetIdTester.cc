@@ -14,25 +14,24 @@ class HcalDetIdTester : public edm::one::EDAnalyzer<> {
 
 public:
   explicit HcalDetIdTester( const edm::ParameterSet& );
-  ~HcalDetIdTester( void );
-    
+  ~HcalDetIdTester( void ) override;
+
   void beginJob() override {}
   void analyze(edm::Event const& iEvent, edm::EventSetup const&) override;
   void endJob() override {}
 
 private:
-  edm::ParameterSet ps0_;
   bool              geomDB_;
 };
 
-HcalDetIdTester::HcalDetIdTester( const edm::ParameterSet& iConfig ) : ps0_(iConfig) {
+HcalDetIdTester::HcalDetIdTester( const edm::ParameterSet& iConfig ) {
   geomDB_ = iConfig.getParameter<bool>("GeometryFromDB");
 }
 
 HcalDetIdTester::~HcalDetIdTester( void ) {}
 
 void
-HcalDetIdTester::analyze(const edm::Event& /*iEvent*/, 
+HcalDetIdTester::analyze(const edm::Event& /*iEvent*/,
 			 const edm::EventSetup& iSetup ) {
 
   edm::ESHandle<HcalDDDRecConstants> hDRCons;
@@ -42,14 +41,14 @@ HcalDetIdTester::analyze(const edm::Event& /*iEvent*/,
   iSetup.get<HcalRecNumberingRecord>().get( topologyHandle );
   const HcalTopology topology = (*topologyHandle);
 
-  CaloSubdetectorGeometry* caloGeom(0);
+  CaloSubdetectorGeometry* caloGeom(nullptr);
   if (geomDB_) {
     edm::ESHandle<CaloGeometry> pG;
     iSetup.get<CaloGeometryRecord>().get(pG);
     const CaloGeometry* geo = pG.product();
     caloGeom = (CaloSubdetectorGeometry*)(geo->getSubdetectorGeometry(DetId::Hcal,HcalBarrel));
   } else {
-    HcalFlexiHardcodeGeometryLoader m_loader(ps0_);
+    HcalFlexiHardcodeGeometryLoader m_loader;
     caloGeom = m_loader.load(topology, hcons);
   }
 
@@ -58,13 +57,13 @@ HcalDetIdTester::analyze(const edm::Event& /*iEvent*/,
 
   int nfail0(0);
   for (int det = 1; det <= HcalForward; det++) {
-    for (int eta = -HcalDetId::kHcalEtaMask2; 
-	 eta <= HcalDetId::kHcalEtaMask2; eta++) {
+    for (int eta = -HcalDetId::kHcalEtaMask2;
+	 eta <= (int)(HcalDetId::kHcalEtaMask2); eta++) {
       for (int depth = 1; depth <= maxDepth; depth++) {
-	for (int phi = 0; phi <= HcalDetId::kHcalPhiMask2; phi++) {
+	for (unsigned int phi = 0; phi <= HcalDetId::kHcalPhiMask2; phi++) {
 	  HcalDetId detId ((HcalSubdetector) det, eta, phi, depth);
 	  if (topology.valid(detId)) {
-	    const CaloCellGeometry * cell = caloGeom->getGeometry((DetId)(detId));
+	    auto cell = caloGeom->getGeometry((DetId)(detId));
 	    if (cell) {
 	      std::cout << detId << " " << cell->getPosition() << std::endl;
 	    } else {
@@ -79,15 +78,14 @@ HcalDetIdTester::analyze(const edm::Event& /*iEvent*/,
 
   int nfail1(0);
   const std::vector<DetId>& ids = caloGeom->getValidDetIds();
-  for (std::vector<DetId>::const_iterator itr = ids.begin();  itr != ids.end();
-       ++itr)  {
-    if (!topology.valid(*itr)) {
-      std::cout << HcalDetId(*itr) << " declared as invalid == ERROR\n";
+  for (auto id : ids)  {
+    if (!topology.valid(id)) {
+      std::cout << HcalDetId(id) << " declared as invalid == ERROR\n";
       ++nfail1;
     }
   }
 
-  std::cout << "\nNumber of failures:\nTopology certifies but geometry fails " 
+  std::cout << "\nNumber of failures:\nTopology certifies but geometry fails "
 	    << nfail0 << "\nGeometry certifies but Topology fails " << nfail1
 	    << std::endl << std::endl;
 }

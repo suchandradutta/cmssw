@@ -7,8 +7,9 @@
 #include "Geometry/TrackerNumberingBuilder/plugins/TrackerStablePhiSort.h"
 #include "DataFormats/DetId/interface/DetId.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
-#include <vector>
 
+#include <functional>
+#include <vector>
 #include <bitset>
 
 void CmsTrackerOTLayerBuilder::buildComponent(DDFilteredView& fv, GeometricDet* g, std::string s){
@@ -47,12 +48,12 @@ void CmsTrackerOTLayerBuilder::sortNS(DDFilteredView& fv, GeometricDet* det){
   for(uint32_t i=0; i<comp.size();i++){
     auto component = det->component(i);
     if(component->type()== GeometricDet::ladder){
-      rods.push_back(component);
+      rods.emplace_back(component);
     } else if(component->type()== GeometricDet::panel){
       if(component->translation().z() < 0.){
-        ringsNeg.push_back(component);
+        ringsNeg.emplace_back(component);
       } else if (component->translation().z() > 0.) {
-        ringsPos.push_back(component);
+        ringsPos.emplace_back(component);
       }
     } else {
       edm::LogError("CmsTrackerOTLayerBuilder")<<"ERROR - wrong SubDet to sort..... "<<det->components().front()->type();
@@ -60,8 +61,8 @@ void CmsTrackerOTLayerBuilder::sortNS(DDFilteredView& fv, GeometricDet* det){
   }
       
   // negative rings 
-  if(ringsNeg.size() != 0){
-    std::sort(ringsNeg.begin(),ringsNeg.end(),LessZ());  
+  if(!ringsNeg.empty()){
+    std::sort(ringsNeg.begin(),ringsNeg.end(),isLessZ);
     uint32_t  totalringsNeg = ringsNeg.size();
   
     LogTrace("DetConstruction") << " Neg rings ordered by z: ";
@@ -74,8 +75,8 @@ void CmsTrackerOTLayerBuilder::sortNS(DDFilteredView& fv, GeometricDet* det){
   }
 
   // rods 
-  if(rods.size() != 0){
-    TrackerStablePhiSort(rods.begin(), rods.end(), ExtractPhi());
+  if(!rods.empty()){
+    TrackerStablePhiSort(rods.begin(), rods.end(), std::function<double(const GeometricDet*)>(getPhi));
     uint32_t  totalrods = rods.size();
   
     LogTrace("DetConstruction") << " Rods ordered by phi: ";
@@ -88,8 +89,8 @@ void CmsTrackerOTLayerBuilder::sortNS(DDFilteredView& fv, GeometricDet* det){
   }
 
   // positive rings 
-  if(ringsPos.size() != 0){
-    std::sort(ringsPos.begin(),ringsPos.end(),LessZ());  
+  if(!ringsPos.empty()){
+    std::sort(ringsPos.begin(),ringsPos.end(),isLessZ);
     uint32_t  totalringsPos = ringsPos.size();
   
   

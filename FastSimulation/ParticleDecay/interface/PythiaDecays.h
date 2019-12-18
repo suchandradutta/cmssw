@@ -30,13 +30,13 @@ class PythiaDecays
  public:
 
   PythiaDecays();
-  ~PythiaDecays(){};
+  ~PythiaDecays();
   const DaughterParticleList & particleDaughters(ParticlePropagator& particle, CLHEP::HepRandomEngine*);
 
  private:
 
   DaughterParticleList theList;
-  std::auto_ptr<Pythia8::Pythia>   decayer; 
+  std::unique_ptr<Pythia8::Pythia>   decayer; 
   std::unique_ptr<gen::P8RndmEngine> p8RndmEngine;
 };
 #endif

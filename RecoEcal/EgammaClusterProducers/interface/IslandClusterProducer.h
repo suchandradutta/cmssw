@@ -2,7 +2,7 @@
 #define RecoEcal_EgammaClusterProducers_IslandClusterProducer_h_
 
 #include <memory>
-#include <time.h>
+#include <ctime>
 
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/stream/EDProducer.h"
@@ -30,9 +30,9 @@ class IslandClusterProducer : public edm::stream::EDProducer<>
 
       IslandClusterProducer(const edm::ParameterSet& ps);
 
-      ~IslandClusterProducer();
-
-      virtual void produce(edm::Event&, const edm::EventSetup&) override;
+      ~IslandClusterProducer() override;
+      static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
+      void produce(edm::Event&, const edm::EventSetup&) override;
 
    private:
 

@@ -27,7 +27,7 @@ public:
 
   typedef std::vector< double > ParmVec ;
 
-  typedef std::shared_ptr<CaloSubdetectorGeometry > PtrType ;
+  using PtrType = std::unique_ptr<CaloSubdetectorGeometry>;
 
   typedef CaloSubdetectorGeometry::ParVec    ParVec ;
   typedef CaloSubdetectorGeometry::ParVecVec ParVecVec ;
@@ -39,8 +39,8 @@ public:
   virtual ~CaloGeometryLoader< T >() {}
  
   PtrType load( const DDCompactView* cpv,
-		const Alignments*    alignments = 0 ,
-		const Alignments*    globals    = 0  ) ;  
+		const Alignments*    alignments = nullptr ,
+		const Alignments*    globals    = nullptr  ) ;  
 
 private:
 

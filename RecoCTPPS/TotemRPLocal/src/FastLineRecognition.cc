@@ -10,7 +10,7 @@
 
 #include "DataFormats/CTPPSReco/interface/TotemRPRecHit.h"
 
-#include "Geometry/VeryForwardGeometryBuilder/interface/TotemRPGeometry.h"
+#include "Geometry/VeryForwardGeometryBuilder/interface/CTPPSGeometry.h"
 
 #include <map>
 #include <cmath>
@@ -47,23 +47,18 @@ void FastLineRecognition::Cluster::add(const Point *p1, const Point *p2, double 
   if (add2)
     contents.push_back(p2);
 
-  // update sums, mins and maxs
+  // update sums
   Saw += a*w;
   Sbw += b*w;
   Sw += w;
   S1 += 1.;
-
-  min_a = min(a, min_a);
-  min_b = min(b, min_b);
-  max_a = max(a, max_a);
-  max_b = max(b, max_b);
 }
 
 //----------------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------------
 
 FastLineRecognition::FastLineRecognition(double cw_a, double cw_b) :
-  chw_a(cw_a/2.), chw_b(cw_b/2.), geometry(NULL)
+  chw_a(cw_a/2.), chw_b(cw_b/2.), geometry(nullptr)
 {
 }
 
@@ -83,8 +78,8 @@ FastLineRecognition::GeomData FastLineRecognition::getGeomData(unsigned int id)
     return it->second;
 
   // calculate it
-  CLHEP::Hep3Vector d = geometry->LocalToGlobalDirection(id, CLHEP::Hep3Vector(0., 1., 0.));
-  DDTranslation c = geometry->GetDetector(TotemRPDetId(id))->translation();
+  CLHEP::Hep3Vector d = geometry->localToGlobalDirection(id, CLHEP::Hep3Vector(0., 1., 0.));
+  DDTranslation c = geometry->getSensor(TotemRPDetId(id))->translation();
   GeomData gd;
   gd.z = c.z();
   gd.s = d.x()*c.x() + d.y()*c.y();

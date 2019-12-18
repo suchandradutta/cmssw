@@ -33,7 +33,7 @@ using namespace edm;
 using namespace std;
 
 DTLocalTriggerTask::DTLocalTriggerTask(const edm::ParameterSet& ps) :
-  trigGeomUtils(0),
+  trigGeomUtils(nullptr),
   isLocalRun(ps.getUntrackedParameter<bool>("localrun", true))
  {
   if (!isLocalRun) {
@@ -47,16 +47,14 @@ DTLocalTriggerTask::DTLocalTriggerTask(const edm::ParameterSet& ps) :
   detailedAnalysis = ps.getUntrackedParameter<bool>("detailedAnalysis", false);
   doTMTheta       = ps.getUntrackedParameter<bool>("enableTMTheta", false);
   tm_Token_       = consumes<L1MuDTChambPhContainer>(
-      edm::InputTag(ps.getUntrackedParameter<string>("tm_label", "dttpgprod")));
-  tmTh_label_     = ps.getUntrackedParameter<edm::InputTag>("tmTh_label");
-  tmTh_Token_       = consumes<L1MuDTChambThContainer>(edm::InputTag(tmTh_label_));
-
-  //cout << "[DTLocalTriggerTask] ThetaTriggerLabel=" << tmTh_label_ << endl;
+      ps.getUntrackedParameter<InputTag>("tm_label",InputTag("twinMuxStage2Digis:PhIn")));
+  tmTh_Token_       = consumes<L1MuDTChambThContainer>(
+      ps.getUntrackedParameter<edm::InputTag>("tmTh_label",InputTag("twinMuxStage2Digis:ThIn")));
 
   ros_Token_       = consumes<DTLocalTriggerCollection>(
-      edm::InputTag(ps.getUntrackedParameter<string>("ros_label", "dtunpacker")));
+      ps.getUntrackedParameter<InputTag>("ros_label", InputTag("dtunpacker")));
   seg_Token_       = consumes<DTRecSegment4DCollection>(
-      edm::InputTag(ps.getUntrackedParameter<string>("seg_label", "dt4DSegments")));
+      ps.getUntrackedParameter<InputTag>("seg_label", InputTag("dt4DSegments")));
 
   if (tpMode) {
     baseFolderTM = "DT/11-LocalTriggerTP-TM/";
@@ -146,6 +144,8 @@ void DTLocalTriggerTask::bookHistograms(DQMStore::IBooker & ibooker, edm::Run co
 		  bookHistos(ibooker, dtChId,"LocalTriggerPhiIn","TM_QualvsPhibend_In"+(*trigSrcIt));
 		}
 		bookHistos(ibooker, dtChId,"LocalTriggerPhiIn","TM_Flag1stvsQual_In"+(*trigSrcIt));
+                bookHistos(ibooker, dtChId,"LocalTriggerPhiIn","TM_FlagUpDownvsQual_In"+(*trigSrcIt));
+
 		bookHistos(ibooker, dtChId,"LocalTriggerPhiIn","TM_BestQual_In"+(*trigSrcIt));
 		if (stat!=4 && doTMTheta){
 		  bookHistos(ibooker, dtChId,"LocalTriggerTheta","TM_PositionvsBX"+(*trigSrcIt));
@@ -385,6 +385,13 @@ void DTLocalTriggerTask::bookHistos(DQMStore::IBooker & ibooker, const DTChamber
       setQLabels((digiHistos[dtCh.rawId()])[histoTag],1);
       return ;
     }
+    if( histoType == "FlagUpDownvsQual" ) {
+      (digiHistos[dtCh.rawId()])[histoTag] =
+        ibooker.book2D(histoName,"Up/Down trig flag vs quality",7,-0.5,6.5,2,-0.5,1.5);
+      setQLabels((digiHistos[dtCh.rawId()])[histoTag],1);
+      return ;
+    }
+
     if( histoType == "QualDDUvsQualTM" ){
       (digiHistos[dtCh.rawId()])[histoTag] =
 	ibooker.book2D(histoName,"DDU quality vs TM quality",8,-1.5,6.5,8,-1.5,6.5);
@@ -534,6 +541,7 @@ void DTLocalTriggerTask::runTMAnalysis(std::vector<L1MuDTChambPhDigi> const* phT
     int phbx    = iph->bxNum();
     int phcode  = iph->code();
     int phi1st  = iph->Ts2Tag();
+    int updown  = iph->UpDownTag();
 
     // FIXME: workaround for TM data with station ID
     if(phst == 0) {
@@ -561,6 +569,7 @@ void DTLocalTriggerTask::runTMAnalysis(std::vector<L1MuDTChambPhDigi> const* phT
     else {
       innerME.find("TM_BXvsQual_In"+trigsrc)->second->Fill(phcode,phbx-phi1st);    // SM BX vs Qual Phi view (1st tracks)
       innerME.find("TM_Flag1stvsQual_In"+trigsrc)->second->Fill(phcode,phi1st);    // SM Qual 1st/2nd track flag Phi view
+      innerME.find("TM_FlagUpDownvsQual_In"+trigsrc)->second->Fill(phcode,updown);    // SM Qual Up/Down track flag Phi view
       if (detailedAnalysis) {
 	innerME.find("TM_QualvsPhirad_In"+trigsrc)->second->Fill(x,phcode);          // SM Qual vs radial angle Phi view
 	innerME.find("TM_QualvsPhibend_In"+trigsrc)->second->Fill(angle,phcode);     // SM Qual vs bending Phi view
@@ -719,7 +728,7 @@ void DTLocalTriggerTask::runSegmentAnalysis(Handle<DTRecSegment4DCollection>& se
   for (chamberId = segments4D->id_begin(); chamberId != segments4D->id_end(); ++chamberId){
 
     DTRecSegment4DCollection::range  range = segments4D->get(*chamberId);
-    const DTRecSegment4D* tmpBest=0;
+    const DTRecSegment4D* tmpBest=nullptr;
     int tmpdof = 0;
     int dof = 0;
 
@@ -920,7 +929,7 @@ void DTLocalTriggerTask::setQLabels(MonitorElement* me, short int iaxis){
   TH1* histo = me->getTH1();
   if (!histo) return;
 
-  TAxis* axis=0;
+  TAxis* axis=nullptr;
   if (iaxis==1) {
     axis=histo->GetXaxis();
   }
@@ -942,7 +951,7 @@ void DTLocalTriggerTask::setQLabelsTheta (MonitorElement* me, short int iaxis){
   TH1* histo = me->getTH1();
   if (!histo) return;
 
-  TAxis* axis=0;
+  TAxis* axis=nullptr;
   if (iaxis==1) {
     axis=histo->GetXaxis();
   }

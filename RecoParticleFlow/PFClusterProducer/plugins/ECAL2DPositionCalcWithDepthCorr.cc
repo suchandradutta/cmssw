@@ -97,8 +97,11 @@ calculateAndSetPositionActual(reco::PFCluster& cluster) const {
   }
   cluster.setEnergy(cl_energy);
   cluster.setTime(cl_time/cl_timeweight);
+  if (_timeResolutionCalc) {
+    cluster.setTimeError(std::sqrt(1.0f/float(cl_timeweight)));
+  }
   cluster.setLayer(max_e_layer);
-  const CaloSubdetectorGeometry* ecal_geom = NULL;
+  const CaloSubdetectorGeometry* ecal_geom = nullptr;
   // get seed geometry information  
   switch(max_e_layer){
   case PFLayer::ECAL_BARREL:
@@ -114,8 +117,7 @@ calculateAndSetPositionActual(reco::PFCluster& cluster) const {
       << "ECAL Position Calc only accepts ECAL_BARREL or ECAL_ENDCAP";
   }
 
-  const CaloCellGeometry* center_cell = 
-    ecal_geom->getGeometry(refmax->detId());
+  auto center_cell = ecal_geom->getGeometry(refmax->detId());
   const double ctreta = center_cell->etaPos();
   const double actreta = std::abs(ctreta);
   // need to change T0 if in ES
@@ -137,10 +139,10 @@ calculateAndSetPositionActual(reco::PFCluster& cluster) const {
     if( rh_energy > 0.0 ) weight = std::max(0.0,( _param_W0 + 
 						  vdt::fast_log(rh_energy) + 
 						  logETot_inv ));
-    const CaloCellGeometry* cell = ecal_geom->getGeometry(refhit->detId());
+    auto cell = ecal_geom->getGeometry(refhit->detId());
     const float depth = maxDepth + maxToFront - cell->getPosition().mag();    
     const GlobalPoint pos =
-      static_cast<const TruncatedPyramid*>(cell)->getPosition(depth);
+      static_cast<const TruncatedPyramid*>(cell.get())->getPosition(depth);
 
     x += weight*pos.x() ;
     y += weight*pos.y() ;
@@ -158,9 +160,9 @@ calculateAndSetPositionActual(reco::PFCluster& cluster) const {
       if( rh_energy > 0.0 ) 
 	weight = rh_energy/cluster.energy();
 
-      const CaloCellGeometry* cell = ecal_geom->getGeometry(refhit->detId());
-      const float depth = maxDepth + maxToFront - cell->getPosition().mag();    
-      const GlobalPoint pos = static_cast<const TruncatedPyramid*>(cell)->getPosition(depth);
+      auto cell = ecal_geom->getGeometry(refhit->detId());
+      const float depth = maxDepth + maxToFront - cell->getPosition().mag();
+      const GlobalPoint pos = cell->getPosition(depth);
       
       x += weight*pos.x() ;
       y += weight*pos.y() ;

@@ -39,9 +39,9 @@ class FastTimeGeometryESProducer : public edm::ESProducer {
 
 public:
   FastTimeGeometryESProducer( const edm::ParameterSet& iP );
-  virtual ~FastTimeGeometryESProducer() ;
+  ~FastTimeGeometryESProducer() override ;
 
-  typedef std::shared_ptr<FastTimeGeometry> ReturnType;
+  using ReturnType = std::unique_ptr<FastTimeGeometry>;
 
   ReturnType produce(const IdealGeometryRecord&);
 
@@ -79,11 +79,10 @@ FastTimeGeometryESProducer::produce(const IdealGeometryRecord& iRecord ) {
   iRecord.get(name_,topo);
 
   FastTimeGeometryLoader builder;
-  ReturnType ct(builder.build(*topo));
 #ifdef EDM_ML_DEBUG
   std::cout << "Create FastTimeGeometry (*topo)" << std::endl;
 #endif
-  return ct ;
+  return ReturnType(builder.build(*topo));
 }
 
 DEFINE_FWK_EVENTSETUP_MODULE(FastTimeGeometryESProducer);

@@ -1,11 +1,5 @@
-// Two modules of CLHEP are partly used in DDD
-// . unit definitions (such as m, cm, GeV, ...) of module CLHEP/Units
-// . rotation matrices and translation std::vectors of module CLHEP/Vector
-//   (they are typedef'd to DDRotationMatrix and DDTranslation in
-//   DDD/DDCore/interface/DDTransform.h
-#include <stdlib.h>
-#include <sys/time.h>
-#include <time.h>
+#include <cstdlib>
+#include <chrono>
 #include <fstream>
 #include <map>
 #include <memory>
@@ -13,10 +7,8 @@
 #include <utility>
 #include <vector>
 
-#include "CLHEP/Units/GlobalSystemOfUnits.h"
-#include "CLHEP/Units/SystemOfUnits.h"
-#include "DetectorDescription/Base/interface/DDRotationMatrix.h"
-#include "DetectorDescription/Base/interface/DDTranslation.h"
+#include "DetectorDescription/Core/interface/DDRotationMatrix.h"
+#include "DetectorDescription/Core/interface/DDTranslation.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "DetectorDescription/Core/interface/DDEnums.h"
 #include "DetectorDescription/Core/interface/DDExpandedNode.h"
@@ -27,22 +19,19 @@
 #include "DetectorDescription/Core/interface/DDMaterial.h"
 #include "DetectorDescription/Core/interface/DDName.h"
 #include "DetectorDescription/Core/interface/DDNodes.h"
-#include "DetectorDescription/Core/interface/DDNumberingScheme.h"
 #include "DetectorDescription/Core/interface/DDPartSelection.h"
 #include "DetectorDescription/Core/interface/DDPosData.h"
-#include "DetectorDescription/Core/interface/DDQuery.h"
 #include "DetectorDescription/Core/interface/DDScope.h"
 #include "DetectorDescription/Core/interface/DDSolid.h"
 #include "DetectorDescription/Core/interface/DDTransform.h"
 #include "DetectorDescription/Core/interface/DDValue.h"
 #include "DetectorDescription/Core/interface/DDsvalues.h"
-#include "DetectorDescription/Core/interface/adjgraph.h"
-#include "DetectorDescription/ExprAlgo/interface/ClhepEvaluator.h"
-#include "DetectorDescription/ExprAlgo/interface/ExprEvalSingleton.h"
+#include "DetectorDescription/Core/interface/DDUnits.h"
+#include "DataFormats/Math/interface/Graph.h"
+#include "DetectorDescription/Core/interface/ClhepEvaluator.h"
 #include "FWCore/Utilities/interface/Exception.h"
-#include "Math/GenVector/Cartesian3D.h"
-#include "Math/GenVector/DisplacementVector3D.h"
-#include "Math/GenVector/Rotation3D.h"
+
+using namespace dd::operators;
 
 namespace {
   class GroupFilter : public DDFilter {
@@ -50,9 +39,9 @@ namespace {
     GroupFilter(std::vector< DDSpecificsFilter* >& filters):
       filters_(filters) {}
 
-    bool accept(const DDExpandedView &cv ) const override final {
+    bool accept(const DDExpandedView &cv ) const final {
       bool returnValue = true;
-      for(auto f: filters_) {
+      for(const auto & f : filters_) {
         returnValue = returnValue and f->accept(cv);
         if(not returnValue) {
           break;
@@ -72,14 +61,14 @@ DDTranslation calc(const DDGeoHistory & aHist)
   std::vector<DDRotationMatrix> vr;
   std::vector<DDTranslation> vt;
   DDRotationMatrix r;
-  vr.push_back(r);
+  vr.emplace_back(r);
   
   if (h.size()>1) {
-    vt.push_back(h[1].posdata()->translation());
+    vt.emplace_back(h[1].posdata()->translation());
     unsigned int i = 1;
     for (; i <= sz-2; ++i) {
-      vr.push_back( vr.back() * *(h[i].posdata()->rot_.rotation()) );
-      vt.push_back(h[i+1].posdata()->translation());
+      vr.emplace_back( vr.back() * h[i].posdata()->ddrot().rotation());
+      vt.emplace_back(h[i+1].posdata()->translation());
     }
   }
   
@@ -102,26 +91,25 @@ void debugHistory(const DDGeoHistory & h)
   }
 }
 
-void goPersistent(const DDCompactView & cv, std::string file) {
+void goPersistent(const DDCompactView & cv, const std::string& file) {
   std::ofstream f(file.c_str());
-  typedef DDCompactView::graph_type graph_t;
-  const graph_t & g = cv.graph();
+  const auto & g = cv.graph();
   unsigned int node = 0;
-  graph_t::const_adj_iterator it = g.begin();
+  auto it = g.begin();
   for (; it != g.end(); ++it) {
-    graph_t::const_edge_iterator eit = it->begin();
+    auto eit = it->begin();
     for (; eit != it->end(); ++eit) {
       unsigned int eindex = eit->first;
-      int copyno = g.edgeData(eit->second)->copyno_;
+      int copyno = g.edgeData(eit->second)->copyno();
       double x,y,z;
       
-      x = g.edgeData(eit->second)->trans_.x()/mm;
-      y = g.edgeData(eit->second)->trans_.y()/mm;
-      z = g.edgeData(eit->second)->trans_.z()/mm;
+      x = CONVERT_TO( g.edgeData(eit->second)->trans().x(), mm );
+      y = CONVERT_TO( g.edgeData(eit->second)->trans().y(), mm );
+      z = CONVERT_TO( g.edgeData(eit->second)->trans().z(), mm );
       f << node << " " << eindex << " " << copyno 
         << " " << x << " " << y << " " << z 
-	<< " " << g.edgeData(eit->second)->rot_.ddname().ns()
-	<< " " << g.edgeData(eit->second)->rot_.ddname().name()
+	<< " " << g.edgeData(eit->second)->ddrot().ddname().ns()
+	<< " " << g.edgeData(eit->second)->ddrot().ddname().name()
         << std::endl;
     }
     ++node;  
@@ -161,7 +149,7 @@ void dumpHistory(const DDGeoHistory & h, bool short_dump=false)
     if (!short_dump) { 
       DDAxisAngle ra(h[i].absRotation());
       std::cout  << h[i].absTranslation() 
-		 << ra.Axis() << ra.Angle()/deg;
+		 << ra.Axis() << CONVERT_TO( ra.Angle(), deg );
     }	  
   }
 }
@@ -257,7 +245,7 @@ void tutorial()
   // DDD/DDCore/interface/graph.h
  
   // First one takes the graph representation of CompactView
-  const DDCompactView::graph_type & cpvGraph = cpv.graph();
+  const auto & cpvGraph = cpv.graph();
  
   // Using the Graph.h interface, some basic information is available:
   std::cout << "CompactView, basic information: " << std::endl
@@ -271,11 +259,11 @@ void tutorial()
 	    << cpv.root() << "]" << std::endl << std::endl;
  
   // The same, but creating a reference to it:
-  DDLogicalPart root = cpv.root(); 
-  DDLogicalPart world = root; //(DDName("CMS","cms"));
+  const DDLogicalPart& root = cpv.root(); 
+  const DDLogicalPart& world = root; //(DDName("CMS","cms"));
   std::cout << "The world volume is described by following solid:" << std::endl;
   std::cout << world.solid() << std::endl << std::endl;
-  DDMaterial worldMaterial = root.material();
+  const DDMaterial& worldMaterial = root.material();
   std::cout << "The world volume is filled with following material:" << std::endl;
   std::cout << worldMaterial << std::endl << std::endl;
  
@@ -357,7 +345,7 @@ void tutorial()
       std::cin >> flog;
       if(flog=="end") 
 	break;
-      vecF.push_back(f);
+      vecF.emplace_back(f);
       while (moreFilterCriteria) {
 	std::cout << " logic   = ";
 	std::cin >> ls;
@@ -372,7 +360,7 @@ void tutorial()
       
 	double dv = 0.;
 	try {
-	  dv = ExprEvalSingleton::instance().eval("",v);
+	  dv = ClhepEvaluator().eval("",v);
 	}
 	catch (const cms::Exception & e) {
 	  dv = 0;
@@ -383,15 +371,6 @@ void tutorial()
       }//<- moreFilterCriteria
     }//<- morFilters
    
-    DDScope scope;
-    DDQuery query(ccv);
-    std::vector<DDSpecificsFilter*>::size_type loop=0;
-    for(; loop < vecF.size(); ++loop) {
-      DDFilter * filter = vecF[loop];  
-      const DDFilter & fi = *filter;
-      query.addFilter( fi );
-    }  
-    std::cout << "The Scope is now: " << std::endl << scope << std::endl;
     std::string ans;
     ans = "";
     DDCompactView aaaaa;
@@ -408,7 +387,6 @@ void tutorial()
       std::cout << "creating the default numbering scheme ..." << std::endl;
   
       DDExpandedView eeeee(aaaaa);
-      DDDefaultNumberingScheme nums(eeeee);
   
       std::cout << "do sibling-stack navigation?";
       std::cin >> ans;
@@ -426,12 +404,11 @@ void tutorial()
 	  for (; i<s; ++i) {
 	    int k;
 	    std::cin >> k;
-	    n.push_back(k);
+	    n.emplace_back(k);
 	  }
 	  std::cout << "input=" << n << std::endl;
 	  if (e.goTo(n)) {
 	    std::cout << "node=" << e.geoHistory() << std::endl;
-	    std::cout << "  id=" << nums.id(e) << std::endl;  
 	  }
 	  else {
 	    std::cout << "no match!" << std::endl;
@@ -451,29 +428,9 @@ void tutorial()
 	  int s;
 	  std::cin >> s;
 	  go = (bool)s;
-	  if (nums.node(s,e)) {
-	    std::cout << "node=" << e.geoHistory() << std::endl;
-	  }
-	  else {
-	    std::cout << "no match!" << std::endl;
-	  }    
 	}
       }  
     }
-    std::cout << "exec a query based on the filter(s) (y/n) ?";
-    std::cin >> ans;
-    if (ans=="y") {
-      const std::vector<DDExpandedNode> & res = query.exec();  
-      std::cout << "the query results in " << res.size() << " nodes." << std::endl;
-      if (res.size()) {
-	std::cout << " the first node is:" << std::endl
-		  << "  " << res[0] << " transl=" << res[0].absTranslation() << std::endl;
-	std::cout << " the last node is:" << std::endl
-		  << "  " << res.back() << " transl=" << res.back().absTranslation() << std::endl << std::endl;	   
-      }
-    
-    }
-  
     std::cout << "iterate the FilteredView (y/n)";
     std::cin >> ans;
     DDCompactView compactview;
@@ -482,21 +439,13 @@ void tutorial()
       GroupFilter gf(vecF);
       DDFilteredView fv(compactview,gf);
     
-      //bool looop = true;
       int count =0;
-      /*
-	while(looop) {
-	looop = fv.next();
-	++count;
-	}
-      */
       std::cout << "The filtered-view contained " << count << " nodes." << std::endl;
       fv.reset();
       std::cout << "Now entering interactive navigation: f = (f)irstChild," << std::endl
 		<< "                                     n = (n)extSibling," << std::endl 
 		<< "                                     p = (p)arent," << std::endl
 		<< "                                     s = (s)tatus," << std::endl
-		<< "                                     w = (w)eigth[kg]," << std::endl
 		<< "                                     h = (h)istory debugging," << std::endl
 		<< "                                     e = (e)nd" << std::endl;
       std::string nav="";
@@ -511,7 +460,6 @@ void tutorial()
 	std::vector<const DDsvalues_type *> only = fv.logicalPart().specifics();
 	DDsvalues_type merged = fv.mergedSpecifics();
 	DDLogicalPart curlp = fv.logicalPart();
-	double curweight=0;
 	bool result = false;
 	switch (c) {
 	case 'f':
@@ -529,10 +477,10 @@ void tutorial()
 	case 's':
 	  fv.print();
 	  std::cout << std::endl <<"specifics sets = " << v.size() << ":" << std::endl;
-	  for (spectype::size_type o=0;o<v.size();++o) {
-	    std::cout << *(v[o].first) 
+	  for (const auto & o : v) {
+	    std::cout << *(o.first) 
 		      << " = " 
-		      << *(v[o].second) 
+		      << *(o.second) 
 		      << std::endl;// << std::endl;
 	  }
 	  std::cout << std::endl;
@@ -540,8 +488,8 @@ void tutorial()
 	  std::cout << merged << std::endl;
 	 
 	  std::cout << "specifics only at logicalPart:" << std::endl;
-	  for (std::vector<const DDsvalues_type *>::size_type o=0;o<only.size();++o) {
-	    std::cout << *(only[o]) << std::endl;
+	  for (const auto & o : only) {
+	    std::cout << *o << std::endl;
 	  }
 	  std::cout << std::endl;	 
 	  std::cout << "translation: " << fv.translation() << std::endl;
@@ -549,21 +497,13 @@ void tutorial()
 	  {	 
 	    DDAxisAngle   aa(fv.rotation());
 	    std::cout << "rotation: axis=" << aa.Axis() 
-		      << " angle=" << aa.Angle()/deg << std::endl << std::endl;
+		      << " angle=" << CONVERT_TO( aa.Angle(), deg ) << std::endl << std::endl;
 	  }
 	  std::cout << "sibling-stack=" << fv.navPos() << std::endl << std::endl;
 	  std::cout << "material=" << fv.logicalPart().material().ddname() << std::endl;
 	  std::cout << "solid=" << fv.logicalPart().solid().ddname() <<
-	    " volume[m3]=" << fv.logicalPart().solid().volume()/m3 << std::endl;	      
-	 
-	  //std::cout << "id from default numbering-scheme=" << nums.id(fv) << std::endl;
+	    " volume[m3]=" << CONVERT_TO( fv.logicalPart().solid().volume(), m3 ) << std::endl;	      
 	  break;
-	case 'w':
-	  curweight = wcpv.weight(curlp);
-	  std::cout << " The weight of " << curlp.ddname() << " is " 
-		    << curweight/kg << "kg" << std::endl;
-	  std::cout << " The average density is " << curweight/curlp.solid().volume()/g*cm3 << "g/cm3" << std::endl;
-	  break;     
 	case 'e':
 	  break;	 
 	default:
@@ -585,19 +525,13 @@ void tutorial()
     Start = clock();
     //while (NEXT(fv,fv_count)) ;
     int cc=0;
-    walker_type  g = walker_type(DDCompactView().graph(),DDCompactView().root());
+    auto g = math::GraphWalker<DDLogicalPart, DDPosData*>( DDCompactView().graph(), DDCompactView().root());
     while(g.next()) ++cc;
     End = clock();
     std::cout << "Time : " << ((double) (End-Start)) / double(CLOCKS_PER_SEC) << " sec" << std::endl;
     //std::cout << fv.history().back() << std::endl;
     std::cout << "Nodes: " << cc << std::endl;
     std::cout << "Using navigation the filtered-view has " << fv_count << " nodes." << std::endl;
-   
-    loop=0;
-    for(; loop<vecF.size(); ++loop) {
-      delete vecF[loop]; // delete the filters
-      vecF[loop]=0;
-    } 
   }
 
   /*
@@ -622,7 +556,7 @@ void tutorial()
     // ask each expanded-not for its specifics 
     // std::vector<..>.size() will be 0 if there are no specifics
     std::vector<const DDsvalues_type *>  spec = ex.specifics();
-    if (spec.size()) {
+    if (!spec.empty()) {
       std::cout << spec.size() << " different specific-data sets found for " << std::endl; 
       dumpHistory(ex.geoHistory(),true) ;    
       std::cout << std::endl;

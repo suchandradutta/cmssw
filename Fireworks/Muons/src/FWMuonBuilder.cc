@@ -73,7 +73,7 @@ void addMatchInformation( const reco::Muon* muon,
   const std::vector<reco::MuonChamberMatch>& matches = muon->matches();
    
   //need to use auto_ptr since the segmentSet may not be passed to muonList
-  std::auto_ptr<TEveStraightLineSet> segmentSet( new TEveStraightLineSet );
+  std::unique_ptr<TEveStraightLineSet> segmentSet( new TEveStraightLineSet );
   // FIXME: This should be set elsewhere.
   segmentSet->SetLineWidth( 4 );
 
@@ -304,7 +304,7 @@ FWMuonBuilder::buildMuon( FWProxyBuilderBase* pb,
 					    muon->outerTrack()->outerPosition().y(),
 					    muon->outerTrack()->outerPosition().z()));
       }
-      TEveTrack* trk = 0;
+      TEveTrack* trk = nullptr;
       if (extraPoints.empty())
          trk = fireworks::prepareTrack( *( muon->globalTrack()),pb->context().getMuonTrackPropagator());
       else

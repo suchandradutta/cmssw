@@ -12,7 +12,8 @@
 #include "DataFormats/Common/interface/DetSet.h"
 #include "DataFormats/Common/interface/DetSetVector.h"
 
-#include "Geometry/VeryForwardGeometryBuilder/interface/TotemRPGeometry.h"
+#include "Geometry/VeryForwardGeometryBuilder/interface/CTPPSGeometry.h"
+#include "DataFormats/CTPPSDetId/interface/TotemRPDetId.h"
 #include "DataFormats/CTPPSReco/interface/TotemRPRecHit.h"
 #include "DataFormats/CTPPSReco/interface/TotemRPUVPattern.h"
 
@@ -28,7 +29,7 @@ class FastLineRecognition
 
     ~FastLineRecognition();
 
-    void resetGeometry(const TotemRPGeometry *_g)
+    void resetGeometry(const CTPPSGeometry *_g)
     {
       geometry = _g;
       geometryMap.clear();
@@ -37,7 +38,7 @@ class FastLineRecognition
     void getPatterns(const edm::DetSetVector<TotemRPRecHit> &input, double _z0, double threshold,
       edm::DetSet<TotemRPUVPattern> &patterns);
 
-  protected:
+  private:
     /// the uncertainty of 1-hit cluster, in mm
     static const double sigma0;
 
@@ -51,7 +52,7 @@ class FastLineRecognition
     double threshold;
 
     /// pointer to the geometry
-    const TotemRPGeometry* geometry;
+    const CTPPSGeometry* geometry;
 
     struct GeomData
     {
@@ -73,7 +74,7 @@ class FastLineRecognition
       double z;                 ///< z position with respect to z0
       double w;                 ///< weight
       bool usable;              ///< whether the point can still be used
-      Point(unsigned int _d=0, const TotemRPRecHit* _hit=NULL, double _h=0., double _z=0., double _w=0.) :
+      Point(unsigned int _d=0, const TotemRPRecHit* _hit=nullptr, double _h=0., double _z=0., double _w=0.) :
         detId(_d), hit(_hit), h(_h), z(_z), w(_w), usable(true) {}
     };
     
@@ -82,12 +83,11 @@ class FastLineRecognition
     {
       double Saw, Sbw, Sw, S1;
       double weight;
-      double min_a, max_a, min_b, max_b;
 
       std::vector<const Point *> contents;
-      
+
       Cluster() : Saw(0.), Sbw(0.), Sw(0.), S1(0.), weight(0.) {}
-      
+
       void add(const Point *p1, const Point *p2, double a, double b, double w);
 
       bool operator<(const Cluster &c) const

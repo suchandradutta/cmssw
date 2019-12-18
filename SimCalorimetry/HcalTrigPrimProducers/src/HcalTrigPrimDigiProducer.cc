@@ -31,12 +31,13 @@ HcalTrigPrimDigiProducer::HcalTrigPrimDigiProducer(const edm::ParameterSet& ps)
         ps.getParameter<std::vector<double> >("weights"),
         ps.getParameter<int>("latency"),
         ps.getParameter<uint32_t>("FG_threshold"),
-        ps.getParameter<uint32_t>("FG_HF_threshold"),
+	ps.getParameter<std::vector<uint32_t> >("FG_HF_thresholds"),
         ps.getParameter<uint32_t>("ZS_threshold"),
         ps.getParameter<int>("numberOfSamples"),
         ps.getParameter<int>("numberOfPresamples"),
         ps.getParameter<int>("numberOfSamplesHF"),
         ps.getParameter<int>("numberOfPresamplesHF"),
+        ps.getParameter<bool>("useTDCInMinBiasBits"),
         ps.getParameter<uint32_t>("MinSignalThreshold"),
         ps.getParameter<uint32_t>("PMTNoiseThreshold")
   ),
@@ -84,10 +85,10 @@ HcalTrigPrimDigiProducer::HcalTrigPrimDigiProducer(const edm::ParameterSet& ps)
    produces<HcalTrigPrimDigiCollection>();
    theAlgo_.setPeakFinderAlgorithm(ps.getParameter<int>("PeakFinderAlgorithm"));
 
-   edm::ParameterSet hfSS=ps.getParameter<edm::ParameterSet>("HFTPScaleShift");
+   edm::ParameterSet hfSS=ps.getParameter<edm::ParameterSet>("tpScales").getParameter<edm::ParameterSet>("HF");
 
-   theAlgo_.setNCTScaleShift(hfSS.getParameter<int>("NCT"));
-   theAlgo_.setRCTScaleShift(hfSS.getParameter<int>("RCT"));
+   theAlgo_.setNCTScaleShift(hfSS.getParameter<int>("NCTShift"));
+   theAlgo_.setRCTScaleShift(hfSS.getParameter<int>("RCTShift"));
 }
 
 
@@ -185,7 +186,7 @@ void HcalTrigPrimDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup
     edm::ESHandle < HcalDbService > pSetup;
     eventSetup.get<HcalDbRecord> ().get(pSetup);
 
-    HcalFeatureBit* hfembit = 0;
+    HcalFeatureBit* hfembit = nullptr;
 
     if(HFEMB_)
     {
@@ -214,7 +215,7 @@ void HcalTrigPrimDigiProducer::produce(edm::Event& iEvent, const edm::EventSetup
         edm::Handle < FEDRawDataCollection > fedHandle;
         iEvent.getByToken(tok_raw_, fedHandle);
 
-        if (fedHandle.isValid() && emap != 0) {
+        if (fedHandle.isValid() && emap != nullptr) {
             theAlgo_.runFEFormatError(fedHandle.product(), emap, *result);
         } else {
             edm::LogInfo("HcalTrigPrimDigiProducer")

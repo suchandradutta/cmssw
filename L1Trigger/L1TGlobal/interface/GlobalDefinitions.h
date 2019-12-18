@@ -11,7 +11,7 @@
  *    lightweight "maps" for enum string label and enum value
  *
  *
- * \author: Brian Winer, OSU   Vasile Mihai Ghete - HEPHY Vienna
+ * \author: Vladimir Rekovic,   Brian Winer, OSU   Vasile Mihai Ghete - HEPHY Vienna
  *
  * $Date$
  * $Revision$
@@ -68,7 +68,20 @@ enum GtConditionType {
     TypeMinBiasHFP1,
     TypeMinBiasHFM1,
     TypeETTem,
-    TypeExternal
+    TypeExternal,
+    Type2corWithOverlapRemoval,
+    TypeCent0,
+    TypeCent1,
+    TypeCent2,
+    TypeCent3,
+    TypeCent4,
+    TypeCent5,
+    TypeCent6,
+    TypeCent7,
+    TypeAsymEt,
+    TypeAsymHt,
+    TypeAsymEtHF,
+    TypeAsymHtHF
 };
 
 struct GtConditionTypeStringToEnum {
@@ -86,7 +99,8 @@ enum GtConditionCategory {
     CondCalo,
     CondEnergySum,
     CondCorrelation,
-    CondExternal
+    CondExternal,
+    CondCorrelationWithOverlapRemoval
 };
 
 struct GtConditionCategoryStringToEnum {

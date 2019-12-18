@@ -1,24 +1,24 @@
 #include "DetectorDescription/Parser/src/DDDividedPolycone.h"
-
-#include <stddef.h>
-#include <iostream>
-#include <string>
-#include <utility>
-#include <vector>
-
-#include "CLHEP/Units/GlobalSystemOfUnits.h"
-#include "CLHEP/Units/SystemOfUnits.h"
-#include "DetectorDescription/Base/interface/DDRotationMatrix.h"
+#include "DetectorDescription/Core/interface/DDRotationMatrix.h"
 #include "DetectorDescription/Core/interface/DDLogicalPart.h"
 #include "DetectorDescription/Core/interface/DDMaterial.h"
 #include "DetectorDescription/Core/interface/DDName.h"
 #include "DetectorDescription/Core/interface/DDSolid.h"
 #include "DetectorDescription/Core/interface/DDTransform.h"
+#include "DetectorDescription/Core/interface/DDUnits.h"
 #include "DetectorDescription/Parser/src/DDDividedGeometryObject.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "FWCore/Utilities/interface/Exception.h"
 
+#include <cstddef>
+#include <iostream>
+#include <string>
+#include <utility>
+#include <vector>
+
 class DDCompactView;
+
+using namespace dd::operators;
 
 DDDividedPolyconeRho::DDDividedPolyconeRho( const DDDivision& div, DDCompactView* cpv )
   :  DDDividedGeometryObject::DDDividedGeometryObject( div, cpv )
@@ -100,7 +100,6 @@ DDDividedPolyconeRho::makeDDTranslation( const int copyNo ) const
 DDLogicalPart
 DDDividedPolyconeRho::makeDDLogicalPart( const int copyNo ) const
 {
-  DDName solname;
   DDSolid ddpolycone;
   DDMaterial usemat(div_.parent().material());
 
@@ -119,15 +118,11 @@ DDDividedPolyconeRho::makeDDLogicalPart( const int copyNo ) const
   {
     width = calculateWidth( localrMaxVec[ii]
 			    - localrMinVec[ii], compNDiv_, div_.offset() );
-    // hmmm different width every time... probably should use width 
-    // not compWidth_
-    // 	  newrMinVec[ii] = localrMinVec[ii]+div_.offset()+compWidth_*copyNo;
-    // 	  newrMaxVec[ii] = localrMinVec[ii]+div_.offset()+compWidth_*(copyNo+1);
-    newrMinVec.push_back(localrMinVec[ii]+div_.offset()+width*copyNo);
-    newrMaxVec.push_back(localrMinVec[ii]+div_.offset()+width*(copyNo+1));
+    newrMinVec.emplace_back(localrMinVec[ii]+div_.offset()+width*copyNo);
+    newrMaxVec.emplace_back(localrMinVec[ii]+div_.offset()+width*(copyNo+1));
   }
-  solname = DDName( div_.parent().ddname().name() + "_DIVCHILD" + std::to_string(copyNo),
-		    div_.parent().ddname().ns());
+  DDName solname( div_.parent().ddname().name() + "_DIVCHILD" + std::to_string(copyNo),
+		  div_.parent().ddname().ns());
       
   ddpolycone = DDSolidFactory::polycone( solname,
 					 msol.startPhi(),
@@ -151,7 +146,7 @@ DDDividedPolyconePhi::DDDividedPolyconePhi( const DDDivision& div, DDCompactView
   if( divisionType_ == DivWIDTH )
   {
     //If you divide a tube of 360 degrees the offset displaces the starting angle, but you still fill the 360 degrees
-    if( msol.deltaPhi() == 360.*deg ) {
+    if( msol.deltaPhi() == 360._deg ) {
       compNDiv_ = calculateNDiv( msol.deltaPhi(), div_.width(), 0. );
     }else {
       compNDiv_ = calculateNDiv( msol.deltaPhi(), div_.width(), div_.offset() );
@@ -159,7 +154,7 @@ DDDividedPolyconePhi::DDDividedPolyconePhi( const DDDivision& div, DDCompactView
   }
   else if( divisionType_ == DivNDIV )
   {
-    if( msol.deltaPhi() == 360.*deg ) {
+    if( msol.deltaPhi() == 360._deg ) {
       compWidth_ = calculateWidth( msol.deltaPhi(), div_.nReplicas(), 0. );
     }else {
       compWidth_ = calculateWidth( msol.deltaPhi(), div_.nReplicas(), div_.offset() );
@@ -185,12 +180,11 @@ DDDividedPolyconePhi::makeDDRotation( const int copyNo ) const
 {
   DDRotation myddrot; // sets to identity.
   double posi = ( copyNo - 1 ) * compWidth_;
-  DDRotationMatrix* rotMat = changeRotMatrix( posi );
   // how to name the rotation??
   // i do not like this
   DDName ddrotname( div_.parent().ddname().name() + "_DIVCHILD_ROT" + std::to_string( copyNo ),
 		    div_.parent().ddname().ns());
-  myddrot = DDrot( ddrotname, rotMat );
+  myddrot = DDrot( ddrotname, changeRotMatrix( posi ));
 
   return myddrot;
 }
@@ -205,7 +199,6 @@ DDDividedPolyconePhi::makeDDTranslation( const int copyNo ) const
 DDLogicalPart
 DDDividedPolyconePhi::makeDDLogicalPart( const int copyNo ) const
 {
-  DDName solname;
   DDSolid ddpolycone;
   DDMaterial usemat(div_.parent().material());
 
@@ -214,8 +207,8 @@ DDDividedPolyconePhi::makeDDLogicalPart( const int copyNo ) const
   std::vector<double> localrMinVec = msol.rMinVec();
   std::vector<double> localzVec = msol.zVec();
 
-  solname = DDName(div_.parent().ddname().name() + "_DIVCHILD",
-		   div_.parent().ddname().ns());
+  DDName solname( div_.parent().ddname().name() + "_DIVCHILD",
+		  div_.parent().ddname().ns());
   DDSolid sol( solname );
   if( !sol.isDefined().second )
   {
@@ -315,7 +308,6 @@ DDDividedPolyconeZ::makeDDTranslation( const int copyNo ) const
 DDLogicalPart
 DDDividedPolyconeZ::makeDDLogicalPart( const int copyNo ) const
 {
-  DDName solname;
   DDSolid ddpolycone;
   DDMaterial usemat(div_.parent().material());
 
@@ -324,8 +316,8 @@ DDDividedPolyconeZ::makeDDLogicalPart( const int copyNo ) const
   std::vector<double> localrMinVec = msol.rMinVec();
   std::vector<double> localzVec = msol.zVec();
 
-  solname = DDName( div_.parent().ddname().name() + "_DIVCHILD" + std::to_string(copyNo),
-		    div_.parent().ddname().ns());
+  DDName solname( div_.parent().ddname().name() + "_DIVCHILD" + std::to_string(copyNo),
+		  div_.parent().ddname().ns());
   ddpolycone = DDSolidFactory::cons( solname,
 				     compWidth_ / 2,
 				     localrMinVec[copyNo],

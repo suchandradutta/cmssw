@@ -20,10 +20,10 @@ public:
   RPCGeometryESModule(const edm::ParameterSet & p);
 
   /// Destructor
-  virtual ~RPCGeometryESModule();
+  ~RPCGeometryESModule() override;
 
   /// Produce RPCGeometry.
-  std::shared_ptr<RPCGeometry>  produce(const MuonGeometryRecord & record);
+  std::unique_ptr<RPCGeometry>  produce(const MuonGeometryRecord & record);
 
 private:  
 

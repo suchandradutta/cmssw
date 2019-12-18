@@ -60,7 +60,7 @@ class DTLocalTriggerTask: public DQMEDAnalyzer{
   DTLocalTriggerTask(const edm::ParameterSet& ps );
 
   /// Destructor
-  virtual ~DTLocalTriggerTask();
+  ~DTLocalTriggerTask() override;
 
  protected:
 
@@ -109,8 +109,6 @@ class DTLocalTriggerTask: public DQMEDAnalyzer{
   const int wheelArrayShift = 3;
 
  private:
-
-  edm::InputTag tmTh_label_;
 
   edm::EDGetTokenT<L1MuDTChambPhContainer> tm_Token_;
   edm::EDGetTokenT<L1MuDTChambThContainer> tmTh_Token_;    

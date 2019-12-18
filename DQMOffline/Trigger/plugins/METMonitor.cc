@@ -6,72 +6,66 @@
 
 #include "CommonTools/TriggerUtils/interface/GenericTriggerEventFlag.h"
 
+#include "DataFormats/Math/interface/deltaPhi.h"
 
-double MAX_PHI = 3.2;
-int N_PHI = 64;
-const MEbinning phi_binning_{
-  N_PHI, -MAX_PHI, MAX_PHI
-};
 // -----------------------------
 //  constructors and destructor
 // -----------------------------
 
 METMonitor::METMonitor( const edm::ParameterSet& iConfig ) : 
   folderName_             ( iConfig.getParameter<std::string>("FolderName") )
-  , metToken_             ( consumes<reco::PFMETCollection>      (iConfig.getParameter<edm::InputTag>("met")       ) )   
-  , jetToken_             ( mayConsume<reco::PFJetCollection>      (iConfig.getParameter<edm::InputTag>("jets")      ) )   
-  , eleToken_             ( mayConsume<reco::GsfElectronCollection>(iConfig.getParameter<edm::InputTag>("electrons") ) )   
-  , muoToken_             ( mayConsume<reco::MuonCollection>       (iConfig.getParameter<edm::InputTag>("muons")     ) )   
+  , metInputTag_          ( iConfig.getParameter<edm::InputTag>    ("met")          )
+  , jetInputTag_          ( iConfig.getParameter<edm::InputTag>    ("jets")         )
+  , eleInputTag_          ( iConfig.getParameter<edm::InputTag>    ("electrons")    ) 
+  , muoInputTag_          ( iConfig.getParameter<edm::InputTag>    ("muons")        ) 
+  , vtxInputTag_          ( iConfig.getParameter<edm::InputTag>    ("vertices")     ) 
+  , metToken_             ( consumes<reco::PFMETCollection>        ( metInputTag_ ) )
+  , jetToken_             ( mayConsume<reco::PFJetCollection>      ( jetInputTag_ ) )
+  , eleToken_             ( mayConsume<reco::GsfElectronCollection>( eleInputTag_ ) )
+  , muoToken_             ( mayConsume<reco::MuonCollection>       ( muoInputTag_ ) )
+  , vtxToken_             ( mayConsume<reco::VertexCollection>     ( vtxInputTag_ ) )
   , met_variable_binning_ ( iConfig.getParameter<edm::ParameterSet>("histoPSet").getParameter<std::vector<double> >("metBinning") )
-  , met_binning_          ( getHistoPSet   (iConfig.getParameter<edm::ParameterSet>("histoPSet").getParameter<edm::ParameterSet>   ("metPSet")    ) )
-  , ls_binning_           ( getHistoLSPSet (iConfig.getParameter<edm::ParameterSet>("histoPSet").getParameter<edm::ParameterSet>   ("lsPSet")     ) )
+  , met_binning_          ( getHistoPSet (iConfig.getParameter<edm::ParameterSet>("histoPSet").getParameter<edm::ParameterSet>   ("metPSet")    ) )
+  , ls_binning_           ( getHistoPSet (iConfig.getParameter<edm::ParameterSet>("histoPSet").getParameter<edm::ParameterSet>   ("lsPSet")     ) )
   , num_genTriggerEventFlag_(new GenericTriggerEventFlag(iConfig.getParameter<edm::ParameterSet>("numGenericTriggerEventPSet"),consumesCollector(), *this))
   , den_genTriggerEventFlag_(new GenericTriggerEventFlag(iConfig.getParameter<edm::ParameterSet>("denGenericTriggerEventPSet"),consumesCollector(), *this))
   , metSelection_ ( iConfig.getParameter<std::string>("metSelection") )
   , jetSelection_ ( iConfig.getParameter<std::string>("jetSelection") )
   , eleSelection_ ( iConfig.getParameter<std::string>("eleSelection") )
   , muoSelection_ ( iConfig.getParameter<std::string>("muoSelection") )
-  , njets_      ( iConfig.getParameter<int>("njets" )      )
-  , nelectrons_ ( iConfig.getParameter<int>("nelectrons" ) )
-  , nmuons_     ( iConfig.getParameter<int>("nmuons" )     )
+  , njets_      ( iConfig.getParameter<unsigned>("njets" )      )
+  , nelectrons_ ( iConfig.getParameter<unsigned>("nelectrons" ) )
+  , nmuons_     ( iConfig.getParameter<unsigned>("nmuons" )     )
 {
-
-  metME_.numerator   = nullptr;
-  metME_.denominator = nullptr;
-  metME_variableBinning_.numerator   = nullptr;
-  metME_variableBinning_.denominator = nullptr;
-  metVsLS_.numerator   = nullptr;
-  metVsLS_.denominator = nullptr;
-  metPhiME_.numerator   = nullptr;
-  metPhiME_.denominator = nullptr;
-  
+    // this vector has to be alligned to the the number of Tokens accessed by this module
+    warningPrinted4token_.push_back(false); // PFMETCollection
+    warningPrinted4token_.push_back(false); // JetCollection
+    warningPrinted4token_.push_back(false); // GsfElectronCollection
+    warningPrinted4token_.push_back(false); // MuonCollection
+    warningPrinted4token_.push_back(false); // VertexCollection
 }
 
-METMonitor::~METMonitor()
-{
-  if (num_genTriggerEventFlag_) delete num_genTriggerEventFlag_;
-  if (den_genTriggerEventFlag_) delete den_genTriggerEventFlag_;
-}
+METMonitor::~METMonitor() = default;
 
-MEbinning METMonitor::getHistoPSet(edm::ParameterSet pset)
+METMonitor::MEbinning METMonitor::getHistoPSet(const edm::ParameterSet& pset)
 {
-  return MEbinning{
-    pset.getParameter<int32_t>("nbins"),
+  return METMonitor::MEbinning{
+    pset.getParameter<unsigned>("nbins"),
       pset.getParameter<double>("xmin"),
       pset.getParameter<double>("xmax"),
       };
 }
 
-MEbinning METMonitor::getHistoLSPSet(edm::ParameterSet pset)
+METMonitor::MEbinning METMonitor::getHistoLSPSet(const edm::ParameterSet& pset)
 {
-  return MEbinning{
-    pset.getParameter<int32_t>("nbins"),
+  return METMonitor::MEbinning{
+    pset.getParameter<unsigned>("nbins"),
       0.,
-      double(pset.getParameter<int32_t>("nbins"))
+      double(pset.getParameter<unsigned>("nbins"))
       };
 }
 
-void METMonitor::setMETitle(METME& me, std::string titleX, std::string titleY)
+void METMonitor::setMETitle(METME& me, const std::string& titleX, const std::string& titleY)
 {
   me.numerator->setAxisTitle(titleX,1);
   me.numerator->setAxisTitle(titleY,2);
@@ -124,7 +118,15 @@ void METMonitor::bookHistograms(DQMStore::IBooker     & ibooker,
   std::string histname, histtitle;
 
   std::string currentFolder = folderName_ ;
-  ibooker.setCurrentFolder(currentFolder.c_str());
+  ibooker.setCurrentFolder(currentFolder);
+
+  histname = "deltaphi_metjet1"; histtitle = "DPHI_METJ1";
+  bookME(ibooker,deltaphimetj1ME_,histname,histtitle,phi_binning_.nbins, phi_binning_.xmin, phi_binning_.xmax);
+  setMETitle(deltaphimetj1ME_,"delta phi (met, j1)","events / 0.1 rad");
+
+  histname = "deltaphi_jet1jet2"; histtitle = "DPHI_J1J2";
+  bookME(ibooker,deltaphij1j2ME_,histname,histtitle,phi_binning_.nbins, phi_binning_.xmin, phi_binning_.xmax);
+  setMETitle(deltaphij1j2ME_,"delta phi (j1, j2)","events / 0.1 rad");
 
   histname = "met"; histtitle = "PFMET";
   bookME(ibooker,metME_,histname,histtitle,met_binning_.nbins,met_binning_.xmin, met_binning_.xmax);
@@ -153,53 +155,124 @@ void METMonitor::bookHistograms(DQMStore::IBooker     & ibooker,
 #include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
 #include "Geometry/Records/interface/TrackerTopologyRcd.h"
 void METMonitor::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup)  {
-
   // Filter out events if Trigger Filtering is requested
   if (den_genTriggerEventFlag_->on() && ! den_genTriggerEventFlag_->accept( iEvent, iSetup) ) return;
-
   edm::Handle<reco::PFMETCollection> metHandle;
   iEvent.getByToken( metToken_, metHandle );
+  if ( !metHandle.isValid() ) {
+    if (!warningPrinted4token_[0]) {
+      edm::LogWarning("METMonitor") << "skipping events because the collection " << metInputTag_.label().c_str() << " is not available";
+      warningPrinted4token_[0] = true;
+    }
+    return;
+  }
   reco::PFMET pfmet = metHandle->front();
   if ( ! metSelection_( pfmet ) ) return;
-  
+
   float met = pfmet.pt();
   float phi = pfmet.phi();
 
+  std::vector<reco::PFJet> jets;
   edm::Handle<reco::PFJetCollection> jetHandle;
   iEvent.getByToken( jetToken_, jetHandle );
-  std::vector<reco::PFJet> jets;
-  if ( int(jetHandle->size()) < njets_ ) return;
-  for ( auto const & j : *jetHandle ) {
-    if ( jetSelection_( j ) ) jets.push_back(j);
+  if ( jetHandle.isValid() ) {
+    if ( jetHandle->size() < njets_ ) return;
+    for ( auto const & j : *jetHandle ) {
+      if ( jetSelection_(j) ) {
+	jets.push_back(j);
+      }
+    }
+  } else {
+    if (!warningPrinted4token_[1]) {
+      if ( jetInputTag_.label().empty() )
+	edm::LogWarning("METMonitor") << "JetCollection not set";
+      else
+	edm::LogWarning("METMonitor") << "skipping events because the collection " << jetInputTag_.label().c_str() << " is not available";
+      warningPrinted4token_[1] = true;
+    }
+    // if Handle is not valid, because the InputTag has been mis-configured, then skip the event
+    if ( !jetInputTag_.label().empty() ) return;
   }
-  if ( int(jets.size()) < njets_ ) return;
-  
+  float deltaPhi_met_j1= 10.0;
+  float deltaPhi_j1_j2 = 10.0;
+
+  if (!jets.empty()   ) deltaPhi_met_j1 = fabs( deltaPhi( pfmet.phi(),  jets[0].phi() ));
+  if (jets.size() >= 2) deltaPhi_j1_j2  = fabs( deltaPhi( jets[0].phi(),  jets[1].phi() ));
+
+  std::vector<reco::GsfElectron> electrons;
   edm::Handle<reco::GsfElectronCollection> eleHandle;
   iEvent.getByToken( eleToken_, eleHandle );
-  std::vector<reco::GsfElectron> electrons;
-  if ( int(eleHandle->size()) < nelectrons_ ) return;
-  for ( auto const & e : *eleHandle ) {
-    if ( eleSelection_( e ) ) electrons.push_back(e);
+  if ( eleHandle.isValid() ) {
+    if ( eleHandle->size() < nelectrons_ ) return;
+    for ( auto const & e : *eleHandle ) {
+      if ( eleSelection_( e ) ) electrons.push_back(e);
+    }
+    if (electrons.size() < nelectrons_ ) return;
+  } else {
+    if (!warningPrinted4token_[2]) {
+      warningPrinted4token_[2] = true;
+      if ( eleInputTag_.label().empty() )
+	edm::LogWarning("METMonitor") << "GsfElectronCollection not set";
+      else	
+	edm::LogWarning("METMonitor") << "skipping events because the collection " << eleInputTag_.label().c_str() << " is not available";
+    }   
+    if ( !eleInputTag_.label().empty() ) return;
   }
-  if ( int(electrons.size()) < nelectrons_ ) return;
-  
+
+  reco::Vertex vtx;
+  edm::Handle<reco::VertexCollection> vtxHandle;
+  iEvent.getByToken(vtxToken_, vtxHandle);
+  if ( vtxHandle.isValid() ) {
+    for (auto const & v : *vtxHandle) {
+      bool isFake =  v.isFake() ;
+    
+      if (!isFake) {
+	vtx = v;
+	break;
+      }
+    }
+  } else {
+    if (!warningPrinted4token_[3]) {
+      warningPrinted4token_[3] = true;
+      if ( vtxInputTag_.label().empty() )
+	edm::LogWarning("METMonitor") << "VertexCollection is not set";
+      else
+	edm::LogWarning("METMonitor") << "skipping events because the collection " << vtxInputTag_.label().c_str() << " is not available";
+    }
+    if ( !vtxInputTag_.label().empty() ) return;
+  }
+
+
+  std::vector<reco::Muon> muons;
   edm::Handle<reco::MuonCollection> muoHandle;
   iEvent.getByToken( muoToken_, muoHandle );
-  if ( int(muoHandle->size()) < nmuons_ ) return;
-  std::vector<reco::Muon> muons;
-  for ( auto const & m : *muoHandle ) {
-    if ( muoSelection_( m ) ) muons.push_back(m);
+  if ( muoHandle.isValid() ) {
+    if ( muoHandle->size() < nmuons_ ) return;
+    for ( auto const & m : *muoHandle ) {
+      bool pass = m.isGlobalMuon() && m.isPFMuon() && m.globalTrack()->normalizedChi2() < 10. && m.globalTrack()->hitPattern().numberOfValidMuonHits() > 0 && m.numberOfMatchedStations() > 1 && fabs(m.muonBestTrack()->dxy(vtx.position())) < 0.2 && fabs(m.muonBestTrack()->dz(vtx.position())) < 0.5 && m.innerTrack()->hitPattern().numberOfValidPixelHits() > 0 && m.innerTrack()->hitPattern().trackerLayersWithMeasurement() > 5;
+      if ( muoSelection_( m ) && pass ) muons.push_back(m);
+    }
+    if ( muons.size() < nmuons_ ) return;
+  } else {
+    if (!warningPrinted4token_[4]) {
+      warningPrinted4token_[4] = true;
+      if ( muoInputTag_.label().empty() )
+	edm::LogWarning("METMonitor") << "MuonCollection not set";
+      else
+	edm::LogWarning("METMonitor") << "skipping events because the collection " << muoInputTag_.label().c_str() << " is not available";
+    }
+    if ( !muoInputTag_.label().empty() ) return;
   }
-  if ( int(muons.size()) < nmuons_ ) return;
 
   // filling histograms (denominator)  
   metME_.denominator -> Fill(met);
   metME_variableBinning_.denominator -> Fill(met);
   metPhiME_.denominator -> Fill(phi);
+  deltaphimetj1ME_.denominator -> Fill(deltaPhi_met_j1);
+  deltaphij1j2ME_.denominator -> Fill(deltaPhi_j1_j2);
 
   int ls = iEvent.id().luminosityBlock();
   metVsLS_.denominator -> Fill(ls, met);
-  
   // applying selection for numerator
   if (num_genTriggerEventFlag_->on() && ! num_genTriggerEventFlag_->accept( iEvent, iSetup) ) return;
 
@@ -208,19 +281,22 @@ void METMonitor::analyze(edm::Event const& iEvent, edm::EventSetup const& iSetup
   metME_variableBinning_.numerator -> Fill(met);
   metPhiME_.numerator -> Fill(phi);
   metVsLS_.numerator -> Fill(ls, met);
-
+  deltaphimetj1ME_.numerator  -> Fill(deltaPhi_met_j1); 
+  deltaphij1j2ME_.numerator  -> Fill(deltaPhi_j1_j2); 
 }
 
 void METMonitor::fillHistoPSetDescription(edm::ParameterSetDescription & pset)
 {
-  pset.add<int>   ( "nbins");
+  pset.add<unsigned>   ( "nbins");
   pset.add<double>( "xmin" );
   pset.add<double>( "xmax" );
 }
 
 void METMonitor::fillHistoLSPSetDescription(edm::ParameterSetDescription & pset)
 {
-  pset.add<int>   ( "nbins", 2500);
+  pset.add<unsigned int>   ( "nbins", 2500 );
+  pset.add<double>         ( "xmin",     0.);
+  pset.add<double>         ( "xmax",  2500.);
 }
 
 void METMonitor::fillDescriptions(edm::ConfigurationDescriptions & descriptions)
@@ -232,13 +308,14 @@ void METMonitor::fillDescriptions(edm::ConfigurationDescriptions & descriptions)
   desc.add<edm::InputTag>( "jets",     edm::InputTag("ak4PFJetsCHS") );
   desc.add<edm::InputTag>( "electrons",edm::InputTag("gedGsfElectrons") );
   desc.add<edm::InputTag>( "muons",    edm::InputTag("muons") );
+  desc.add<edm::InputTag>( "vertices",edm::InputTag("offlinePrimaryVertices") );
   desc.add<std::string>("metSelection", "pt > 0");
   desc.add<std::string>("jetSelection", "pt > 0");
   desc.add<std::string>("eleSelection", "pt > 0");
   desc.add<std::string>("muoSelection", "pt > 0");
-  desc.add<int>("njets",      0);
-  desc.add<int>("nelectrons", 0);
-  desc.add<int>("nmuons",     0);
+  desc.add<unsigned>("njets",      0);
+  desc.add<unsigned>("nelectrons", 0);
+  desc.add<unsigned>("nmuons",     0);
 
   edm::ParameterSetDescription genericTriggerEventPSet;
   genericTriggerEventPSet.add<bool>("andOr");

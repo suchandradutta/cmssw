@@ -1,12 +1,12 @@
 #include "DTSpyHelper.h"
-#include <errno.h>
+#include <cerrno>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-#include <string.h>
+#include <cstring>
 
 #ifdef __wasAPPLE__
 typedef int socklen_t;
@@ -171,26 +171,6 @@ DTCtcp::Connect(const char *host,int toport)
         throw DTtcpExcp(errno);
 }
   connected = true;
-}
-
-int
-DTCtcp::WaitData(int timeout)
-{
-//    return  read (sock, buffer,size) ;
-     fd_set rfds;
-     struct timeval tv;
-   
-    FD_ZERO(&rfds);
-    FD_SET(sock,&rfds);
-
-    tv.tv_sec = timeout;
-    tv.tv_usec = 0;
- 
-     int retva = select (1,&rfds,0,&rfds,&tv);
-     if (retva)
-         if (FD_ISSET(0,&rfds)) return 1;
-         else return -1;
-     else return 0; 
 }
 
 int

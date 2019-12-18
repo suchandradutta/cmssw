@@ -2,7 +2,7 @@
 
 HGCalTriggerBackendProcessor::
 HGCalTriggerBackendProcessor(const edm::ParameterSet& conf, edm::ConsumesCollector&& cc) {
-  const std::vector<edm::ParameterSet> be_confs = 
+  const std::vector<edm::ParameterSet>& be_confs = 
     conf.getParameterSetVector("algorithms");
   for( const auto& algo_cfg : be_confs ) {
     const std::string& algo_name = 
@@ -20,7 +20,7 @@ void HGCalTriggerBackendProcessor::setGeometry(const HGCalTriggerGeometryBase* c
 }
 
 
-void HGCalTriggerBackendProcessor::setProduces(edm::EDProducer& prod) const {
+void HGCalTriggerBackendProcessor::setProduces(edm::stream::EDProducer<>& prod) const {
   for( const auto& algo : algorithms_ ) {
     algo->setProduces(prod);
   }
@@ -28,7 +28,7 @@ void HGCalTriggerBackendProcessor::setProduces(edm::EDProducer& prod) const {
 
 void HGCalTriggerBackendProcessor::run(const l1t::HGCFETriggerDigiCollection& coll, 
 		const edm::EventSetup& es,
-		const edm::Event &e
+		edm::Event &e
 		) {
   for( auto& algo : algorithms_ ) {
     algo->run(coll, es,e);

@@ -47,12 +47,12 @@ class EcalSimRawData: public edm::one::EDAnalyzer<> {
 
   /** Destructor
    */
-  virtual ~EcalSimRawData(){};
+  ~EcalSimRawData() override{};
 
   /** Main method. Called back for each event. This method produced the
    * raw data and write them to disk.
    */
-  virtual void analyze(const edm::Event&, const edm::EventSetup&);
+  void analyze(const edm::Event&, const edm::EventSetup&) override;
 
 private:
 
@@ -442,7 +442,7 @@ private:
 
   /** Selective readout simulator
    */
-  std::auto_ptr<EcalSelectiveReadout> esr_;
+  std::unique_ptr<EcalSelectiveReadout> esr_;
 
   /** Output file for trigger tower flags
    */

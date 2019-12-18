@@ -4,6 +4,7 @@ import RecoLocalCalo.HcalRecProducers.HBHEPhase1Reconstructor_cfi
 hbherecoMB = RecoLocalCalo.HcalRecProducers.HBHEPhase1Reconstructor_cfi.hbheprereco.clone(
     dropZSmarkedPassed = cms.bool(False),
     algorithm = dict(
+        useMahi = cms.bool(False),
         useM2 = cms.bool(False),
         useM3 = cms.bool(False)
     ),
@@ -18,11 +19,11 @@ hbherecoMB = RecoLocalCalo.HcalRecProducers.HBHEPhase1Reconstructor_cfi.hbheprer
     setLegacyFlagsQIE11 = cms.bool(False),
 )
 
-import RecoLocalCalo.HcalRecProducers.HcalSimpleReconstructor_hf_cfi
-hfrecoMB = RecoLocalCalo.HcalRecProducers.HcalSimpleReconstructor_hf_cfi.hfreco.clone()
+import RecoLocalCalo.HcalRecProducers.hfsimplereco_cfi
+hfrecoMB = RecoLocalCalo.HcalRecProducers.hfsimplereco_cfi.hfsimplereco.clone()
 
-import RecoLocalCalo.HcalRecProducers.HcalSimpleReconstructor_ho_cfi
-horecoMB = RecoLocalCalo.HcalRecProducers.HcalSimpleReconstructor_ho_cfi.horeco.clone()
+import RecoLocalCalo.HcalRecProducers.hosimplereco_cfi
+horecoMB = RecoLocalCalo.HcalRecProducers.hosimplereco_cfi.hosimplereco.clone()
 
 # switch off "Hcal ZS in reco":
 hfrecoMB.dropZSmarkedPassed = cms.bool(False)
@@ -58,7 +59,8 @@ run2_HF_2017.toReplaceWith( hfrecoMB, _phase1_hfrecoMB )
 from Configuration.Eras.Modifier_run2_HCAL_2017_cff import run2_HCAL_2017
 run2_HCAL_2017.toModify( hbherecoMB,
     processQIE11 = cms.bool(True),
-    setNoiseFlagsQIE11 = cms.bool(True),
+# temporarily disabled until RecoLocalCalo/HcalRecProducers/python/HBHEPhase1Reconstructor_cfi.py:flagParametersQIE11 is filled
+#    setNoiseFlagsQIE11 = cms.bool(True),
 )
 
 _plan1_hcalLocalRecoSequenceNZS = _phase1_hcalLocalRecoSequenceNZS.copy()
@@ -67,3 +69,10 @@ _plan1_hcalLocalRecoSequenceNZS.insert(0,hbheprerecoMB)
 from Configuration.Eras.Modifier_run2_HEPlan1_2017_cff import run2_HEPlan1_2017
 run2_HEPlan1_2017.toReplaceWith(hbherecoMB, hbheplan1MB)
 run2_HEPlan1_2017.toReplaceWith(hcalLocalRecoSequenceNZS, _plan1_hcalLocalRecoSequenceNZS)
+
+hbhecollapseMB = hbheplan1MB.clone()
+_collapse_hcalLocalRecoSequenceNZS = _phase1_hcalLocalRecoSequenceNZS.copy()
+_collapse_hcalLocalRecoSequenceNZS.insert(0,hbheprerecoMB)
+from Configuration.ProcessModifiers.run2_HECollapse_2018_cff import run2_HECollapse_2018
+run2_HECollapse_2018.toReplaceWith(hbherecoMB, hbhecollapseMB)
+run2_HECollapse_2018.toReplaceWith(hcalLocalRecoSequenceNZS, _collapse_hcalLocalRecoSequenceNZS)

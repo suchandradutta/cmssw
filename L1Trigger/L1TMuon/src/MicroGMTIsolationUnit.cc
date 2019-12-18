@@ -1,4 +1,4 @@
-#include "../interface/MicroGMTIsolationUnit.h"
+#include "L1Trigger/L1TMuon/interface/MicroGMTIsolationUnit.h"
 
 #include "L1Trigger/L1TMuon/interface/GMTInternalMuon.h"
 #include "DataFormats/L1TMuon/interface/MuonCaloSum.h"
@@ -66,7 +66,7 @@ void
 l1t::MicroGMTIsolationUnit::extrapolateMuons(MicroGMTConfiguration::InterMuonList& inputmuons) const {
   int outputShiftPhi = 3;
   int outputShiftEta = 3;
-  if (m_fwVersion >= 0x5000000) {
+  if (m_fwVersion >= 0x4010000) {
     outputShiftPhi = 2;
     outputShiftEta = 0;
   }
@@ -202,7 +202,7 @@ void l1t::MicroGMTIsolationUnit::setTowerSums(const MicroGMTConfiguration::CaloI
 
 void l1t::MicroGMTIsolationUnit::isolatePreSummed(MicroGMTConfiguration::InterMuonList& muons) const
 {
-  for (auto mu : muons) {
+  for (const auto &mu : muons) {
     int caloIndex = getCaloIndex(*mu);
     int energySum = 0;
     if (m_towerEnergies.count(caloIndex) == 1) {

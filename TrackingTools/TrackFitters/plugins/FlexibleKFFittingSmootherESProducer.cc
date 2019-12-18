@@ -17,7 +17,7 @@ namespace {
 
   class FlexibleKFFittingSmoother final : public TrajectoryFitter {
   public:
-        ~FlexibleKFFittingSmoother(){}
+        ~FlexibleKFFittingSmoother() override{}
 
   private:
     /// constructor with predefined fitter and smoother and propagator
@@ -74,7 +74,7 @@ namespace {
       setWhatProduced(this,myname);
     }
     
-    ~FlexibleKFFittingSmootherESProducer() {}
+    ~FlexibleKFFittingSmootherESProducer() override {}
 
     static void fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
       edm::ParameterSetDescription desc;
@@ -84,7 +84,7 @@ namespace {
       descriptions.add("FlexibleKFFittingSmoother", desc);
     }
     
-    std::shared_ptr<TrajectoryFitter> 
+    std::unique_ptr<TrajectoryFitter> 
     produce(const TrajectoryFitterRecord & iRecord){ 
       
       edm::ESHandle<TrajectoryFitter> standardFitter;
@@ -93,9 +93,8 @@ namespace {
       iRecord.get(pset_.getParameter<std::string>("standardFitter"),standardFitter);
       iRecord.get(pset_.getParameter<std::string>("looperFitter"),looperFitter);
       
-      return std::shared_ptr<TrajectoryFitter>(new FlexibleKFFittingSmoother(*standardFitter.product(),
-									       *looperFitter.product())
-						 );
+      return std::unique_ptr<TrajectoryFitter>(new FlexibleKFFittingSmoother(*standardFitter.product(),
+                                                                             *looperFitter.product()));
     }
     
     

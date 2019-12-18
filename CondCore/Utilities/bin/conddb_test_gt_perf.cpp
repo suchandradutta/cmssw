@@ -10,6 +10,7 @@
 #include <fstream>
 
 #include <chrono>
+#include <memory>
 
 #include <boost/thread/mutex.hpp>
 #include "tbb/parallel_for_each.h"
@@ -87,7 +88,7 @@ namespace cond {
   class TestGTPerf : public cond::Utilities {
     public:
       TestGTPerf();
-      int execute();
+      int execute() override;
   }; // end class TestGTLoad
   
 } // end namespace cond
@@ -180,7 +181,7 @@ bool cond::UntypedPayloadProxy::get( cond::Time_t targetTime, bool debug ){
     if( debug )std::cout <<" Searching tag "<<m_iov.tag()<<" for a valid payload for time="<<targetTime<<std::endl;
     m_session.transaction().start();
     auto iIov = m_iov.find( targetTime );
-    if(iIov == m_iov.end() ) cond::throwException(std::string("Tag ")+m_iov.tag()+": No iov available for the target time:"+boost::lexical_cast<std::string>(targetTime),"UntypedPayloadProxy::get");
+    if(iIov == m_iov.end() ) cond::throwException(std::string("Tag ")+m_iov.tag()+": No iov available for the target time:"+std::to_string(targetTime),"UntypedPayloadProxy::get");
     m_data->current = *iIov;
 
     std::string payloadType(""); 
@@ -270,7 +271,7 @@ void Timer::showIntervals(std::ostream &os) {
 void Timer::showFetchInfo(std::ostream &os) {
     os << std::endl;
     os << "Serialization type: " << name << std::endl;
-    if (fetchTime.size() < 1) {
+    if (fetchTime.empty()) {
       os << "No fetch info available." << std::endl;
       return;
     }
@@ -288,7 +289,7 @@ void Timer::showFetchInfo(std::ostream &os) {
 void Timer::showDeserInfo(std::ostream &os) {
     os << std::endl;
     os << "Serialization type: " << name << std::endl;
-    if (deserTime.size() < 1) {
+    if (deserTime.empty()) {
       os << "No deserialization info available." << std::endl;
       return;
     }
@@ -414,7 +415,7 @@ public:
     const cond::Binary &buffer = p->getBuffer();
     const cond::Binary &streamerInfo = p->getStreamerInfo();
   
-    auto result = new std::pair< std::string, std::shared_ptr<void> > (cond::persistency::fetchOne( payloadTypeName, buffer, streamerInfo, payloadPtr ));
+    auto result = std::make_unique<std::pair< std::string, std::shared_ptr<void> > >(cond::persistency::fetchOne( payloadTypeName, buffer, streamerInfo, payloadPtr ));
     payload = result->second;
 
     return;

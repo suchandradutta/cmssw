@@ -78,7 +78,7 @@ int DTROS8FileReader::fillRawData(Event& e,
     
 
     // Check that the event data size corresponds to the 1st word datum 
-    if ( eventData[numberOfWords-1] != numberOfWords ) {
+    if ( numberOfWords <= 0 || eventData[numberOfWords-1] != numberOfWords ) {
       cout << "[DTROS8FileReader]: word counter mismatch exception: "
 	   << numberOfWords << " " << eventData[numberOfWords-1] << endl;
       throw 99;
@@ -131,13 +131,13 @@ int DTROS8FileReader::fillRawData(Event& e,
     if ( i == 1 ){
       cout << "[DTROS8FileReader]: END OF FILE REACHED. "
            << "No information read for the requested event" << endl;
-      delete data; data=0;
+      delete data; data=nullptr;
       return false;
     }    
     else {
       cout << "[DTROS8FileReader]: PROBLEM WITH EVENT INFORMATION ON THE FILE. "
            << "EVENT DATA READING FAILED  code= " << i << endl;
-      delete data; data=0;
+      delete data; data=nullptr;
       return false;
     }
 
@@ -147,7 +147,7 @@ int DTROS8FileReader::fillRawData(Event& e,
 
 void DTROS8FileReader::produce(Event&e, EventSetup const&es){
    edm::Handle<FEDRawDataCollection> rawdata;
-   FEDRawDataCollection *fedcoll = 0;
+   FEDRawDataCollection *fedcoll = nullptr;
    fillRawData(e,fedcoll);
    std::unique_ptr<FEDRawDataCollection> bare_product(fedcoll);
    e.put(std::move(bare_product));

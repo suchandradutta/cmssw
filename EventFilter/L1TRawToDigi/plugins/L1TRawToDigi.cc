@@ -39,27 +39,30 @@
 
 #include "PackingSetupFactory.h"
 
+#include "EventFilter/L1TRawToDigi/plugins/implementations_stage2/L1TStage2Layer2Constants.h"
+
 namespace l1t {
    class L1TRawToDigi : public edm::stream::EDProducer<> {
       public:
          explicit L1TRawToDigi(const edm::ParameterSet&);
-         ~L1TRawToDigi();
+         ~L1TRawToDigi() override;
 
          static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
 
       private:
-         virtual void produce(edm::Event&, const edm::EventSetup&) override;
+         void produce(edm::Event&, const edm::EventSetup&) override;
 
-         virtual void beginRun(edm::Run const&, edm::EventSetup const&) override {};
-         virtual void endRun(edm::Run const&, edm::EventSetup const&) override {};
-         virtual void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override {};
-         virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override {};
+         void beginRun(edm::Run const&, edm::EventSetup const&) override {};
+         void endRun(edm::Run const&, edm::EventSetup const&) override {};
+         void beginLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override {};
+         void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override {};
 
          // ----------member data ---------------------------
          edm::EDGetTokenT<FEDRawDataCollection> fedData_;
          std::vector<int> fedIds_;
          unsigned int minFeds_;
          unsigned int fwId_;
+         unsigned int dmxFwId_;
          bool fwOverride_;
 
          std::unique_ptr<PackingSetup> prov_;
@@ -71,6 +74,8 @@ namespace l1t {
          int amcTrailerSize_;
          int amc13HeaderSize_;
          int amc13TrailerSize_;
+
+         bool tmtCheck_;
 
          bool ctp7_mode_;
          bool mtf7_mode_;
@@ -90,7 +95,9 @@ namespace l1t {
       fedIds_(config.getParameter<std::vector<int>>("FedIds")),
       minFeds_(config.getParameter<unsigned int>("MinFeds")),
       fwId_(config.getParameter<unsigned int>("FWId")),
+      dmxFwId_(config.getParameter<unsigned int>("DmxFWId")),
       fwOverride_(config.getParameter<bool>("FWOverride")),
+      tmtCheck_(config.getParameter<bool>("TMTCheck")),
       ctp7_mode_(config.getUntrackedParameter<bool>("CTP7")),
       mtf7_mode_(config.getUntrackedParameter<bool>("MTF7"))
    {
@@ -179,7 +186,7 @@ namespace l1t {
 
          if (trailer.check()) {
             LogDebug("L1T") << "Found SLink trailer:"
-               << " Length " << trailer.lenght()
+               << " Length " << trailer.fragmentLength()
                << " CRC " << trailer.crc()
                << " Status " << trailer.evtStatus()
                << " Throttling bits " << trailer.ttsBits();
@@ -219,7 +226,8 @@ namespace l1t {
             std::unique_ptr<Payload> payload;
             if (ctp7_mode_) {
                LogDebug("L1T") << "Using CTP7 mode";
-               payload.reset(new CTP7Payload(start, end));
+               // CTP7 uses userData in AMC header
+               payload.reset(new CTP7Payload(start, end, amc.header()));
             } else if (mtf7_mode_) {
                LogDebug("L1T") << "Using MTF7 mode";
                payload.reset(new MTF7Payload(start, end));
@@ -228,50 +236,62 @@ namespace l1t {
                payload.reset(new MP7Payload(start, end, legacy_mc));
             }
             unsigned fw = payload->getAlgorithmFWVersion();
-
-            // Let parameterset value override FW version
-            if (fwOverride_)
-               fw = fwId_;
-
-            unsigned board = amc.blockHeader().getBoardID();
+	    unsigned board = amc.blockHeader().getBoardID();
             unsigned amc_no = amc.blockHeader().getAMCNumber();
-
-            auto unpackers = prov_->getUnpackers(fedId, board, amc_no, fw);
-
+	    
+            // Let parameterset value override FW version
+            if (fwOverride_){
+	      if (fedId == 1360)
+		fw = fwId_;
+	      else if (fedId == 1366)
+		fw = dmxFwId_;
+	    }
+            
+	    auto unpackers = prov_->getUnpackers(fedId, board, amc_no, fw);
+	      
             // getBlock() returns a non-null unique_ptr on success
             std::unique_ptr<Block> block;
             while ((block = payload->getBlock()).get()) {
-               if (debug_) {
+	      
+	      // only unpack the Calo Layer 2 MP TMT node if it has processed this BX
+	      unsigned tmtId = board - l1t::stage2::layer2::mp::offsetBoardId + 1;
+	      unsigned bxId = header.bxID();
+	      unsigned unpackTMT = ( !tmtCheck_ || ( ( tmtId - 1 ) == ( ( bxId - 1 + 3 ) % 9 ) ) );
+	      unsigned isCaloL2TMT = ( fedId==l1t::stage2::layer2::fedId && ( amc_no != l1t::stage2::layer2::demux::amcSlotNum ) );
+	      
+	      if( !isCaloL2TMT || unpackTMT ) { 
+		if (debug_) {
                   std::cout << ">>> block to unpack <<<" << std::endl
-                     << "hdr:  " << std::hex << std::setw(8) << std::setfill('0') << block->header().raw() << std::dec
-                     << " (ID " << block->header().getID() << ", size " << block->header().getSize()
-                     << ", CapID 0x" << std::hex << std::setw(2) << std::setfill('0') << block->header().getCapID()
-			    << ")" << std::dec << std::endl;
+			    << "hdr:  " << std::hex << std::setw(8) << std::setfill('0') << block->header().raw() << std::dec
+			    << " (ID " << block->header().getID() << ", size " << block->header().getSize()
+			    << ", CapID 0x" << std::hex << std::setw(2) << std::setfill('0') << block->header().getCapID()
+	       		    << ")" << std::dec << std::endl;
                   for (const auto& word: block->payload()) {
-		    if (debug_)
-		      std::cout << "data: " << std::hex << std::setw(8) << std::setfill('0') << word << std::dec << std::endl;
-		  }
-               }
-
-               auto unpacker = unpackers.find(block->header().getID());
-
-               block->amc(amc.header());
-
-               if (unpacker == unpackers.end()) {
-                  LogDebug("L1T") << "Cannot find an unpacker for"
-                     << "\n\tblock: ID " << block->header().getID() << ", size " << block->header().getSize()
-                     << "\n\tAMC: # " << amc_no << ", board ID 0x" << std::hex << board << std::dec
-                     << "\n\tFED ID " << fedId << ", and FW ID " << fw;
-                  // TODO Handle error
-               } else if (!unpacker->second->unpack(*block, coll.get())) {
-                  LogDebug("L1T") << "Error unpacking data for block ID "
-                     << block->header().getID() << ", AMC # " << amc_no
-                     << ", board ID " << board << ", FED ID " << fedId
-                     << ", and FW ID " << fw << "!";
-                  // TODO Handle error
-               }
-            }
-         }
+	       	    if (debug_)
+	       	      std::cout << "data: " << std::hex << std::setw(8) << std::setfill('0') << word << std::dec << std::endl;
+	       	  }
+		}
+		
+		auto unpacker = unpackers.find(block->header().getID());
+		
+		block->amc(amc.header());
+		
+		if (unpacker == unpackers.end()) {
+		  LogDebug("L1T") << "Cannot find an unpacker for"
+				  << "\n\tblock: ID " << block->header().getID() << ", size " << block->header().getSize()
+				  << "\n\tAMC: # " << amc_no << ", board ID 0x" << std::hex << board << std::dec
+				  << "\n\tFED ID " << fedId << ", and FW ID " << fw;
+		  // TODO Handle error
+		} else if (!unpacker->second->unpack(*block, coll.get())) {
+		  LogDebug("L1T") << "Error unpacking data for block ID "
+				  << block->header().getID() << ", AMC # " << amc_no
+				  << ", board ID " << board << ", FED ID " << fedId
+				  << ", and FW ID " << fw << "!";
+		  // TODO Handle error
+		}
+	      }
+	    }
+	 }
       }
       if (valid_count < minFeds_){
 	if (warnsb_ < 5){
@@ -291,7 +311,9 @@ namespace l1t {
      // These parameters have well defined  default values and are not currently 
      // part of the L1T/HLT interface.  They can be cleaned up or updated at will:     
      desc.add<unsigned int>("FWId",0)->setComment("Ignored unless FWOverride is true.  Calo Stage1:  32 bits: if the first eight bits are 0xff, will read the 74x MC format.\n");
+     desc.add<unsigned int>("DmxFWId",0)->setComment("Ignored unless FWOverride is true.  Calo Stage1:  32 bits: if the first eight bits are 0xff, will read the 74x MC format.\n");
      desc.add<bool>("FWOverride", false)->setComment("Firmware version should be taken as FWId parameters");
+     desc.add<bool>("TMTCheck", true)->setComment("Flag for turning on/off Calo Layer 2 TMT node check");
      desc.addUntracked<bool>("CTP7", false);
      desc.addUntracked<bool>("MTF7", false);
      desc.add<edm::InputTag>("InputLabel",edm::InputTag("rawDataCollector"));

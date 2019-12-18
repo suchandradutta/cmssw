@@ -9,7 +9,7 @@
 #include "EventFilter/Utilities/interface/FastMonitor.h"
 
 #include <fstream>
-#include <stdio.h>
+#include <cstdio>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -72,7 +72,7 @@ class RawEventFileWriterForBU
   jsoncollector::DataPointDefinition eorJsonDef_;
   bool writtenJSDs_=false;
 
-  std::auto_ptr<std::ofstream> ost_;
+  std::unique_ptr<std::ofstream> ost_;
   std::string fileName_;
   std::string destinationDir_;
 

@@ -104,7 +104,7 @@ public:
    /**
     * Chamber type (integer 1-10)
     */
-   unsigned short iChamberType() {
+   unsigned short iChamberType() const {
      return iChamberType( station(), ring() );
    }
 
@@ -243,6 +243,13 @@ public:
    static int maxChamberId() { return MAX_CHAMBER; }
    static int minLayerId()   { return MIN_LAYER; }
    static int maxLayerId()   { return MAX_LAYER; }
+
+   /**
+    * Returns the chamber name in the format
+    * ME$sign$station/$ring/$chamber. Example: ME+1/1/9
+    */
+   static std::string chamberName(int endcap, int station, int ring, int chamber);
+   std::string chamberName() const;
 
 private:
  

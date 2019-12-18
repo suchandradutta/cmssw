@@ -40,7 +40,7 @@
 #include "DataFormats/TrackerCommon/interface/TrackerTopology.h"
 //
 #include <string>
-#include <stdlib.h>
+#include <cstdlib>
 
 using namespace std;
 using namespace edm;
@@ -86,7 +86,7 @@ SiPixelClusterSource::~SiPixelClusterSource()
   std::map<uint32_t,SiPixelClusterModule*>::iterator struct_iter;
   for (struct_iter = thePixelStructure.begin() ; struct_iter != thePixelStructure.end() ; struct_iter++){
     delete struct_iter->second;
-    struct_iter->second = 0;
+    struct_iter->second = nullptr;
   }
 }
 
@@ -160,6 +160,7 @@ void SiPixelClusterSource::bookHistograms(DQMStore::IBooker & iBooker, edm::Run 
     if (i==1) { ybins = 42; ymin = -10.5; ymax = 10.5; }
     if (i==2) { ybins = 66; ymin = -16.5; ymax = 16.5; }
     if (i==3) { ybins = 90; ymin = -22.5; ymax = 22.5; }
+    if (i==4) { ybins = 130; ymin = -32.5; ymax = 32.5; }
     ss1.str(std::string()); ss1 << "pix_bar Occ_roc_online_" + digisrc_. label() + "_layer_" << i;
     ss2.str(std::string()); ss2 << "Pixel Barrel Occupancy, ROC level (Online): Layer " << i;
     meZeroRocBPIX.push_back(iBooker.book2D(ss1.str(),ss2.str(),72,-4.5,4.5,ybins,ymin,ymax));
@@ -296,7 +297,7 @@ void SiPixelClusterSource::buildStructure(const edm::EventSetup& iSetup){
   
   for(TrackerGeometry::DetContainer::const_iterator it = pDD->dets().begin(); it != pDD->dets().end(); it++){
     
-    if(dynamic_cast<PixelGeomDetUnit const *>((*it))!=0){
+    if(dynamic_cast<PixelGeomDetUnit const *>((*it))!=nullptr){
 
       DetId detId = (*it)->geographicalId();
       const GeomDetUnit      * geoUnit = pDD->idToDetUnit( detId );
@@ -308,12 +309,12 @@ void SiPixelClusterSource::buildStructure(const edm::EventSetup& iSetup){
       if((detId.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)) ||
          (detId.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap))){ 
         uint32_t id = detId();
-        SiPixelClusterModule* theModule = new SiPixelClusterModule(id, ncols, nrows);
         if(detId.subdetId() == static_cast<int>(PixelSubdetector::PixelBarrel)) {
           if(isPIB) continue;
 	  LogDebug ("PixelDQM") << " ---> Adding Barrel Module " <<  detId.rawId() << endl;
           int layer = PixelBarrelName(DetId(id),pTT,isUpgrade).layerName();
           if (layer > noOfLayers) noOfLayers = layer;
+      SiPixelClusterModule* theModule = new SiPixelClusterModule(id, ncols, nrows);
 	  thePixelStructure.insert(pair<uint32_t,SiPixelClusterModule*> (id,theModule));
         }else if ( detId.subdetId() == static_cast<int>(PixelSubdetector::PixelEndcap ) ) {
 	  LogDebug ("PixelDQM") << " ---> Adding Endcap Module " <<  detId.rawId() << endl;
@@ -337,6 +338,7 @@ void SiPixelClusterSource::buildStructure(const edm::EventSetup& iSetup){
 	  // clutch to take all of FPIX, but no BPIX:
 	  mask = false;
 	  if(isPIB && mask) continue;
+      SiPixelClusterModule* theModule = new SiPixelClusterModule(id, ncols, nrows);
 	  thePixelStructure.insert(pair<uint32_t,SiPixelClusterModule*> (id,theModule));
         }
       }
@@ -425,8 +427,8 @@ void SiPixelClusterSource::bookMEs(DQMStore::IBooker & iBooker, const edm::Event
 
 }
 
-void SiPixelClusterSource::getrococcupancy(DetId detId,const edm::DetSetVector<PixelDigi> diginp,const TrackerTopology* const tTopo,
-					   std::vector<MonitorElement*> meinput) {
+void SiPixelClusterSource::getrococcupancy(DetId detId,const edm::DetSetVector<PixelDigi> & diginp,const TrackerTopology* const tTopo,
+					   std::vector<MonitorElement*> const & meinput) {
   
   edm::DetSetVector<PixelDigi>::const_iterator ipxsearch = diginp.find(detId);
   if( ipxsearch != diginp.end() ) {

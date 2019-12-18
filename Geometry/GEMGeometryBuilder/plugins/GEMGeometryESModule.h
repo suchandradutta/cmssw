@@ -22,13 +22,14 @@ class GEMGeometryESModule : public edm::ESProducer
   GEMGeometryESModule(const edm::ParameterSet & p);
   
   /// Destructor
-  virtual ~GEMGeometryESModule();
+  ~GEMGeometryESModule() override;
   
   /// Produce GEMGeometry.
-  std::shared_ptr<GEMGeometry>  produce(const MuonGeometryRecord & record);
+  std::unique_ptr<GEMGeometry> produce(const MuonGeometryRecord & record);
   
  private:  
   // use the DDD as Geometry source
   bool useDDD;
+
 };
 #endif

@@ -1,18 +1,17 @@
 #include "DetectorDescription/Parser/src/DDLPosPart.h"
-
-#include <map>
-#include <utility>
-
-#include "DetectorDescription/Base/interface/DDRotationMatrix.h"
-#include "DetectorDescription/Base/interface/DDTranslation.h"
+#include "DetectorDescription/Core/interface/DDRotationMatrix.h"
+#include "DetectorDescription/Core/interface/DDTranslation.h"
 #include "DetectorDescription/Core/interface/DDCompactView.h"
 #include "DetectorDescription/Core/interface/DDLogicalPart.h"
 #include "DetectorDescription/Core/interface/DDName.h"
 #include "DetectorDescription/Core/interface/DDTransform.h"
-#include "DetectorDescription/ExprAlgo/interface/ClhepEvaluator.h"
+#include "DetectorDescription/Core/interface/ClhepEvaluator.h"
 #include "DetectorDescription/Parser/interface/DDLElementRegistry.h"
 #include "DetectorDescription/Parser/src/DDXMLElement.h"
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
+
+#include <map>
+#include <utility>
 
 DDLPosPart::DDLPosPart( DDLElementRegistry* myreg )
   : DDXMLElement( myreg )
@@ -38,13 +37,13 @@ void
 DDLPosPart::processElement( const std::string& name, const std::string& nmspace, DDCompactView& cpv )
 {
   // get all internal elements.
-  DDXMLElement* myParent     = myRegistry_->getElement("rParent");
-  DDXMLElement* myChild      = myRegistry_->getElement("rChild");
-  DDXMLElement* myTranslation= myRegistry_->getElement("Translation");
-  DDXMLElement* myDDLRotation= myRegistry_->getElement("Rotation");
-  DDXMLElement* myrRotation  = myRegistry_->getElement("rRotation");
-  DDXMLElement* myDDLRefl    = myRegistry_->getElement("ReflectionRotation");
-  DDXMLElement* myrRefl      = myRegistry_->getElement("rReflectionRotation");
+  auto myParent     = myRegistry_->getElement("rParent");
+  auto myChild      = myRegistry_->getElement("rChild");
+  auto myTranslation= myRegistry_->getElement("Translation");
+  auto myDDLRotation= myRegistry_->getElement("Rotation");
+  auto myrRotation  = myRegistry_->getElement("rRotation");
+  auto myDDLRefl    = myRegistry_->getElement("ReflectionRotation");
+  auto myrRefl      = myRegistry_->getElement("rReflectionRotation");
   // FIXME!!! add in the new RotationByAxis element...
 
   // At this time, PosPart is becoming the most complex of the elements.
@@ -58,26 +57,10 @@ DDLPosPart::processElement( const std::string& name, const std::string& nmspace,
   // rRotation, Rotation, ReflectionRotation, rReflectionRotation.
   // If it falls through here, a default call will result in a nameless 
   // "identity" rotation being passed to DDCore.
-  DDName rotn;
-  if (myrRotation->size() > 0){
-    rotn = myrRotation->getDDName(nmspace);
-  }
-  else if (myDDLRotation->size() > 0) {
-    // The assumption here is that the Rotation element created 
-    // a DDRotation already, and so we can use this as an rRotation
-    // just provide DDCore with the name of the one just added... 
-    // How to handle name conflicts? OVERWRITTEN by DDCore for now.
-    rotn = myDDLRotation->getDDName(nmspace);
-  }
-  else if (myDDLRefl->size() > 0) {
-    // The assumption is that a ReflectionRotation has been created and therefore 
-    // we can refer to it as the rotation associated with this PosPart.
-    // we can further assume that the namespace is the same as this PosPart.
-    rotn = myDDLRefl->getDDName(nmspace);
-  }
-  else if (myrRefl->size() > 0) {
-    rotn = myrRefl->getDDName(nmspace);
-  }
+  DDName rotn(( myrRotation->size() > 0) ? myrRotation->getDDName( nmspace ) :
+	      (( myDDLRotation->size() > 0) ? myDDLRotation->getDDName( nmspace ) :
+	       (( myDDLRefl->size() > 0) ? myDDLRefl->getDDName(nmspace) :
+		(( myrRefl->size() > 0 ) ? myrRefl->getDDName(nmspace) : DDName("")))));
 
   ClhepEvaluator & ev = myRegistry_->evaluator();
 
@@ -90,20 +73,16 @@ DDLPosPart::processElement( const std::string& name, const std::string& nmspace,
     z = ev.eval(nmspace, atts.find("z")->second);
   }
 
-  DDRotation* myDDRotation;
+  std::unique_ptr<DDRotation> myDDRotation;
   // if rotation is named ...
-  if ( rotn.name() != "" && rotn.ns() != "" ) {
-    DDRotation temp(rotn);
-    myDDRotation = &temp;
+  if ( !rotn.name().empty() && !rotn.ns().empty() ) {
+    myDDRotation = std::make_unique<DDRotation>(rotn);
   } else { 
     // rotn is not assigned a name anywhere therefore the DDPos assumes the identity matrix.
-    DDRotation temp(DDName(std::string("identity"),std::string("generatedForDDD")));
-    myDDRotation = &temp;
+    myDDRotation = std::make_unique<DDRotation>(DDName(std::string("identity"),std::string("generatedForDDD")));
     // if the identity is not yet defined, then...
     if ( !myDDRotation->isValid() ) {
-      DDRotationMatrix* dmr = new DDRotationMatrix;
-      temp = DDrot(DDName(std::string("identity"),std::string("generatedForDDD")), dmr );
-      myDDRotation = &temp;
+      myDDRotation = DDrotPtr( DDName( std::string( "identity" ), std::string( "generatedForDDD" )), std::make_unique<DDRotationMatrix>());
     }
   }
 

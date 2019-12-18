@@ -15,19 +15,19 @@ class HcalGeometryAnalyzer : public edm::one::EDAnalyzer<> {
 
 public:
   explicit HcalGeometryAnalyzer( const edm::ParameterSet& );
-  ~HcalGeometryAnalyzer( void );
+  ~HcalGeometryAnalyzer( void ) override;
     
   void beginJob() override {}
   void analyze(edm::Event const& iEvent, edm::EventSetup const&) override;
   void endJob() override {}
 
 private:
-  edm::ParameterSet ps0_;
+
   bool              useOld_;
   bool              geomDB_;
 };
 
-HcalGeometryAnalyzer::HcalGeometryAnalyzer( const edm::ParameterSet& iConfig ) : ps0_(iConfig) {
+HcalGeometryAnalyzer::HcalGeometryAnalyzer( const edm::ParameterSet& iConfig ) {
   useOld_ = iConfig.getParameter<bool>("UseOldLoader");
   geomDB_ = iConfig.getParameter<bool>("GeometryFromDB");
 }
@@ -44,17 +44,17 @@ HcalGeometryAnalyzer::analyze( const edm::Event& /*iEvent*/, const edm::EventSet
   iSetup.get<HcalRecNumberingRecord>().get( topologyHandle );
   const HcalTopology topology = (*topologyHandle);
 
-  CaloSubdetectorGeometry* caloGeom(0);
+  CaloSubdetectorGeometry* caloGeom(nullptr);
   if (geomDB_) {
     edm::ESHandle<CaloGeometry> pG;
     iSetup.get<CaloGeometryRecord>().get(pG);
     const CaloGeometry* geo = pG.product();
     caloGeom = (CaloSubdetectorGeometry*)(geo->getSubdetectorGeometry(DetId::Hcal,HcalBarrel));
   } else if (useOld_) {
-    HcalHardcodeGeometryLoader m_loader(ps0_);
+    HcalHardcodeGeometryLoader m_loader;
     caloGeom = m_loader.load(topology);
   } else {
-    HcalFlexiHardcodeGeometryLoader m_loader(ps0_);
+    HcalFlexiHardcodeGeometryLoader m_loader;
     caloGeom = m_loader.load(topology, hcons);
   }
   const std::vector<DetId>& ids = caloGeom->getValidDetIds();
@@ -64,9 +64,9 @@ HcalGeometryAnalyzer::analyze( const edm::Event& /*iEvent*/, const edm::EventSet
   for( std::vector<DetId>::const_iterator i = ids.begin(), iEnd = ids.end(); i != iEnd; ++i, ++counter )  {
     HcalDetId hid = (*i);
     std::cout << counter << ": din " << topology.detId2denseId(*i) << ":" << hid;
-    dins.push_back( topology.detId2denseId(*i));
+    dins.emplace_back( topology.detId2denseId(*i));
 	
-    const CaloCellGeometry * cell = caloGeom->getGeometry(*i);
+    auto cell = caloGeom->getGeometry(*i);
     std::cout << *cell << std::endl;
   }
 

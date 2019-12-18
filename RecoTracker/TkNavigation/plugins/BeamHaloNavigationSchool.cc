@@ -10,14 +10,14 @@ public:
   
   BeamHaloNavigationSchool(const GeometricSearchTracker* theTracker,
 			 const MagneticField* field);
-  ~BeamHaloNavigationSchool(){ cleanMemory();}
+  ~BeamHaloNavigationSchool() override{ cleanMemory();}
 
  protected:
   //addon to SimpleNavigationSchool
   void linkOtherEndLayers( SymmetricLayerFinder& symFinder);
   void addInward(const DetLayer * det, const FDLC& news);
   void addInward(const DetLayer * det, const ForwardDetLayer * newF);
-  void establishInverseRelations();
+  void establishInverseRelations() override;
   FDLC reachableFromHorizontal();
 };
 
@@ -248,7 +248,7 @@ BeamHaloNavigationSchool::reachableFromHorizontal()
   FDLI end   = myRightLayers.end();
 
   //sort along Z to be sure
-  sort(begin, end, DetLessZ());
+  sort(begin, end, isDetLessZ);
 
   FDLC reachableFL;
 
