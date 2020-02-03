@@ -58,6 +58,7 @@ public:
   virtual void digitize(const Phase2TrackerGeomDetUnit* pixdet,
                         std::map<int, DigitizerUtility::DigiSimInfo>& digi_map,
                         const TrackerTopology* tTopo);
+  virtual bool select_hit(const PSimHit& hit, double tCorr, double& sigScale) = 0;
 
   // For premixing
   void loadAccumulator(uint32_t detId, const std::map<int, float>& accumulator);
