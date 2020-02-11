@@ -13,8 +13,8 @@ namespace DigitizerUtility {
 
   class SimHitInfo {
   public:
-    SimHitInfo(const PSimHit* hitp, size_t hitIndex, uint32_t tofBin)
-      : eventId_(hitp->eventId()), trackId_(hitp->trackId()), hitIndex_(hitIndex), tofBin_(tofBin), time_(hitp->tof())
+    SimHitInfo(const PSimHit* hitp, float corrTime, size_t hitIndex, uint32_t tofBin)
+      : eventId_(hitp->eventId()), trackId_(hitp->trackId()), hitIndex_(hitIndex), tofBin_(tofBin), time_(corrTime)
     {}
 
     uint32_t hitIndex() const { return hitIndex_; };
@@ -29,15 +29,16 @@ namespace DigitizerUtility {
     uint32_t hitIndex_;
     uint32_t tofBin_;
     float time_;
+    
   };
 
   class Amplitude {
   public:
     Amplitude() : _amp(0.0) {}
-    Amplitude(float amp, const PSimHit* hitp, float frac = 0, size_t hitIndex = 0, uint32_t tofBin = 0) : _amp(amp) {
+    Amplitude(float amp, const PSimHit* hitp, float frac = 0, float tcor = 0, size_t hitIndex = 0, uint32_t tofBin = 0) : _amp(amp) {
       if (frac > 0) {
         if (hitp != nullptr)
-          _simInfoList.push_back({frac, std::make_unique<SimHitInfo>(hitp, hitIndex, tofBin)});
+          _simInfoList.push_back({frac, std::make_unique<SimHitInfo>(hitp, tcor, hitIndex, tofBin)});
         else
           _simInfoList.push_back({frac, nullptr});
       }
