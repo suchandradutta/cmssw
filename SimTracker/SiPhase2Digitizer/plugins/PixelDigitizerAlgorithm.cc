@@ -102,6 +102,12 @@ void PixelDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iter
     ++simHitGlobalIndex;
   }
 }
+
+bool PixelDigitizerAlgorithm::select_hit(const PSimHit& hit, double tCorr, double& sigScale) {
+  double time = hit.tof() - tCorr;
+  return (time >= theTofLowerCut_ && time < theTofUpperCut_);
+}
+
 // ======================================================================
 //
 //  Add  Cross-talk contribution
@@ -204,6 +210,8 @@ void PixelDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
     }
   }
 }
+
+
 PixelDigitizerAlgorithm::TimewalkCurve::TimewalkCurve(const edm::ParameterSet& pset)
   : x_(pset.getParameter<std::vector<double>>("charge"))
   , y_(pset.getParameter<std::vector<double>>("delay"))
@@ -251,8 +259,13 @@ std::size_t PixelDigitizerAlgorithm::TimewalkModel::find_closest_index(const std
   }
 }
 bool PixelDigitizerAlgorithm::isAboveThreshold(const DigitizerUtility::SimHitInfo* hitInfo, float charge, float thr) {
-  float corrected_time = hitInfo->time();
-  double time = corrected_time + timewalk_model_(charge, thr);
-  if (time < theTofLowerCut_ || time > theTofUpperCut_) return true;
-  else return false;
+  if (charge < thr)
+    return false;
+  else if (hitInfo) {
+    float corrected_time = hitInfo->time();
+    double time = corrected_time + timewalk_model_(charge, thr);
+    return (time >= theTofLowerCut_ && time < theTofUpperCut_);
+  }
+  else
+    return true;
 }
