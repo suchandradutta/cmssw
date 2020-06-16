@@ -56,7 +56,7 @@ Pixel3DDigitizerAlgorithm::Pixel3DDigitizerAlgorithm(const edm::ParameterSet& co
       // The size of the column np-junction (XXX: to be included via config)
       _np_column_radius(5.0_um),
       _ohm_column_radius(5.0_um) {
-  // XXX - NEEDED?
+ // XXX - NEEDED?
   pixelFlag_ = true;
 
   edm::LogInfo("Pixel3DDigitizerAlgorithm")
@@ -72,6 +72,7 @@ Pixel3DDigitizerAlgorithm::Pixel3DDigitizerAlgorithm(const edm::ParameterSet& co
 
 Pixel3DDigitizerAlgorithm::~Pixel3DDigitizerAlgorithm() {}
 
+#if 0
 void Pixel3DDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_iterator inputBegin,
                                                   std::vector<PSimHit>::const_iterator inputEnd,
                                                   const size_t inputBeginGlobalIndex,
@@ -105,10 +106,10 @@ void Pixel3DDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_it
         (it->tof() - global_hit_position * c_inv <= theTofUpperCut_)) {
       // XXX: this vectors are the output of the next methods, the methods should
       // return them, instead of an input argument
-      std::vector<DigitizerUtility::EnergyDepositUnit> ionization_points;
 
       // For each sim hit, super-charges (electron-holes) are created every 10um
-      primary_ionization(*it, ionization_points);
+      const auto ionization_points = primary_ionization(*it);
+
       // Drift the super-charges (only electrons) to the collecting electrodes
       const auto collection_points = drift(*it, pix3Ddet, bfield, ionization_points, true);
 
@@ -117,6 +118,14 @@ void Pixel3DDigitizerAlgorithm::accumulateSimHits(std::vector<PSimHit>::const_it
       induce_signal(*it, simHitGlobalIndex, tofBin, pix3Ddet, collection_points);
     }
   }
+}
+#endif
+//
+// -- Select the Hit for Digitization
+//
+bool Pixel3DDigitizerAlgorithm::select_hit(const PSimHit& hit, double tCorr, double& sigScale) const {
+  double time = hit.tof() - tCorr;
+  return (time >= theTofLowerCut_ && time < theTofUpperCut_);
 }
 
 const bool Pixel3DDigitizerAlgorithm::_is_inside_n_column(const LocalPoint& p) const {
@@ -146,7 +155,7 @@ std::vector<DigitizerUtility::EnergyDepositUnit> Pixel3DDigitizerAlgorithm::diff
     const float& ncarriers,
     const std::function<LocalVector(float, float)>& u_drift,
     const std::pair<float, float> hpitches,
-    const float& thickness) {
+    const float& thickness) const {
   // FIXME -- DM : Note that with a 0.3 will be enough (if using current sigma formulae)
   //          With the current sigma, this value is dependent of the thickness,
   //          Note that this formulae is coming from planar sensors, a similar
@@ -244,6 +253,7 @@ std::vector<DigitizerUtility::EnergyDepositUnit> Pixel3DDigitizerAlgorithm::diff
   return migrated_charge;
 }
 
+
 // ======================================================================
 //
 // Drift the charge segments to the column (collection surface)
@@ -255,8 +265,16 @@ std::vector<DigitizerUtility::SignalPoint> Pixel3DDigitizerAlgorithm::drift(
     const PSimHit& hit,
     const Phase2TrackerGeomDetUnit* pixdet,
     const GlobalVector& bfield,
+    const std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points) const
+{
+  return drift(hit, pixdet, bfield, ionization_points, true);
+}
+std::vector<DigitizerUtility::SignalPoint> Pixel3DDigitizerAlgorithm::drift(
+    const PSimHit& hit,
+    const Phase2TrackerGeomDetUnit* pixdet,
+    const GlobalVector& bfield,
     const std::vector<DigitizerUtility::EnergyDepositUnit>& ionization_points,
-    bool diffusion_activated) {
+    bool diffusion_activated) const {
   // -- Current reference system is placed in the center on the module
   // -- The natural reference frame should be discribed taking advantatge of
   // -- the cylindrical nature of the pixel geometry -->
@@ -350,7 +368,7 @@ std::vector<DigitizerUtility::SignalPoint> Pixel3DDigitizerAlgorithm::drift(
                                                      << "MIGRATING (super-)charges"
                                                      << "****************";
         // Drift this charges on the other pixel
-        auto mig_colpoints = drift(hit, pixdet, bfield, migrated_charges, false);
+        auto mig_colpoints = drift(hit, pixdet, bfield, migrated_charges);
         LogDebug("Pixel3DDigitizerAlgorithm::drift") << "*****************"
                                                      << "DOME MIGRATION"
                                                      << "****************";
@@ -393,7 +411,7 @@ std::vector<DigitizerUtility::SignalPoint> Pixel3DDigitizerAlgorithm::drift(
 // signal and linking it to the simulated energy deposit (hit)
 void Pixel3DDigitizerAlgorithm::induce_signal(const PSimHit& hit,
                                               const size_t hitIndex,
-                                              const unsigned int tofBin,
+                                              const uint32_t tofBin,
                                               const Phase2TrackerGeomDetUnit* pixdet,
                                               const std::vector<DigitizerUtility::SignalPoint>& collection_points) {
   // X  - Rows, Left-Right
