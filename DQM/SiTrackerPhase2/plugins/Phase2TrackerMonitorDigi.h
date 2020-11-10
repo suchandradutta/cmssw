@@ -54,7 +54,7 @@ private:
   void bookLayerHistos(DQMStore::IBooker& ibooker, unsigned int det_id, const TrackerTopology* tTopo);
   void fillITPixelDigiHistos(const edm::Handle<edm::DetSetVector<PixelDigi>> handle,
                              const edm::ESHandle<TrackerGeometry> gHandle);
-  void fillOTDigiHistos(const edm::Handle<edm::DetSetVector<Phase2TrackerDigi>> handle,
+  void fillOTDigiHistos(const edm::Handle<edm::DetSetVector<PixelDigi>> handle,
                         const edm::ESHandle<TrackerGeometry> gHandle);
 
   edm::ParameterSet config_;
@@ -64,7 +64,7 @@ private:
   std::string geomType_;
   edm::InputTag otDigiSrc_;
   edm::InputTag itPixelDigiSrc_;
-  const edm::EDGetTokenT<edm::DetSetVector<Phase2TrackerDigi>> otDigiToken_;
+  const edm::EDGetTokenT<edm::DetSetVector<PixelDigi>> otDigiToken_;
   const edm::EDGetTokenT<edm::DetSetVector<PixelDigi>> itPixelDigiToken_;
   edm::ESHandle<TrackerTopology> tTopoHandle_;
 };

@@ -77,18 +77,17 @@ namespace cms {
     if (makeDigiSimLinks_)
       producesCollector.produces<edm::DetSetVector<PixelDigiSimLink> >("Pixel").setBranchAlias(alias1);
 
-    if (!iConfig.getParameter<bool>("isOTreadoutAnalog")) {
-      const std::string alias2("simSiTrackerDigis");
-      if (premixStage1_) {
-        // Premixing exploits the ADC field of PixelDigi to store the collected charge
-        // But we still want everything else to be treated like for Phase2TrackerDigi
-        producesCollector.produces<edm::DetSetVector<PixelDigi> >("Tracker").setBranchAlias(alias2);
-      } else {
-        producesCollector.produces<edm::DetSetVector<Phase2TrackerDigi> >("Tracker").setBranchAlias(alias2);
-      }
-      if (makeDigiSimLinks_)
-        producesCollector.produces<edm::DetSetVector<PixelDigiSimLink> >("Tracker").setBranchAlias(alias2);
+    const std::string alias2("simSiTrackerDigis");
+    if (isOuterTrackerReadoutAnalog_ || premixStage1_) {
+      // Premixing exploits the ADC field of PixelDigi to store the collected charge
+      // But we still want everything else to be treated like for Phase2TrackerDigi
+      producesCollector.produces<edm::DetSetVector<PixelDigi> >("Tracker").setBranchAlias(alias2);
+    } else {
+      producesCollector.produces<edm::DetSetVector<Phase2TrackerDigi> >("Tracker").setBranchAlias(alias2);
     }
+    if (makeDigiSimLinks_)
+      producesCollector.produces<edm::DetSetVector<PixelDigiSimLink> >("Tracker").setBranchAlias(alias2);
+    
     // creating algorithm objects and pushing them into the map
     algomap_[AlgorithmType::InnerPixel] = std::make_unique<PixelDigitizerAlgorithm>(iConfig);
     algomap_[AlgorithmType::InnerPixel3D] = std::make_unique<Pixel3DDigitizerAlgorithm>(iConfig);
@@ -217,12 +216,12 @@ namespace cms {
 
   void Phase2TrackerDigitizer::finalizeEvent(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     //Decide if we want analog readout for Outer Tracker.
-    addPixelCollection(iEvent, iSetup, isOuterTrackerReadoutAnalog_);
-    if (!isOuterTrackerReadoutAnalog_) {
-      if (premixStage1_)
-        addOuterTrackerCollection<PixelDigi>(iEvent, iSetup);
-      else
-        addOuterTrackerCollection<Phase2TrackerDigi>(iEvent, iSetup);
+    addPixelCollection(iEvent, iSetup);
+    if (isOuterTrackerReadoutAnalog_ || premixStage1_) {
+
+      addOuterTrackerCollection<PixelDigi>(iEvent, iSetup);
+    } else {
+      addOuterTrackerCollection<Phase2TrackerDigi>(iEvent, iSetup);
     }
   }
   Phase2TrackerDigitizer::AlgorithmType Phase2TrackerDigitizer::getAlgoType(uint32_t detId_raw) {
@@ -272,8 +271,7 @@ namespace cms {
     return algotype;
   }
   void Phase2TrackerDigitizer::addPixelCollection(edm::Event& iEvent,
-                                                  const edm::EventSetup& iSetup,
-                                                  const bool ot_analog) {
+                                      const edm::EventSetup& iSetup) {
     const TrackerTopology* tTopo = tTopoHand_.product();
 
     std::vector<edm::DetSet<PixelDigi> > digiVector;
@@ -286,9 +284,8 @@ namespace cms {
         continue;
 
       // Decide if we want analog readout for Outer Tracker.
-      if (!ot_analog && (algotype != AlgorithmType::InnerPixel && algotype != AlgorithmType::InnerPixel3D)) {
-        continue;
-      }
+      if (algotype != AlgorithmType::InnerPixel && algotype != AlgorithmType::InnerPixel3D) continue;
+      
       std::map<int, DigitizerUtility::DigiSimInfo> digi_map;
       fiter->second->digitize(dynamic_cast<const Phase2TrackerGeomDetUnit*>(det_u), digi_map, tTopo);
 
