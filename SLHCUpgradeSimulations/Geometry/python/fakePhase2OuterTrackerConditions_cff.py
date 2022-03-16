@@ -1,24 +1,35 @@
 import FWCore.ParameterSet.Config as cms
 
+# The Outer Tracker Lorentz Angle are now taken from Global Tag
+
+# ##
+# ## Fake Sim Outer Tracker Lorentz Angle
+# ##
+
+# SiPhase2OTFakeLorentzAngleESSource = cms.ESSource('SiPhase2OuterTrackerFakeLorentzAngleESSource',
+#                                                   LAValue = cms.double(0.07),
+#                                                   recordName = cms.string("LorentzAngle"))
+
+# es_prefer_fake_LA = cms.ESPrefer("SiPhase2OuterTrackerFakeLorentzAngleESSource","SiPhase2OTFakeLorentzAngleESSource")
+
+# ##
+# ## Fake Sim Outer Tracker Lorentz Angle
+# ##
+
+# SiPhase2OTFakeSimLorentzAngleESSource = cms.ESSource('SiPhase2OuterTrackerFakeLorentzAngleESSource',
+#                                                      LAValue = cms.double(0.07),
+#                                                      recordName = cms.string("SimLorentzAngle"))
+
+# es_prefer_fake_simLA = cms.ESPrefer("SiPhase2OuterTrackerFakeLorentzAngleESSource","SiPhase2OTFakeSimLorentzAngleESSource")
+
 ##
 ## Fake Sim Outer Tracker Lorentz Angle
 ##
 
-SiPhase2OTFakeLorentzAngleESSource = cms.ESSource('SiPhase2OuterTrackerFakeLorentzAngleESSource',
-                                                  LAValue = cms.double(0.07),
-                                                  recordName = cms.string("LorentzAngle")
-                                                  )
+SiPhase2OTFakeBadStripsESSource = cms.ESSource('SiPhase2BadStripConfigurableFakeESSource',
+                                               seed = cms.uint32(1),
+                                               printDebug = cms.untracked.bool(False),
+                                               badComponentsFraction = cms.double(0.),
+                                               appendToDataLabel = cms.string(''))
 
-es_prefer_fake_LA = cms.ESPrefer("SiPhase2OuterTrackerFakeLorentzAngleESSource","SiPhase2OTFakeLorentzAngleESSource")
-
-##
-## Fake Sim Outer Tracker Lorentz Angle
-##
-
-SiPhase2OTFakeSimLorentzAngleESSource = cms.ESSource('SiPhase2OuterTrackerFakeLorentzAngleESSource',
-                                                     LAValue = cms.double(0.07),
-                                                     recordName = cms.string("SimLorentzAngle")
-                                                     )
-
-es_prefer_fake_simLA = cms.ESPrefer("SiPhase2OuterTrackerFakeLorentzAngleESSource","SiPhase2OTFakeSimLorentzAngleESSource")
-
+es_prefer_fake_BadStrips = cms.ESPrefer("SiPhase2BadStripConfigurableFakeESSource","SiPhase2OTFakeBadStripsESSource")
