@@ -1,4 +1,3 @@
-
 import FWCore.ParameterSet.Config as cms
 
 PixelDigitizerAlgorithmCommon = cms.PSet(
@@ -166,7 +165,8 @@ phase2TrackerDigitizer = cms.PSet(
       EfficiencyFactors_Barrel = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999 ),
       EfficiencyFactors_Endcap = cms.vdouble(0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 0.999, 
       0.999, 0.999 ),#Efficiencies kept as Side2Disk1,Side1Disk1 and so on
-      CellsToKill = cms.VPSet()
+      CellsToKill = cms.VPSet(),
+      BadChannelLabel = cms.string("") 
     ),
 #Two Strip Module
     SSDigitizerAlgorithm = cms.PSet(
@@ -207,7 +207,8 @@ phase2TrackerDigitizer = cms.PSet(
       CellsToKill = cms.VPSet(),
       HitDetectionMode = cms.int32(0),  # (0/1/2/3/4 => SquareWindow/SampledMode/LatchedMode/SampledOrLachedMode/HIPFindingMode)
       PulseShapeParameters = cms.vdouble(-3.0, 16.043703, 99.999857, 40.571650, 2.0, 1.2459094),
-        CBCDeadTime = cms.double(0.0) # (2.7 ns deadtime in latched mode)
+      CBCDeadTime = cms.double(0.0), # (2.7 ns deadtime in latched mode)
+      BadChannelLabel = cms.string("") 
     )
 )
 
