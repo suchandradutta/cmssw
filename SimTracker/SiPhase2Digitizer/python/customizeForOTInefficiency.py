@@ -5,7 +5,7 @@ def _commonCustomizeForInefficiency(process):
     if hasattr(process,'mix') and hasattr(process.mix,'digitizers') and hasattr(process.mix.digitizers,'pixel'): 
         if hasattr(process.mix.digitizers.pixel,'PSPDigitizerAlgorithm'):
             print("# Activating Bias Rail Inefficiency in macro-pixels")
-            process.mix.digitizers.pixel.PSPDigitizerAlgorithm.AddBiasRailInefficiency = cms.bool(1)
+            process.mix.digitizers.pixel.PSPDigitizerAlgorithm.BiasRailInefficiencyFlag = cms.int32(1)
 
         if hasattr(process.mix.digitizers.pixel,'PSSDigitizerAlgorithm'):
             print("# Activating bad strip simulation for s-sensors in PS modules from DB")
@@ -21,7 +21,7 @@ def _commonCustomizeForInefficiency(process):
     if hasattr(process, "mixData") and hasattr(process.mixData, "workers") and hasattr(process.mixData.workers, "pixel"):
         if hasattr(process.mixData.workers.pixel,'PSPDigitizerAlgorithm'):
             print("# Activating Bias Rail Inefficiency in macro-pixels")
-            process.mixData.workers.pixel.PSPDigitizerAlgorithm.AddBiasRailInefficiency = cms.bool(1)
+            process.mixData.workers.pixel.PSPDigitizerAlgorithm.BiasRailInefficiencyFlag = cms.int32(1)
 
         if hasattr(process.mixData.workers.pixel,'PSSDigitizerAlgorithm'):
             print("# Activating bad strip simulation for s-sensors in PS modules from DB")
