@@ -116,6 +116,10 @@ void PixelDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
 
   for (auto& s : theSignal) {
     float signalInElectrons = s.second.ampl();  // signal in electrons
+    const auto& info_list = s.second.simInfoList();
+    const digitizerUtility::SimHitInfo* hitInfo = nullptr;
+    if (!info_list.empty())
+      hitInfo = std::max_element(info_list.begin(), info_list.end())->second.get();
 
     auto hitChan = PixelDigi::channelToPixel(s.first);
 
@@ -136,22 +140,27 @@ void PixelDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
       int chanXtalkPrev = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
       if (hitChan.first % 2 == 1)
-        signalNew.emplace(chanXtalkPrev,
-                          digitizerUtility::Ph2Amplitude(signalInElectrons_even_row_Xtalk_next_row, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkPrev,
+	//                          digitizerUtility::Ph2Amplitude(signalInElectrons_even_row_Xtalk_next_row, nullptr, -1.0));
+	signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_even_row_Xtalk_next_row, hitInfo));
+
       else
-        signalNew.emplace(chanXtalkPrev,
-                          digitizerUtility::Ph2Amplitude(signalInElectrons_odd_row_Xtalk_next_row, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkPrev,
+        //                  digitizerUtility::Ph2Amplitude(signalInElectrons_odd_row_Xtalk_next_row, nullptr, -1.0));
+        signalNew.emplace(chanXtalkPrev,digitizerUtility::Ph2Amplitude(signalInElectrons_odd_row_Xtalk_next_row, hitInfo));
     }
     if (hitChan.first < numRows - 1) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
       int chanXtalkNext = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
       if (hitChan.first % 2 == 1)
-        signalNew.emplace(chanXtalkNext,
-                          digitizerUtility::Ph2Amplitude(signalInElectrons_odd_row_Xtalk_next_row, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkNext,
+	//                          digitizerUtility::Ph2Amplitude(signalInElectrons_odd_row_Xtalk_next_row, nullptr, -1.0));
+        signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_odd_row_Xtalk_next_row, hitInfo));
       else
-        signalNew.emplace(chanXtalkNext,
-                          digitizerUtility::Ph2Amplitude(signalInElectrons_even_row_Xtalk_next_row, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkNext,
+	//                          digitizerUtility::Ph2Amplitude(signalInElectrons_even_row_Xtalk_next_row, nullptr, -1.0));
+        signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_even_row_Xtalk_next_row, hitInfo));
     }
 
     if (hitChan.second != 0) {
@@ -159,35 +168,40 @@ void PixelDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetUnit* pix
       int chanXtalkPrev = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
       if (hitChan.second % 2 == 1)
-        signalNew.emplace(
-            chanXtalkPrev,
-            digitizerUtility::Ph2Amplitude(signalInElectrons_even_column_Xtalk_next_column, nullptr, -1.0));
+	//   signalNew.emplace(chanXtalkPrev,
+        //            digitizerUtility::Ph2Amplitude(signalInElectrons_even_column_Xtalk_next_column, nullptr, -1.0));
+	signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_even_column_Xtalk_next_column, hitInfo));
       else
-        signalNew.emplace(
-            chanXtalkPrev,
-            digitizerUtility::Ph2Amplitude(signalInElectrons_odd_column_Xtalk_next_column, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkPrev,
+	//            digitizerUtility::Ph2Amplitude(signalInElectrons_odd_column_Xtalk_next_column, nullptr, -1.0));
+        signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_odd_column_Xtalk_next_column, hitInfo));
     }
     if (hitChan.second < numColumns - 1) {
       auto XtalkNext = std::make_pair(hitChan.first, hitChan.second + 1);
       int chanXtalkNext = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
       if (hitChan.second % 2 == 1)
-        signalNew.emplace(
-            chanXtalkNext,
-            digitizerUtility::Ph2Amplitude(signalInElectrons_odd_column_Xtalk_next_column, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkNext,
+	//            digitizerUtility::Ph2Amplitude(signalInElectrons_odd_column_Xtalk_next_column, nullptr, -1.0));
+        signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_odd_column_Xtalk_next_column, hitInfo));
       else
-        signalNew.emplace(
-            chanXtalkNext,
-            digitizerUtility::Ph2Amplitude(signalInElectrons_even_column_Xtalk_next_column, nullptr, -1.0));
+	//        signalNew.emplace(chanXtalkNext,
+	//            digitizerUtility::Ph2Amplitude(signalInElectrons_even_column_Xtalk_next_column, nullptr, -1.0));
+        signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_even_column_Xtalk_next_column, hitInfo));
     }
   }
   for (auto const& l : signalNew) {
     int chan = l.first;
+    const digitizerUtility::SimHitInfo* hitInfo = nullptr;
+    const auto& info_list = l.second.simInfoList();
+    if (!info_list.empty())
+      hitInfo = std::max_element(info_list.begin(), info_list.end())->second.get();
+
     auto iter = theSignal.find(chan);
     if (iter != theSignal.end()) {
       iter->second += l.second.ampl();
     } else {
-      theSignal.emplace(chan, digitizerUtility::Ph2Amplitude(l.second.ampl(), nullptr, -1.0));
+      theSignal.emplace(chan, digitizerUtility::Ph2Amplitude(l.second.ampl(), hitInfo));
     }
   }
 }

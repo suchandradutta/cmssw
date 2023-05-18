@@ -643,6 +643,11 @@ void Phase2TrackerDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetU
 
   for (auto& s : theSignal) {
     float signalInElectrons = s.second.ampl();  // signal in electrons
+    const auto& info_list = s.second.simInfoList();
+    const digitizerUtility::SimHitInfo* hitInfo = nullptr;
+    if (!info_list.empty())
+      hitInfo = std::max_element(info_list.begin(), info_list.end())->second.get();
+    
 
     std::pair<int, int> hitChan;
     if (pixelFlag_)
@@ -658,22 +663,29 @@ void Phase2TrackerDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetU
       auto XtalkPrev = std::make_pair(hitChan.first - 1, hitChan.second);
       int chanXtalkPrev = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
-      signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      //      signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk, hitInfo));
     }
     if (hitChan.first < numRows - 1) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
       int chanXtalkNext = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
-      signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      //      signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk, nullptr, -1.0));
+      signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk,hitInfo));
     }
   }
   for (auto const& l : signalNew) {
     int chan = l.first;
+    const digitizerUtility::SimHitInfo* hitInfo = nullptr;
+    const auto& info_list = l.second.simInfoList();
+    if (!info_list.empty())
+      hitInfo = std::max_element(info_list.begin(), info_list.end())->second.get();
+    
     auto iter = theSignal.find(chan);
     if (iter != theSignal.end()) {
       theSignal[chan] += l.second.ampl();
     } else {
-      theSignal.emplace(chan, digitizerUtility::Ph2Amplitude(l.second.ampl(), nullptr, -1.0));
+      theSignal.emplace(chan, digitizerUtility::Ph2Amplitude(l.second.ampl(), hitInfo));
     }
   }
 }
@@ -903,7 +915,7 @@ void Phase2TrackerDigitizerAlgorithm::loadAccumulator(uint32_t detId, const std:
   // the input channel is always with PixelDigi definition
   // if needed, that has to be converted to Phase2TrackerDigi convention
   for (const auto& elem : accumulator) {
-    auto inserted = theSignal.emplace(elem.first, digitizerUtility::Ph2Amplitude(elem.second, nullptr));
+    auto inserted = theSignal.emplace(elem.first, digitizerUtility::Ph2Amplitude(elem.second, nullptr, -1));
     if (!inserted.second) {
       throw cms::Exception("LogicError") << "Signal was already set for DetId " << detId;
     }
