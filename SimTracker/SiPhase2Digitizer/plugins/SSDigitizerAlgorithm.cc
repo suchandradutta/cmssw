@@ -36,22 +36,20 @@ void SSDigitizerAlgorithm::init(const edm::EventSetup& es) {
 
   geom_ = &es.getData(geomToken_);
 }
-
-SSDigitizerAlgorithm::SSDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
-    : Phase2TrackerDigitizerAlgorithm(conf.getParameter<ParameterSet>("AlgorithmCommon"),
-                                      conf.getParameter<ParameterSet>("SSDigitizerAlgorithm"),
-                                      iC),
-      hitDetectionMode_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<int>("HitDetectionMode")),
-      pulseShapeParameters_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm")
-                                .getParameter<std::vector<double> >("PulseShapeParameters")),
-      deadTime_(conf.getParameter<ParameterSet>("SSDigitizerAlgorithm").getParameter<double>("CBCDeadTime")),
+SSDigitizerAlgorithm::SSDigitizerAlgorithm(const edm::ParameterSet& conf_common,
+						 const edm::ParameterSet& conf_specific,
+						 edm::ConsumesCollector iC)
+  //SSDigitizerAlgorithm::SSDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
+  : Phase2TrackerDigitizerAlgorithm(conf_common, conf_specific, iC),
+      hitDetectionMode_(conf_specific.getParameter<int>("HitDetectionMode")),
+      pulseShapeParameters_(conf_specific.getParameter<std::vector<double> >("PulseShapeParameters")),
+      deadTime_(conf_specific.getParameter<double>("CBCDeadTime")),
       geomToken_(iC.esConsumes()) {
   if (use_LorentzAngle_DB_)
     siPhase2OTLorentzAngleToken_ = iC.esConsumes();
 
   if (use_deadmodule_DB_) {
-    std::string badChannelLabel_ = conf.getParameter<ParameterSet>("SSDigitizerAlgorithm")
-                                       .getUntrackedParameter<std::string>("BadChannelLabel", "");
+    std::string badChannelLabel_ = conf_specific.getUntrackedParameter<std::string>("BadChannelLabel", "");
     badChannelToken_ = iC.esConsumes(edm::ESInputTag{"", badChannelLabel_});
   }
 

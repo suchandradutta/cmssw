@@ -9,7 +9,8 @@
 
 class PSSDigitizerAlgorithm : public Phase2TrackerDigitizerAlgorithm {
 public:
-  PSSDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC);
+  PSSDigitizerAlgorithm(const edm::ParameterSet& conf_common, 
+		       const edm::ParameterSet& conf_specific,edm::ConsumesCollector iC);
   ~PSSDigitizerAlgorithm() override;
 
   // initialization that cannot be done in the constructor

@@ -99,7 +99,14 @@ namespace digitizerUtility {
           _simInfoList.push_back({frac, nullptr});
       }
     }
-
+    Ph2Amplitude(float amp, const digitizerUtility::SimHitInfo* shinfo)
+        : _amp(amp) {
+      if (shinfo != nullptr)
+	_simInfoList.push_back({amp, std::make_unique<SimHitInfo>(*shinfo)});
+        else
+          _simInfoList.push_back({amp, nullptr});
+    }
+   
     // can be used as a float by convers.
     operator float() const { return _amp; }
     float ampl() const { return _amp; }

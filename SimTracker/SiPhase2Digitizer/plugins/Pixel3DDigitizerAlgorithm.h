@@ -28,7 +28,8 @@
 
 class Pixel3DDigitizerAlgorithm : public PixelDigitizerAlgorithm {
 public:
-  Pixel3DDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC);
+   Pixel3DDigitizerAlgorithm(const edm::ParameterSet& conf_common, 
+      		           const edm::ParameterSet& conf_specific,edm::ConsumesCollector iC);
   ~Pixel3DDigitizerAlgorithm() override;
 
   std::vector<digitizerUtility::SignalPoint> drift(

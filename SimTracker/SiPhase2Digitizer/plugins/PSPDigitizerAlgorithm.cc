@@ -20,13 +20,13 @@ void PSPDigitizerAlgorithm::init(const edm::EventSetup& es) {
   geom_ = &es.getData(geomToken_);
 }
 
-PSPDigitizerAlgorithm::PSPDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
-    : Phase2TrackerDigitizerAlgorithm(conf.getParameter<ParameterSet>("AlgorithmCommon"),
-                                      conf.getParameter<ParameterSet>("PSPDigitizerAlgorithm"),
-                                      iC),
+PSPDigitizerAlgorithm::PSPDigitizerAlgorithm(const edm::ParameterSet& conf_common,
+						 const edm::ParameterSet& conf_specific,
+						 edm::ConsumesCollector iC)
+  //PSPDigitizerAlgorithm::PSPDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
+  : Phase2TrackerDigitizerAlgorithm(conf_common, conf_specific, iC),
       geomToken_(iC.esConsumes()),
-      biasRailInefficiencyFlag_(
-          conf.getParameter<ParameterSet>("PSPDigitizerAlgorithm").getParameter<int>("BiasRailInefficiencyFlag")) {
+      biasRailInefficiencyFlag_(conf_specific.getParameter<int>("BiasRailInefficiencyFlag")) {
   if (use_LorentzAngle_DB_)
     siPhase2OTLorentzAngleToken_ = iC.esConsumes();
   pixelFlag_ = false;

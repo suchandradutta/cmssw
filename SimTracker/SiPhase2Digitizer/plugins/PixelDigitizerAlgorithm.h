@@ -41,7 +41,10 @@ private:
   };
 
 public:
-  PixelDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC);
+  PixelDigitizerAlgorithm(const edm::ParameterSet& conf_common,
+			  const edm::ParameterSet& conf_specific,
+			  edm::ConsumesCollector iC);
+  //  PixelDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC);
   ~PixelDigitizerAlgorithm() override;
 
   // initialization that cannot be done in the constructor

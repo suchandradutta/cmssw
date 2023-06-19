@@ -91,11 +91,16 @@ namespace cms {
         producesCollector.produces<edm::DetSetVector<PixelDigiSimLink> >("Tracker").setBranchAlias(alias2);
     }
     // creating algorithm objects and pushing them into the map
-    algomap_[AlgorithmType::InnerPixel] = std::make_unique<PixelDigitizerAlgorithm>(iConfig, iC);
-    algomap_[AlgorithmType::InnerPixel3D] = std::make_unique<Pixel3DDigitizerAlgorithm>(iConfig, iC);
-    algomap_[AlgorithmType::PixelinPS] = std::make_unique<PSPDigitizerAlgorithm>(iConfig, iC);
-    algomap_[AlgorithmType::StripinPS] = std::make_unique<PSSDigitizerAlgorithm>(iConfig, iC);
-    algomap_[AlgorithmType::TwoStrip] = std::make_unique<SSDigitizerAlgorithm>(iConfig, iC);
+    algomap_[AlgorithmType::InnerPixel]   = std::make_unique<PixelDigitizerAlgorithm>(iConfig.getParameter<edm::ParameterSet>("AlgorithmCommon"),
+										      iConfig.getParameter<edm::ParameterSet>("PixelDigitizerAlgorithm"),iC);
+    algomap_[AlgorithmType::InnerPixel3D] = std::make_unique<Pixel3DDigitizerAlgorithm>(iConfig.getParameter<edm::ParameterSet>("AlgorithmCommon"),
+											iConfig.getParameter<edm::ParameterSet>("Pixel3DDigitizerAlgorithm"),iC);
+    algomap_[AlgorithmType::PixelinPS]    = std::make_unique<PSPDigitizerAlgorithm>(iConfig.getParameter<edm::ParameterSet>("AlgorithmCommon"),
+										    iConfig.getParameter<edm::ParameterSet>("PSPDigitizerAlgorithm"),iC);
+    algomap_[AlgorithmType::StripinPS]    = std::make_unique<PSSDigitizerAlgorithm>(iConfig.getParameter<edm::ParameterSet>("AlgorithmCommon"),
+										    iConfig.getParameter<edm::ParameterSet>("PSSDigitizerAlgorithm"),iC);
+    algomap_[AlgorithmType::TwoStrip]     = std::make_unique<SSDigitizerAlgorithm>(iConfig.getParameter<edm::ParameterSet>("AlgorithmCommon"),
+										   iConfig.getParameter<edm::ParameterSet>("SSDigitizerAlgorithm"),iC);
   }
 
   Phase2TrackerDigitizer::~Phase2TrackerDigitizer() {}

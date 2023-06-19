@@ -9,7 +9,8 @@
 
 class SSDigitizerAlgorithm : public Phase2TrackerDigitizerAlgorithm {
 public:
-  SSDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC);
+  SSDigitizerAlgorithm(const edm::ParameterSet& conf_common, 
+		       const edm::ParameterSet& conf_specific,edm::ConsumesCollector iC);
   ~SSDigitizerAlgorithm() override;
 
   // initialization that cannot be done in the constructor

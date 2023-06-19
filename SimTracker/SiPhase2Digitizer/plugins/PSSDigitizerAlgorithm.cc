@@ -23,17 +23,18 @@ void PSSDigitizerAlgorithm::init(const edm::EventSetup& es) {
 
   geom_ = &es.getData(geomToken_);
 }
-PSSDigitizerAlgorithm::PSSDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
-    : Phase2TrackerDigitizerAlgorithm(conf.getParameter<ParameterSet>("AlgorithmCommon"),
-                                      conf.getParameter<ParameterSet>("PSSDigitizerAlgorithm"),
-                                      iC),
-      geomToken_(iC.esConsumes()) {
+PSSDigitizerAlgorithm::PSSDigitizerAlgorithm(const edm::ParameterSet& conf_common,
+						 const edm::ParameterSet& conf_specific,
+						 edm::ConsumesCollector iC)
+  //PSSDigitizerAlgorithm::PSSDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
+  : Phase2TrackerDigitizerAlgorithm(conf_common, conf_specific, iC),
+    geomToken_(iC.esConsumes()) {
+
   if (use_LorentzAngle_DB_)
     siPhase2OTLorentzAngleToken_ = iC.esConsumes();
 
   if (use_deadmodule_DB_) {
-    std::string badChannelLabel_ = conf.getParameter<ParameterSet>("SSDigitizerAlgorithm")
-                                       .getUntrackedParameter<std::string>("BadChannelLabel", "");
+    std::string badChannelLabel_ = conf_specific.getUntrackedParameter<std::string>("BadChannelLabel", "");
     badChannelToken_ = iC.esConsumes(edm::ESInputTag{"", badChannelLabel_});
   }
 

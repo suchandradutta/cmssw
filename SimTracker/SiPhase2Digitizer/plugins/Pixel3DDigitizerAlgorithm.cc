@@ -17,17 +17,14 @@ namespace {
   constexpr double operator""_um_inv(long double length) { return length * 1e4; }
 }  // namespace
 
-Pixel3DDigitizerAlgorithm::Pixel3DDigitizerAlgorithm(const edm::ParameterSet& conf, edm::ConsumesCollector iC)
-    : PixelDigitizerAlgorithm(conf, iC),
-      np_column_radius_(
-          (conf.getParameter<edm::ParameterSet>("Pixel3DDigitizerAlgorithm").getParameter<double>("NPColumnRadius")) *
-          1.0_um),
-      ohm_column_radius_(
-          (conf.getParameter<edm::ParameterSet>("Pixel3DDigitizerAlgorithm").getParameter<double>("OhmicColumnRadius")) *
-          1.0_um),
-      np_column_gap_(
-          (conf.getParameter<edm::ParameterSet>("Pixel3DDigitizerAlgorithm").getParameter<double>("NPColumnGap")) *
-          1.0_um) {
+Pixel3DDigitizerAlgorithm::Pixel3DDigitizerAlgorithm(const edm::ParameterSet& conf_common,
+						 const edm::ParameterSet& conf_specific,
+						 edm::ConsumesCollector iC)
+  //Pixel3DDigitizerAlgorithm::Pixel3DDigitizerAlgorithm(const edm::ParameterSet& conf_common, edm::ConsumesCollector iC)
+  : PixelDigitizerAlgorithm(conf_common, conf_specific, iC),
+    np_column_radius_((conf_specific.getParameter<double>("NPColumnRadius"))*1.0_um),
+    ohm_column_radius_((conf_specific.getParameter<double>("OhmicColumnRadius"))*1.0_um),
+    np_column_gap_((conf_specific.getParameter<double>("NPColumnGap"))*1.0_um) {
   // XXX - NEEDED?
   pixelFlag_ = true;
 
