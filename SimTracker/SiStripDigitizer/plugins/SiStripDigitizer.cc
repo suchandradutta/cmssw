@@ -54,7 +54,9 @@ SiStripDigitizer::SiStripDigitizer(const edm::ParameterSet& conf,
                                    edm::ProducesCollector producesCollector,
                                    edm::ConsumesCollector& iC)
     : hitsProducer(conf.getParameter<std::string>("hitsProducer")),
+      hitsProducerPU(conf.getParameter<std::string>("hitsProducerPU")),
       trackerContainers(conf.getParameter<std::vector<std::string>>("ROUList")),
+      trackerContainersPU(conf.getParameter<std::vector<std::string>>("ROUListPU")),      
       ZSDigi(conf.getParameter<edm::ParameterSet>("DigiModeList").getParameter<std::string>("ZSDigi")),
       SCDigi(conf.getParameter<edm::ParameterSet>("DigiModeList").getParameter<std::string>("SCDigi")),
       VRDigi(conf.getParameter<edm::ParameterSet>("DigiModeList").getParameter<std::string>("VRDigi")),
@@ -119,29 +121,32 @@ void SiStripDigitizer::accumulateStripHits(edm::Handle<std::vector<PSimHit>> hSi
   // globalSimHitIndex is the index the sim hit will have when it is put in a collection
   // of sim hits for all crossings. This is only used when creating digi-sim links if
   // configured to do so.
-
   if (hSimHits.isValid()) {
     std::set<unsigned int> detIds;
     std::vector<PSimHit> const& simHits = *hSimHits.product();
     for (std::vector<PSimHit>::const_iterator it = simHits.begin(), itEnd = simHits.end(); it != itEnd;
          ++it, ++globalSimHitIndex) {
       unsigned int detId = (*it).detUnitId();
-      if (detIds.insert(detId).second) {
-        // The insert succeeded, so this detector element has not yet been processed.
-        assert(detectorUnits[detId]);
-        if (detectorUnits[detId]->type().isTrackerStrip()) {  // this test can be removed and replaced by stripdet!=0
-          auto stripdet = detectorUnits[detId];
-          //access to magnetic field in global coordinates
-          GlobalVector bfield = pSetup->inTesla(stripdet->surface().position());
-          LogDebug("Digitizer ") << "B-field(T) at " << stripdet->surface().position()
-                                 << "(cm): " << pSetup->inTesla(stripdet->surface().position());
-          theDigiAlgo->accumulateSimHits(it, itEnd, globalSimHitIndex, tofBin, stripdet, bfield, tTopo, randomEngine_);
+      auto itDet = detectorUnits.find(detId);
+      if (itDet == detectorUnits.end())
+	continue;	
+      auto stripdet = detectorUnits[detId];
+      assert(stripdet);
+      if (stripdet->type().isTrackerStrip()) {
+	if (detIds.insert(detId).second) {
+	  //// The insert succeeded, so this detector element has not yet been processed.
+	  //	//        assert(detectorUnits[detId]);
+	  //if (detectorUnits[detId]->type().isTrackerStrip()) {  // this test can be removed and replaced by stripdet!=0
+	  //    //access to magnetic field in global coordinates
+	  GlobalVector bfield = pSetup->inTesla(stripdet->surface().position());
+	  LogDebug("Digitizer ") << "B-field(T) at " << stripdet->surface().position()
+				 << "(cm): " << pSetup->inTesla(stripdet->surface().position());
+	  theDigiAlgo->accumulateSimHits(it, itEnd, globalSimHitIndex, tofBin, stripdet, bfield, tTopo, randomEngine_);
         }
       }
-    }  // end of loop over sim hits
+    }  // end of loop over sim hits    
   }
-}
-
+}   
 // Functions that gets called by framework every event
 void SiStripDigitizer::accumulate(edm::Event const& iEvent, edm::EventSetup const& iSetup) {
   //Retrieve tracker topology from geometry
@@ -164,6 +169,7 @@ void SiStripDigitizer::accumulate(edm::Event const& iEvent, edm::EventSetup cons
     if (simHits.isValid())
       crossingSimHitIndexOffset_[tag.encode()] += simHits->size();
   }
+  
 }
 
 void SiStripDigitizer::accumulate(PileUpEventPrincipal const& iEvent,
@@ -175,9 +181,9 @@ void SiStripDigitizer::accumulate(PileUpEventPrincipal const& iEvent,
   theDigiAlgo->calculateInstlumiScale(PileupInfo_.get());
 
   // Step A: Get Inputs
-  for (auto const& trackerContainer : trackerContainers) {
+  for (auto const& trackerContainer : trackerContainersPU) {
     edm::Handle<std::vector<PSimHit>> simHits;
-    edm::InputTag tag(hitsProducer, trackerContainer);
+    edm::InputTag tag(hitsProducerPU, trackerContainer);
     unsigned int tofBin = StripDigiSimLink::LowTof;
     if (trackerContainer.find(std::string("HighTof")) != std::string::npos)
       tofBin = StripDigiSimLink::HighTof;
@@ -263,7 +269,7 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
   // Step B: LOOP on StripGeomDetUnit
   theDigiVector.reserve(10000);
   theDigiVector.clear();
-
+  int totalDigis = 0; 
   for (const auto& iu : pDD->detUnits()) {
     if (useConfFromDB) {
       //apply the cable map _before_ digitization: consider only the detis that are connected
@@ -299,7 +305,7 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
                             randomEngine_,
                             tTopo);
 
-      if (!collectorStripAmplitudes.data.empty())
+      if (!collectorStripAmplitudes.data.empty()) 
         theStripAmplitudeVector->insert(collectorStripAmplitudes);
       if (!collectorStripAmplitudesPostAPV.data.empty())
         theStripAmplitudeVectorPostAPV->insert(collectorStripAmplitudesPostAPV);
@@ -309,6 +315,7 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
       if (zeroSuppression) {
         if (!collectorZS.data.empty()) {
           theDigiVector.push_back(collectorZS);
+	  totalDigis += collectorZS.data.size();
           if (!collectorLink.data.empty())
             pOutputDigiSimLink->insert(collectorLink);
         }
@@ -322,6 +329,9 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
     }
   }
   if (zeroSuppression) {
+#ifdef EDM_ML_DEBUG
+    std::cout << " SiStripDigitizer::finalize  Size of Digis " << totalDigis << std::endl;
+#endif    
     // Step C: create output collection
     std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_virginraw(new edm::DetSetVector<SiStripRawDigi>());
     std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_scopemode(new edm::DetSetVector<SiStripRawDigi>());

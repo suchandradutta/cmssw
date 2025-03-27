@@ -20,6 +20,7 @@ hcalSimBlock = cms.PSet(
     doTimeSlew = cms.bool(True),
     doHFWindow = cms.bool(False),
     hitsProducer = cms.string('g4SimHits'),
+    hitsProducerPU = cms.string('g4SimHits'),
     DelivLuminosity = cms.double(0),
     TestNumbering = cms.bool(False),
     doNeutralDensityFilter = cms.bool(True),
@@ -45,7 +46,14 @@ hcalSimBlock = cms.PSet(
 )
 
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
-fastSim.toModify( hcalSimBlock, hitsProducer=cms.string('fastSimProducer') )
+fastSim.toModify( hcalSimBlock,
+                  hitsProducer   = cms.string('fastSimProducer'), 
+                  hitsProducerPU = cms.string('fastSimProducer') )
+
+from Configuration.ProcessModifiers.fastSimPU_cff import fastSimPU
+fastSimPU.toModify( hcalSimBlock,
+                  hitsProducer   = cms.string('g4SimHits'),                     
+                  hitsProducerPU = cms.string('fastSimProducer') )
 
 from Configuration.ProcessModifiers.premix_stage1_cff import premix_stage1
 premix_stage1.toModify(hcalSimBlock,

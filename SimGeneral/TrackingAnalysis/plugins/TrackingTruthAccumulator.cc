@@ -269,8 +269,10 @@ TrackingTruthAccumulator::TrackingTruthAccumulator(const edm::ParameterSet &conf
       createInitialVertexCollection_(config.getParameter<bool>("createInitialVertexCollection")),
       addAncestors_(config.getParameter<bool>("alwaysAddAncestors")),
       removeDeadModules_(config.getParameter<bool>("removeDeadModules")),
-      simTrackLabel_(config.getParameter<edm::InputTag>("simTrackCollection")),
-      simVertexLabel_(config.getParameter<edm::InputTag>("simVertexCollection")),
+      simTrackLabelSig_(config.getParameter<edm::InputTag>("simTrackCollection")),
+      simVertexLabelSig_(config.getParameter<edm::InputTag>("simVertexCollection")),
+      simTrackLabelPU_(config.getParameter<edm::InputTag>("simTrackCollectionPU")),
+      simVertexLabelPU_(config.getParameter<edm::InputTag>("simVertexCollectionPU")),
       collectionTags_(),
       genParticleLabel_(config.getParameter<edm::InputTag>("genParticleCollection")),
       hepMCproductLabel_(config.getParameter<edm::InputTag>("HepMCProductLabel")),
@@ -333,8 +335,10 @@ TrackingTruthAccumulator::TrackingTruthAccumulator(const edm::ParameterSet &conf
     producesCollector.produces<TrackingVertexCollection>("InitialVertices");
   }
 
-  iC.consumes<std::vector<SimTrack>>(simTrackLabel_);
-  iC.consumes<std::vector<SimVertex>>(simVertexLabel_);
+  iC.consumes<std::vector<SimTrack>>(simTrackLabelSig_);
+  iC.consumes<std::vector<SimVertex>>(simVertexLabelSig_);
+  iC.consumes<std::vector<SimTrack>>(simTrackLabelPU_);
+  iC.consumes<std::vector<SimVertex>>(simVertexLabelPU_);
   iC.consumes<std::vector<reco::GenParticle>>(genParticleLabel_);
   iC.consumes<std::vector<int>>(genParticleLabel_);
   iC.consumes<std::vector<int>>(hepMCproductLabel_);
@@ -344,7 +348,15 @@ TrackingTruthAccumulator::TrackingTruthAccumulator(const edm::ParameterSet &conf
   std::vector<std::string> parameterNames = simHitCollectionConfig.getParameterNames();
 
   for (const auto &parameterName : parameterNames) {
+#ifdef EDM_ML_DEBUG
+    std::cout << " Detector Type " << parameterName.c_str() << std::endl;
+#endif
+    
     std::vector<edm::InputTag> tags = simHitCollectionConfig.getParameter<std::vector<edm::InputTag>>(parameterName);
+#ifdef EDM_ML_DEBUG
+   for (const auto &tagName : tags) std::cout << "    " << tagName << std::endl;
+#endif
+   
     collectionTags_.insert(collectionTags_.end(), tags.begin(), tags.end());
   }
 
@@ -390,6 +402,12 @@ void TrackingTruthAccumulator::accumulate(edm::Event const &event, edm::EventSet
   edm::Handle<edm::HepMCProduct> hepmc;
   event.getByLabel(hepMCproductLabel_, hepmc);
 
+  simTrackLabel_ = simTrackLabelSig_;
+  simVertexLabel_ = simVertexLabelSig_;
+
+#ifdef EDM_ML_DEBUG
+  std::cout << " TrackingTruthAccumulator::accumulate for Signal " << " SimVertex " <<  simVertexLabel_ << " SimTrack " << simTrackLabel_ <<std::endl;
+#endif  
   accumulateEvent(event, setup, hepmc);
 }
 
@@ -405,6 +423,12 @@ void TrackingTruthAccumulator::accumulate(PileUpEventPrincipal const &event,
 
     // simply create empty handle as we do not have a HepMCProduct in PU anyway
     edm::Handle<edm::HepMCProduct> hepmc;
+#ifdef EDM_ML_DEBUG
+    std::cout << " TrackingTruthAccumulator::accumulate for PU " << " SimVertex " <<  simVertexLabel_ << " SimTrack " << simTrackLabel_ <<std::endl;
+#endif    
+    simTrackLabel_ = simTrackLabelPU_;
+    simVertexLabel_ = simVertexLabelPU_;
+    
     accumulateEvent(event, setup, hepmc);
   } else
     edm::LogInfo(messageCategory_) << "Skipping pileup event for bunch crossing " << event.bunchCrossing();
@@ -483,6 +507,9 @@ void TrackingTruthAccumulator::accumulateEvent(const T &event,
   if (createMergedCollection_)
     pMergedCollectionWrapper = std::make_unique<::OutputCollectionWrapper>(decayChain, mergedOutput_);
 
+#ifdef EDM_ML_DEBUG
+  std::cout << " TrackingTruthAccumulator::accumulateEvent ==> Calling fillSimHits " << std::endl;
+#endif  
   std::vector<const PSimHit *> simHitPointers;
   fillSimHits(simHitPointers, event, setup);
   TrackingParticleFactory objectFactory(decayChain,
@@ -573,8 +600,11 @@ void TrackingTruthAccumulator::fillSimHits(std::vector<const PSimHit *> &returnV
   for (const auto &collectionTag : collectionTags_) {
     edm::Handle<std::vector<PSimHit>> hSimHits;
     event.getByLabel(collectionTag, hSimHits);
-
+    if (!hSimHits.isValid()) continue;
     // TODO - implement removing the dead modules
+#ifdef EDM_ML_DEBUG    
+    std::cout << " TrackingTruthAccumulator::fillSimHits " << collectionTag << " SimHit Size " << hSimHits->size() <<  std::endl;
+#endif    
     for (const auto &simHit : *hSimHits) {
       returnValue.push_back(&simHit);
     }
@@ -1029,7 +1059,7 @@ namespace  // Unnamed namespace for things only used in this file
       }
     }  // end of loop over decay vertices
 
-    std::cout << "TrackingTruthAccumulator.cc integrityCheck() completed successfully" << std::endl;
+    //    std::cout << "TrackingTruthAccumulator.cc integrityCheck() completed successfully" << std::endl;
   }  // end of ::DecayChain::integrityCheck()
 #endif
 

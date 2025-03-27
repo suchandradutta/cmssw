@@ -120,7 +120,10 @@ namespace edm {
 
       if (got)
         LogInfo("MixingModule") << " Will create a CrossingFrame for " << typeid(T).name()
-                                << " with InputTag= " << t.encode();
+                               << " with InputTag= " << t.encode();
+      //      std::cout << "MixingWorker::checkSignal "<< " Will create a CrossingFrame for " << typeid(T).name()
+      //		<< " with InputTag= " << t.encode()  << std::endl;
+    
 
       return got;
     }
@@ -136,6 +139,7 @@ namespace edm {
         LogDebug("MixingModule") << " adding " << result_t.product()->size() << " signal objects for "
                                  << typeid(T).name() << " with " << tag_;
         crFrame_->addSignals(result_t.product(), e.id());
+	//	if (result_t->size() > 0) std::cout << " MixingWorker::addSignals for Event " << e.id() << " Tag " << tag_ << " size " << result_t->size() << std::endl;
       } else {
         LogInfo("MixingModule") << "!!!!!!! Did not get any signal data for " << typeid(T).name() << ", with " << tag_;
       }
@@ -154,11 +158,13 @@ namespace edm {
       }
       e.put(std::move(crFrame_), label_);
       LogDebug("MixingModule") << " CF was put for type " << typeid(T).name() << " with " << label_;
+      //      std::cout << " MixingWorker " << " CF was put for type " << typeid(T).name() << " with " << label_ << " #of Signal " << crFrame_->getNrSignals() << " #of PU " << crFrame_->getNrPileups() << std::endl;
     }
 
     // When using mixed secondary source
     // Copy the data from the PCrossingFrame to the CrossingFrame
     virtual void copyPCrossingFrame(const PCrossingFrame<T> *PCF);
+    InputTag getInputTag() const {return tag_;} 
 
   private:
     int minBunch_;
@@ -180,6 +186,7 @@ namespace edm {
   void MixingWorker<T>::addPileups(const EventPrincipal &ep, ModuleCallingContext const *mcc, unsigned int eventNr) {
     std::shared_ptr<Wrapper<std::vector<T> > const> shPtr = getProductByTag<std::vector<T> >(ep, tag_, mcc);
     if (shPtr) {
+      //SD      if (shPtr->product()->size() > 0) std::cout << " MixingWorker::addPileups for Event : " << eventNr << " Id " << ep.id() << " Bx " << ep.bunchCrossing() <<" Tag " << tag_ << " Size " << shPtr->product()->size() << std::endl;
       LogDebug("MixingModule") << shPtr->product()->size() << "  pileup objects  added, eventNr " << eventNr;
       crFrame_->setPileupPtr(shPtr);
       crFrame_->addPileups(*shPtr->product());

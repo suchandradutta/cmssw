@@ -61,6 +61,7 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
       m_EEdigiCollection(params.getParameter<std::string>("EEdigiCollection")),
       m_ESdigiCollection(params.getParameter<std::string>("ESdigiCollection")),
       m_hitsProducerTag(params.getParameter<std::string>("hitsProducer")),
+      m_hitsProducerTagPU(params.getParameter<std::string>("hitsProducerPU")),      
       m_HitsEBToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEB"))),
       m_HitsEEToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEE"))),
       m_HitsESToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsES"))),
@@ -384,10 +385,12 @@ void EcalDigiProducer::accumulate(edm::Event const &e, edm::EventSetup const &ev
   const edm::Handle<std::vector<PCaloHit>> &eeHandle = e.getHandle(m_HitsEEToken_);
   if (m_doEE) {
     m_EEShape.setEventSetup(eventSetup);
-  }
+  }  
 
   const edm::Handle<std::vector<PCaloHit>> &esHandle = e.getHandle(m_HitsESToken_);
-
+#ifdef EDM_ML_DEBUG
+  std::cout << " EcalDigiProducer::accumulate Signal Hits with Tag " << m_hitsProducerTag <<  std::endl;
+#endif  
   accumulateCaloHits(ebHandle, eeHandle, esHandle, 0);
 }
 
@@ -397,22 +400,24 @@ void EcalDigiProducer::accumulate(PileUpEventPrincipal const &e,
   // Step A: Get Inputs
   edm::Handle<std::vector<PCaloHit>> ebHandle;
   if (m_doEB) {
-    edm::InputTag ebTag(m_hitsProducerTag, "EcalHitsEB");
+    edm::InputTag ebTag(m_hitsProducerTagPU, "EcalHitsEB");
     e.getByLabel(ebTag, ebHandle);
   }
 
   edm::Handle<std::vector<PCaloHit>> eeHandle;
   if (m_doEE) {
-    edm::InputTag eeTag(m_hitsProducerTag, "EcalHitsEE");
+    edm::InputTag eeTag(m_hitsProducerTagPU, "EcalHitsEE");
     e.getByLabel(eeTag, eeHandle);
   }
 
   edm::Handle<std::vector<PCaloHit>> esHandle;
   if (m_doES) {
-    edm::InputTag esTag(m_hitsProducerTag, "EcalHitsES");
+    edm::InputTag esTag(m_hitsProducerTagPU, "EcalHitsES");
     e.getByLabel(esTag, esHandle);
   }
-
+#ifdef EDM_ML_DEBUG
+  std::cout << " EcalDigiProducer::accumulate PU Hits with Tag " << m_hitsProducerTagPU <<  std::endl;
+#endif  
   accumulateCaloHits(ebHandle, eeHandle, esHandle, e.bunchCrossing());
 }
 

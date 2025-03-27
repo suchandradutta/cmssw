@@ -50,7 +50,7 @@ public:
 
 private:
   //Name of Collection used for create the XF
-  edm::EDGetTokenT<CrossingFrame<PSimHit> > cf_token;
+  std::vector<edm::EDGetTokenT<CrossingFrame<PSimHit> > > cf_tokens_;
   edm::ESGetToken<GEMGeometry, MuonGeometryRecord> geom_token_;
 
   const GEMGeometry* geometry_;
@@ -69,10 +69,18 @@ GEMDigiProducer::GEMDigiProducer(const edm::ParameterSet& ps) : gemDigiModule_(s
         << "Add the service in the configuration file or remove the modules that require it.";
   }
 
-  std::string mix_(ps.getParameter<std::string>("mixLabel"));
-  std::string collection_(ps.getParameter<std::string>("inputCollection"));
+  std::string mix_ = ps.getParameter<std::string>("mixLabel");
 
-  cf_token = consumes<CrossingFrame<PSimHit> >(edm::InputTag(mix_, collection_));
+  std::set<std::string> collectionNames = { ps.getParameter<std::string>("inputCollection"),
+                                             ps.getParameter<std::string>("inputCollectionPU")};
+  
+  for (auto & cname : collectionNames) {    
+#ifdef EDM_ML_DEBUG
+    std::cout << " GEMDigiProducer::Creating Crossing Frame Consumers for InputTag " << mix << ":"<<cname << std::endl;
+#endif    
+    cf_tokens_.push_back(consumes<CrossingFrame<PSimHit>>(edm::InputTag(mix_, cname)));
+  }    
+    
   geom_token_ = esConsumes<GEMGeometry, MuonGeometryRecord, edm::Transition::BeginRun>();
 }
 
@@ -81,6 +89,7 @@ GEMDigiProducer::~GEMDigiProducer() = default;
 void GEMDigiProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   edm::ParameterSetDescription desc;
   desc.add<std::string>("inputCollection", "g4SimHitsMuonGEMHits");
+  desc.add<std::string>("inputCollectionPU", "g4SimHitsMuonGEMHits");  
   desc.add<std::string>("mixLabel", "mix");
 
   desc.add<double>("signalPropagationSpeed", 0.66);
@@ -144,18 +153,26 @@ void GEMDigiProducer::produce(edm::Event& e, const edm::EventSetup& eventSetup) 
   edm::Service<edm::RandomNumberGenerator> rng;
   CLHEP::HepRandomEngine* engine = &rng->getEngine(e.streamID());
 
-  edm::Handle<CrossingFrame<PSimHit> > cf;
-  e.getByToken(cf_token, cf);
-
-  MixCollection<PSimHit> hits{cf.product()};
-
+  std::vector<const CrossingFrame <PSimHit> *> cf_list;
+  for (auto const &token : cf_tokens_) {
+    //    edm::Handle<CrossingFrame<PSimHit>> cf_handle;
+    //    e.getByToken(cf_token, cf_handle);
+    const auto& handle = e.getHandle(token);
+    if (handle.isValid()) {
+      cf_list.emplace_back(handle.product());
+    }      
+  }
+  
+  //  std::unique_ptr<MixCollection<PSimHit>> hits(new MixCollection<PSimHit>(cf_list));
+  auto hits = std::make_unique<MixCollection<PSimHit>>(cf_list);
+  
   // Create empty output
   auto digis = std::make_unique<GEMDigiCollection>();
   auto gemDigiSimLinks = std::make_unique<GEMDigiSimLinks>();
 
   // arrange the hits by eta partition
   std::map<uint32_t, edm::PSimHitContainer> hitMap;
-  for (const auto& hit : hits) {
+  for (const auto& hit : *hits) {
     hitMap[GEMDetId(hit.detUnitId()).rawId()].emplace_back(hit);
   }
 

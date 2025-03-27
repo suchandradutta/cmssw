@@ -173,6 +173,7 @@ private:
   bool injectTestHits_;
 
   std::string hitsProducer_;
+  std::string hitsProducerPU_;
 
   int theHOSiPMCode;
 

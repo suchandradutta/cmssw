@@ -91,7 +91,9 @@ namespace cms {
                                          : false),
         _pixeldigialgo(),
         hitsProducer(iConfig.getParameter<std::string>("hitsProducer")),
+        hitsProducerPU(iConfig.getParameter<std::string>("hitsProducerPU")),	
         trackerContainers(iConfig.getParameter<std::vector<std::string> >("RoutList")),
+        trackerContainersPU(iConfig.getParameter<std::vector<std::string> >("RoutListPU")),	
         pilotBlades(iConfig.exists("enablePilotBlades") ? iConfig.getParameter<bool>("enablePilotBlades") : false),
         NumberOfEndcapDisks(iConfig.exists("NumPixelEndcap") ? iConfig.getParameter<int>("NumPixelEndcap") : 2),
         tTopoToken_(iC.esConsumes()),
@@ -144,18 +146,22 @@ namespace cms {
       for (std::vector<PSimHit>::const_iterator it = simHits.begin(), itEnd = simHits.end(); it != itEnd;
            ++it, ++globalSimHitIndex) {
         unsigned int detId = (*it).detUnitId();
-        if (detIds.insert(detId).second) {
-          // The insert succeeded, so this detector element has not yet been processed.
-          assert(detectorUnits[detId]);
-          if (detectorUnits[detId] &&
-              detectorUnits[detId]
-                  ->type()
-                  .isTrackerPixel()) {  // this test could be avoided and changed into a check of pixdet!=0
-            std::map<unsigned int, PixelGeomDetUnit const*>::iterator itDet = detectorUnits.find(detId);
-            if (itDet == detectorUnits.end())
-              continue;
-            auto pixdet = itDet->second;
-            assert(pixdet != nullptr);
+        auto itDet = detectorUnits.find(detId);
+        if (itDet == detectorUnits.end())
+          continue;	
+	auto pixdet = itDet->second;
+	assert(pixdet != nullptr);
+        if (pixdet && pixdet->type().isTrackerPixel()) {
+	  if (detIds.insert(detId).second) {
+	    // The insert succeeded, so this detector element has not yet been processed.
+	    //          assert(detectorUnits[detId]);
+	    //          if (detectorUnits[detId] &&
+	    //              detectorUnits[detId]
+	    //                  ->type()
+	    //                  .isTrackerPixel()) {  // this test could be avoided and changed into a check of pixdet!=0
+	    //            std::map<unsigned int, PixelGeomDetUnit const*>::iterator itDet = detectorUnits.find(detId);
+	    //            if (itDet == detectorUnits.end())
+	    //              continue;
             //access to magnetic field in global coordinates
             GlobalVector bfield = pSetup->inTesla(pixdet->surface().position());
             LogDebug("PixelDigitizer ") << "B-field(T) at " << pixdet->surface().position()
@@ -217,6 +223,9 @@ namespace cms {
       edm::InputTag tag(hitsProducer, *i);
 
       iEvent.getByLabel(tag, simHits);
+#ifdef EDM_ML_DEBUG
+      std::cout << " SiPixelDigitizer::accumulate " << " Accumulating SimHits for Signals with InputTag " << tag << std::endl;
+#endif      
       unsigned int tofBin = PixelDigiSimLink::LowTof;
       if ((*i).find(std::string("HighTof")) != std::string::npos)
         tofBin = PixelDigiSimLink::HighTof;
@@ -235,11 +244,14 @@ namespace cms {
                                     edm::EventSetup const& iSetup,
                                     edm::StreamID const& streamID) {
     // Step A: Get Inputs
-    for (vstring::const_iterator i = trackerContainers.begin(), iEnd = trackerContainers.end(); i != iEnd; ++i) {
+    for (vstring::const_iterator i = trackerContainersPU.begin(), iEnd = trackerContainersPU.end(); i != iEnd; ++i) {
       edm::Handle<std::vector<PSimHit> > simHits;
-      edm::InputTag tag(hitsProducer, *i);
+      edm::InputTag tag(hitsProducerPU, *i);
 
       iEvent.getByLabel(tag, simHits);
+#ifdef EDM_ML_DEBUG
+      std::cout << " SiPixelDigitizer::accumulate " << " Accumulating SimHits for PUs with InputTag " << tag << std::endl;
+#endif      
       unsigned int tofBin = PixelDigiSimLink::LowTof;
       if ((*i).find(std::string("HighTof")) != std::string::npos)
         tofBin = PixelDigiSimLink::HighTof;

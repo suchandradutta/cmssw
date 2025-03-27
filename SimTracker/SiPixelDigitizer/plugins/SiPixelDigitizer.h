@@ -89,7 +89,9 @@ namespace cms {
 
     typedef std::vector<std::string> vstring;
     const std::string hitsProducer;
+    const std::string hitsProducerPU;    
     const vstring trackerContainers;
+    const vstring trackerContainersPU;    
     const TrackerGeometry* pDD = nullptr;
     const MagneticField* pSetup = nullptr;
     std::map<unsigned int, PixelGeomDetUnit const*> detectorUnits;

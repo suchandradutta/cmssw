@@ -130,10 +130,11 @@ private:
   float LinksTimeWindow;
 
   // Name of Collection use for create the XF
-  std::string mix_;
-  std::string collection_for_XF;
+  //  std::string mix_;
+  //  std::string collection_for_XF;
 
-  edm::EDGetTokenT<CrossingFrame<PSimHit>> cf_token;
+  std::vector<edm::EDGetTokenT<CrossingFrame<PSimHit>>> cf_tokens;
+  edm::EDGetTokenT<CrossingFrame<PSimHit>> cf_token_pu;  
   edm::ESGetToken<DTGeometry, MuonGeometryRecord> muonGeom_token;
   edm::ESGetToken<MagneticField, IdealMagneticFieldRecord> magnField_token;
 };

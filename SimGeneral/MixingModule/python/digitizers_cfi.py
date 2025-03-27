@@ -42,8 +42,8 @@ fastSim.toModify(theDigitizers,
     # fastsim does not model castor
     castor = None,
     # fastsim does not digitize pixel and strip hits
-    pixel = None,
-    strip = None,
+#    pixel = None,
+#    strip = None,
     tracks = recoTrackAccumulator
 )
 from Configuration.ProcessModifiers.premix_stage2_cff import premix_stage2

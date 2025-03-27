@@ -121,6 +121,7 @@ private:
   const std::string m_EEdigiCollection;
   const std::string m_ESdigiCollection;
   const std::string m_hitsProducerTag;
+  const std::string m_hitsProducerTagPU;
 
   const edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsEBToken_;
   const edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsEEToken_;

@@ -94,6 +94,7 @@ HcalDigitizer::HcalDigitizer(const edm::ParameterSet &ps, edm::ConsumesCollector
       ignoreTime_(ps.getParameter<bool>("ignoreGeantTime")),
       injectTestHits_(ps.getParameter<bool>("injectTestHits")),
       hitsProducer_(ps.getParameter<std::string>("hitsProducer")),
+      hitsProducerPU_(ps.getParameter<std::string>("hitsProducerPU")),
       theHOSiPMCode(ps.getParameter<edm::ParameterSet>("ho").getParameter<int>("siPMCode")),
       deliveredLumi(0.),
       agingFlagHB(ps.getParameter<bool>("HBDarkening")),
@@ -367,7 +368,7 @@ void HcalDigitizer::accumulateCaloHits(edm::Handle<std::vector<PCaloHit>> const 
       DetId id(hcalHitsOrig[i].id());
       HcalDetId hid(id);
       if (!htopoP->validHcal(hid)) {
-        edm::LogError("HcalDigitizer") << "bad hcal id found in digitizer. Skipping " << id.rawId() << " " << hid;
+	//        edm::LogError("HcalDigitizer") << "bad hcal id found in digitizer. Skipping " << id.rawId() << " " << hid;
         continue;
       } else if (hid.subdet() == HcalForward && !doHFWindow_ && hcalHitsOrig[i].depth() != 0) {
         // skip HF window hits unless desired
@@ -432,6 +433,9 @@ void HcalDigitizer::accumulate(edm::Event const &e, edm::EventSetup const &event
 
   const HcalTopology *htopoP = &eventSetup.getData(topoToken_);
 
+#ifdef EDM_ML_DEBUG  
+  std::cout << " HcalDigitizer::accumulate Signal Hits with Tag " << hitsProducer_ <<  std::endl;
+#endif
   accumulateCaloHits(hcalHandle, zdcHandle, 0, engine, htopoP);
 }
 
@@ -439,18 +443,19 @@ void HcalDigitizer::accumulate(PileUpEventPrincipal const &e,
                                edm::EventSetup const &eventSetup,
                                CLHEP::HepRandomEngine *engine) {
   // Step A: Get Inputs
-  edm::InputTag zdcTag(hitsProducer_, "ZDCHITS");
+  edm::InputTag zdcTag(hitsProducerPU_, "ZDCHITS");
   edm::Handle<std::vector<PCaloHit>> zdcHandle;
   e.getByLabel(zdcTag, zdcHandle);
   isZDC = zdcHandle.isValid();
 
-  edm::InputTag hcalTag(hitsProducer_, "HcalHits");
+  edm::InputTag hcalTag(hitsProducerPU_, "HcalHits");
   edm::Handle<std::vector<PCaloHit>> hcalHandle;
   e.getByLabel(hcalTag, hcalHandle);
   isHCAL = hcalHandle.isValid();
 
   const HcalTopology *htopoP = &eventSetup.getData(topoToken_);
 
+  //SD  std::cout << " HcalDigitizer::accumulate PU Hits with Tag " << hitsProducerPU_ <<  std::endl;
   accumulateCaloHits(hcalHandle, zdcHandle, e.bunchCrossing(), engine, htopoP);
 }
 

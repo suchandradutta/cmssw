@@ -87,7 +87,9 @@ private:
   typedef simhit_map::iterator simhit_map_iterator;
 
   const std::string hitsProducer;
+  const std::string hitsProducerPU;
   const vstring trackerContainers;
+  const vstring trackerContainersPU;  
   const std::string ZSDigi;
   const std::string SCDigi;
   const std::string VRDigi;
