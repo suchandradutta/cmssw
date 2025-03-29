@@ -115,12 +115,12 @@ DTDigitizer::DTDigitizer(const ParameterSet &conf_)
   LinksTimeWindow = conf_.getParameter<double>("LinksTimeWindow");  // (10 ns)
 
   // Name of Collection used for create the XF
-  std::string mix_ = conf_.getParameter<std::string>("mixLabel");
-  std::set<std::string> collections_for_XF = {conf_.getParameter<std::string>("InputCollection"),
-                                              conf_.getParameter<std::string>("InputCollectionPU")};
-  for (auto & cname : collections_for_XF) {    
+  const std::string mix_ = conf_.getParameter<std::string>("mixLabel");
+  const std::set<std::string> collections_for_XF = {conf_.getParameter<std::string>("InputCollection"),
+                                                    conf_.getParameter<std::string>("InputCollectionPU")};
+  for (auto const& cname: collections_for_XF) {    
 #ifdef EDM_ML_DEBUG
-    std::cout << " DTDigiProducer::Creating Crossing Frame Consumers for InputTag " << mix_ << ":"<<cname << std::endl;
+    std::cout << " DTDigiProducer::Creating CrossingFrame Consumers for InputTag " << mix_ << ":" << cname << std::endl;
 #endif    
     cf_tokens.push_back(consumes<CrossingFrame<PSimHit>>(edm::InputTag(mix_, cname)));
   }    
@@ -149,8 +149,6 @@ void DTDigitizer::produce(Event &iEvent, const EventSetup &iSetup) {
   // use MixCollection instead of the previous
   std::vector<const CrossingFrame <PSimHit> *> cf_list;
   for (auto const &token : cf_tokens) {
-    //    edm::Handle<CrossingFrame<PSimHit>> cf_handle;
-    //    iEvent.getByToken(cf_token, cf_handle);
     const auto& handle = iEvent.getHandle(token);
     if (handle.isValid()) {
       cf_list.emplace_back(handle.product());

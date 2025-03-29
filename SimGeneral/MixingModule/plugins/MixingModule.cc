@@ -225,7 +225,8 @@ namespace edm {
             pset.getUntrackedParameter<std::vector<std::string> >("crossingFrames", std::vector<std::string>());
         sort_all(crossingFrames);
 #ifdef EDM_ML_DEBUG
-        for (auto const& xframes : crossingFrames) std::cout << " MixingModule::MixingModule object ==  PSimHit ==> Crossing Frames " << xframes << std::endl;
+        for (auto const& xframes : crossingFrames) std::cout << " MixingModule::MixingModule object ==  PSimHit ==> Crossing Frames "
+							     << xframes << std::endl;
 #endif	
         std::vector<std::string> pcrossingFrames =
             pset.getUntrackedParameter<std::vector<std::string> >("pcrossingFrames", std::vector<std::string>());
@@ -343,8 +344,8 @@ namespace edm {
                                       InputTag& tag,
                                       std::string& label) {
 #ifdef EDM_ML_DEBUG
-    std::cout << " MixingModule::branchesActivate " << " friendlyName " << friendlyName << " subdet " << subdet << " tag " << tag
-   	      << " label " << label << std::endl;
+    std::cout << " MixingModule::branchesActivate " << " friendlyName " << friendlyName << " subdet " << subdet
+	      << " tag " << tag << " label " << label << std::endl;
 #endif    
     label = tag.label() + tag.instance();
     wantedBranches_.push_back(friendlyName + '_' + tag.label() + '_' + tag.instance());
@@ -368,13 +369,15 @@ namespace edm {
       for (auto const& worker : workersObjects_) {
 	//bool result = worker->checkSignal(e);
 #ifdef EDM_ML_DEBUG
-	std::cout << " MixingModule::checkSignal " << std::boolalpha << " skipSignal_: " << skipSignal_ << ", MixingWorker:checkSignal: " << result << std::endl;
+	std::cout << " MixingModule::checkSignal " << std::boolalpha << " skipSignal_: "
+		  << skipSignal_ << ", MixingWorker:checkSignal: " << worker->checkSignal(e) << std::endl;
 #endif	
 	//        if (skipSignal_ or result) {
         if (skipSignal_ or worker->checkSignal(e)) {
           workers_.push_back(worker);
 #ifdef EDM_ML_DEBUG	  
-	  std::cout << " MixingModule::checkSignal " << " Worker with InputTag " << worker->getInputTag() <<" stored " << std::endl;
+	  std::cout << " MixingModule::checkSignal " << " Worker with InputTag " << worker->getInputTag()
+		    << " stored " << std::endl;
 #endif	  
         }
       }

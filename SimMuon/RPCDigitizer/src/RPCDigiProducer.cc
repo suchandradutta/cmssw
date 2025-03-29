@@ -37,13 +37,13 @@ RPCDigiProducer::RPCDigiProducer(const edm::ParameterSet& ps) {
   produces<RPCDigitizerSimLinks>("RPCDigiSimLink");
 
   //Name of Collection used for create the XF
-  std::string mix_ = ps.getParameter<std::string>("mixLabel");
+  const std::string mix_ = ps.getParameter<std::string>("mixLabel");
 
-  std::set<std::string> collections_for_XF = { ps.getParameter<std::string>("InputCollection"),
-                                               ps.getParameter<std::string>("InputCollectionPU")};
-  for (auto & cname : collections_for_XF) {    
+  const std::set<std::string> collections_for_XF = { ps.getParameter<std::string>("InputCollection"),
+                                                     ps.getParameter<std::string>("InputCollectionPU")};
+  for (auto const& cname: collections_for_XF) {    
 #ifdef EDM_ML_DEBUG
-    std::cout << " RPCDigiProducer::Creating Crossing Frame Consumers for InputTag " << mix << ":"<<cname << std::endl;
+    std::cout << " RPCDigiProducer::CreatingCrossing Frame Consumers for InputTag " << mix_ << ":" << cname << std::endl;
 #endif    
     crossingFrameTokens.push_back(consumes<CrossingFrame<PSimHit>>(edm::InputTag(mix_, cname)));
   }    
@@ -101,8 +101,6 @@ void RPCDigiProducer::produce(edm::Event& e, const edm::EventSetup& eventSetup) 
   //New code, based on tokens
   std::vector<const CrossingFrame <PSimHit> *> cf_list;
   for (auto const &token : crossingFrameTokens) {
-    //    edm::Handle<CrossingFrame<PSimHit>> cf_handle;
-    //    e.getByToken(cf_token, cf_handle);
     const auto& handle = e.getHandle(token);
     if (handle.isValid()) {
       cf_list.emplace_back(handle.product());

@@ -122,10 +122,14 @@ private:
   const std::string m_ESdigiCollection;
   const std::string m_hitsProducerTag;
   const std::string m_hitsProducerTagPU;
-
+#if 0
   const edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsEBToken_;
   const edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsEEToken_;
   const edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsESToken_;
+#endif
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsEBToken_;
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsEEToken_;
+  edm::EDGetTokenT<std::vector<PCaloHit>> m_HitsESToken_;
 
   const edm::ESGetToken<EcalPedestals, EcalPedestalsRcd> m_pedestalsToken;
   const edm::ESGetToken<EcalIntercalibConstantsMC, EcalIntercalibConstantsMCRcd> m_icalToken;

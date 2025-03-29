@@ -110,11 +110,16 @@ namespace cms {
     if (store_SimHitEntryExitPoints_)
       producesCollector.produces<edm::DetSetVector<PixelSimHitExtraInfo> >().setBranchAlias(alias +
                                                                                             "siPixelExtraSimHit");
+    std::map<std::string, std::vector<std::string>> pmap = {
+      {hitsProducer, trackerContainers},
+      {hitsProducerPU, trackerContainersPU}
+    };
 
-    for (auto const& trackerContainer : trackerContainers) {
-      edm::InputTag tag(hitsProducer, trackerContainer);
-      iC.consumes<std::vector<PSimHit> >(edm::InputTag(hitsProducer, trackerContainer));
-    }
+    for (auto const& ip: pmap) {
+      for (auto const& ic: ip.second) {
+	iC.consumes<std::vector<PSimHit>>(edm::InputTag(ip.first, ic));
+      }
+    }    
     edm::Service<edm::RandomNumberGenerator> rng;
     if (!rng.isAvailable()) {
       throw cms::Exception("Configuration")
@@ -369,11 +374,11 @@ namespace cms {
     _pixeldigialgo->resetSimHitMaps();
 
     // Step C: create collection with the cache vector of DetSet
-    std::unique_ptr<edm::DetSetVector<PixelDigi> > output(new edm::DetSetVector<PixelDigi>(theDigiVector));
-    std::unique_ptr<edm::DetSetVector<PixelDigiSimLink> > outputlink(
-        new edm::DetSetVector<PixelDigiSimLink>(theDigiLinkVector));
-    std::unique_ptr<edm::DetSetVector<PixelSimHitExtraInfo> > outputExtraSim(
-        new edm::DetSetVector<PixelSimHitExtraInfo>(theExtraSimHitInfoVector));
+    std::unique_ptr<edm::DetSetVector<PixelDigi>> output = std::make_unique<edm::DetSetVector<PixelDigi>>(theDigiVector);
+    std::unique_ptr<edm::DetSetVector<PixelDigiSimLink>> outputlink
+      = std::make_unique<edm::DetSetVector<PixelDigiSimLink>>(theDigiLinkVector);
+    std::unique_ptr<edm::DetSetVector<PixelSimHitExtraInfo>> outputExtraSim
+      = std::make_unique<edm::DetSetVector<PixelSimHitExtraInfo>>(theExtraSimHitInfoVector);
 
     // Step D: write output to file
     iEvent.put(std::move(output));

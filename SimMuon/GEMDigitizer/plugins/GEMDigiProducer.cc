@@ -69,14 +69,14 @@ GEMDigiProducer::GEMDigiProducer(const edm::ParameterSet& ps) : gemDigiModule_(s
         << "Add the service in the configuration file or remove the modules that require it.";
   }
 
-  std::string mix_ = ps.getParameter<std::string>("mixLabel");
+  const std::string mix_ = ps.getParameter<std::string>("mixLabel");
 
-  std::set<std::string> collectionNames = { ps.getParameter<std::string>("inputCollection"),
-                                             ps.getParameter<std::string>("inputCollectionPU")};
+  const std::set<std::string> collectionNames = { ps.getParameter<std::string>("inputCollection"),
+                                                  ps.getParameter<std::string>("inputCollectionPU")};
   
-  for (auto & cname : collectionNames) {    
+  for (auto const& cname: collectionNames) {    
 #ifdef EDM_ML_DEBUG
-    std::cout << " GEMDigiProducer::Creating Crossing Frame Consumers for InputTag " << mix << ":"<<cname << std::endl;
+    std::cout << " GEMDigiProducer::Creating CrossingFrame Consumers for InputTag " << mix_ << ":" << cname << std::endl;
 #endif    
     cf_tokens_.push_back(consumes<CrossingFrame<PSimHit>>(edm::InputTag(mix_, cname)));
   }    
@@ -155,15 +155,12 @@ void GEMDigiProducer::produce(edm::Event& e, const edm::EventSetup& eventSetup) 
 
   std::vector<const CrossingFrame <PSimHit> *> cf_list;
   for (auto const &token : cf_tokens_) {
-    //    edm::Handle<CrossingFrame<PSimHit>> cf_handle;
-    //    e.getByToken(cf_token, cf_handle);
     const auto& handle = e.getHandle(token);
     if (handle.isValid()) {
       cf_list.emplace_back(handle.product());
     }      
   }
   
-  //  std::unique_ptr<MixCollection<PSimHit>> hits(new MixCollection<PSimHit>(cf_list));
   auto hits = std::make_unique<MixCollection<PSimHit>>(cf_list);
   
   // Create empty output

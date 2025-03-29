@@ -62,9 +62,9 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
       m_ESdigiCollection(params.getParameter<std::string>("ESdigiCollection")),
       m_hitsProducerTag(params.getParameter<std::string>("hitsProducer")),
       m_hitsProducerTagPU(params.getParameter<std::string>("hitsProducerPU")),      
-      m_HitsEBToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEB"))),
-      m_HitsEEToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEE"))),
-      m_HitsESToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsES"))),
+      //      m_HitsEBToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEB"))),
+      //      m_HitsEEToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEE"))),
+      //      m_HitsESToken_(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsES"))),
       m_pedestalsToken(iC.esConsumes()),
       m_icalToken(iC.esConsumes()),
       m_laserToken(iC.esConsumes()),
@@ -187,18 +187,24 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
   // mixMod.produces<EBDigiCollection>(m_EBdigiCollection);
   // mixMod.produces<EEDigiCollection>(m_EEdigiCollection);
   // mixMod.produces<ESDigiCollection>(m_ESdigiCollection);
-  if (m_doEB)
-    iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEB"));
-  if (m_doEE)
-    iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsEE"));
-  if (m_doES) {
-    iC.consumes<std::vector<PCaloHit>>(edm::InputTag(m_hitsProducerTag, "EcalHitsES"));
-    m_esGainToken = iC.esConsumes();
-    m_esMIPToGeVToken = iC.esConsumes();
-    m_esPedestalsToken = iC.esConsumes();
-    m_esMIPsToken = iC.esConsumes();
-  }
 
+  const std::set<std::string> producers = {m_hitsProducerTag, m_hitsProducerTagPU};
+  std::vector<edm::EDGetTokenT<std::vector<PCaloHit>>> eb_list, ee_list, es_list;
+  for (auto const& prod : producers) {
+    if (m_doEB) eb_list.push_back(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(prod, "EcalHitsEB")));
+    if (m_doEE) ee_list.push_back(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(prod, "EcalHitsEE")));
+    if (m_doES) {
+      es_list.push_back(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(prod, "EcalHitsES")));
+      m_esGainToken = iC.esConsumes();
+      m_esMIPToGeVToken = iC.esConsumes();
+      m_esPedestalsToken = iC.esConsumes();
+      m_esMIPsToken = iC.esConsumes();
+    }
+  }
+  if (m_doEB) m_HitsEBToken_ = eb_list[0];
+  if (m_doEE) m_HitsEEToken_ = ee_list[0];
+  if (m_doES) m_HitsESToken_ = es_list[0];    
+   
   const std::vector<double> ebCorMatG12 = params.getParameter<std::vector<double>>("EBCorrNoiseMatrixG12");
   const std::vector<double> eeCorMatG12 = params.getParameter<std::vector<double>>("EECorrNoiseMatrixG12");
   const std::vector<double> ebCorMatG06 = params.getParameter<std::vector<double>>("EBCorrNoiseMatrixG06");
@@ -426,9 +432,9 @@ void EcalDigiProducer::finalizeEvent(edm::Event &event, edm::EventSetup const &e
   std::unique_ptr<EBDigiCollection> apdResult(!m_apdSeparateDigi || !m_doEB ? nullptr : new EBDigiCollection());
   std::unique_ptr<EBDigiCollection> componentResult(!m_componentSeparateDigi || !m_doEB ? nullptr
                                                                                         : new EBDigiCollection());
-  std::unique_ptr<EBDigiCollection> barrelResult(new EBDigiCollection());
-  std::unique_ptr<EEDigiCollection> endcapResult(new EEDigiCollection());
-  std::unique_ptr<ESDigiCollection> preshowerResult(new ESDigiCollection());
+  std::unique_ptr<EBDigiCollection> barrelResult = std::make_unique<EBDigiCollection>();
+  std::unique_ptr<EEDigiCollection> endcapResult = std::make_unique<EEDigiCollection>();
+  std::unique_ptr<ESDigiCollection> preshowerResult = std::make_unique<ESDigiCollection>();
 
   // run the algorithm
 

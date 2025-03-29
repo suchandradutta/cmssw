@@ -47,18 +47,17 @@ CSCDigiProducer::CSCDigiProducer(const edm::ParameterSet &ps) : theDigitizer(ps)
                                              "in the configuration file or remove the modules that require it.";
   }
 
-  std::string mix_ = ps.getParameter<std::string>("mixLabel");
+  const std::string mix_ = ps.getParameter<std::string>("mixLabel");
 
-  std::set<std::string> collections_ = {ps.getParameter<std::string>("InputCollection"),
-                                        ps.getParameter<std::string>("InputCollectionPU")};
+  const std::set<std::string> collections_ = {ps.getParameter<std::string>("InputCollection"),
+                                              ps.getParameter<std::string>("InputCollectionPU")};
 
-  for (auto & cname : collections_) {    
+  for (auto const& cname: collections_) {    
 #ifdef EDM_ML_DEBUG
-    std::cout << " CSCDigiProducer::Creating Crossing Frame Consumers for InputTag " << mix_ << ":"<<cname << std::endl;
+    std::cout << " CSCDigiProducer::Creating CrossingFrame Consumers for InputTag " << mix_ << ":" << cname << std::endl;
 #endif    
     cf_tokens.push_back(consumes<CrossingFrame<PSimHit>>(edm::InputTag(mix_, cname)));
-  }    
-
+  }
 }
 
 CSCDigiProducer::~CSCDigiProducer() { delete theStripConditions; }
@@ -71,8 +70,6 @@ void CSCDigiProducer::produce(edm::Event &ev, const edm::EventSetup &eventSetup)
 
   std::vector<const CrossingFrame <PSimHit> *> cf_list;
   for (auto const &token : cf_tokens) {
-    //    edm::Handle<CrossingFrame<PSimHit>> handle;
-    //    ev.getByToken(token, handle);
     const auto& handle = ev.getHandle(token);
     if (handle.isValid()) {
       cf_list.emplace_back(handle.product());

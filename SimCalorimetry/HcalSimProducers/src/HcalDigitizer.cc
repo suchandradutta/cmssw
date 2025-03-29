@@ -99,8 +99,8 @@ HcalDigitizer::HcalDigitizer(const edm::ParameterSet &ps, edm::ConsumesCollector
       deliveredLumi(0.),
       agingFlagHB(ps.getParameter<bool>("HBDarkening")),
       agingFlagHE(ps.getParameter<bool>("HEDarkening")),
-      zdcToken_(iC.consumes(edm::InputTag(hitsProducer_, "ZDCHITS"))),
-      hcalToken_(iC.consumes(edm::InputTag(hitsProducer_, "HcalHits"))),
+      //      zdcToken_(iC.consumes(edm::InputTag(hitsProducer_, "ZDCHITS"))),
+      //      hcalToken_(iC.consumes(edm::InputTag(hitsProducer_, "HcalHits"))),
       m_HBDarkening(nullptr),
       m_HEDarkening(nullptr),
       m_HFRecalibration(nullptr),
@@ -116,6 +116,15 @@ HcalDigitizer::HcalDigitizer(const edm::ParameterSet &ps, edm::ConsumesCollector
   if (theHOSiPMCode == 2) {
     mcParamsToken_ = iC.esConsumes();
   }
+
+  const std::set<std::string> producers = {hitsProducer_, hitsProducerPU_};
+  std::vector<edm::EDGetTokenT<std::vector<PCaloHit>>> zdc_list, hcal_list;
+  for (auto const& prod: producers) {    
+    zdc_list.push_back(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(prod, "ZDCHITS")));
+    hcal_list.push_back(iC.consumes<std::vector<PCaloHit>>(edm::InputTag(prod, "HcalHits")));
+  }
+  zdcToken_  = zdc_list[0];
+  hcalToken_ = hcal_list[0];
 
   bool doNoise = ps.getParameter<bool>("doNoise");
 
@@ -461,10 +470,19 @@ void HcalDigitizer::accumulate(PileUpEventPrincipal const &e,
 
 void HcalDigitizer::finalizeEvent(edm::Event &e, const edm::EventSetup &eventSetup, CLHEP::HepRandomEngine *engine) {
   // Step B: Create empty output
-  std::unique_ptr<HBHEDigiCollection> hbheResult(new HBHEDigiCollection());
-  std::unique_ptr<HODigiCollection> hoResult(new HODigiCollection());
-  std::unique_ptr<HFDigiCollection> hfResult(new HFDigiCollection());
-  std::unique_ptr<ZDCDigiCollection> zdcResult(new ZDCDigiCollection());
+  std::unique_ptr<HBHEDigiCollection> hbheResult = std::make_unique<HBHEDigiCollection>();
+  std::unique_ptr<HODigiCollection> hoResult = std::make_unique<HODigiCollection>();
+  std::unique_ptr<HFDigiCollection> hfResult = std::make_unique<HFDigiCollection>();
+  std::unique_ptr<ZDCDigiCollection> zdcResult = std::make_unique<ZDCDigiCollection>();
+  std::unique_ptr<QIE10DigiCollection> hfQIE10Result = std::make_unique<QIE10DigiCollection>(
+      !theHFQIE10DetIds.empty() ? theHFQIE10Response.get()->getReadoutFrameSize(theHFQIE10DetIds[0])
+                                : QIE10DigiCollection::MAXSAMPLES);
+  std::unique_ptr<QIE11DigiCollection> hbheQIE11Result = std::make_unique<QIE11DigiCollection>(
+      !theHBHEQIE11DetIds.empty() ? theHBHESiPMResponse.get()->getReadoutFrameSize(theHBHEQIE11DetIds[0]) :
+                                  //      theParameterMap->simParameters(theHBHEQIE11DetIds[0]).readoutFrameSize()
+          //      :
+          QIE11DigiCollection::MAXSAMPLES);
+#if 0
   std::unique_ptr<QIE10DigiCollection> hfQIE10Result(new QIE10DigiCollection(
       !theHFQIE10DetIds.empty() ? theHFQIE10Response.get()->getReadoutFrameSize(theHFQIE10DetIds[0])
                                 : QIE10DigiCollection::MAXSAMPLES));
@@ -473,7 +491,7 @@ void HcalDigitizer::finalizeEvent(edm::Event &e, const edm::EventSetup &eventSet
                                   //      theParameterMap->simParameters(theHBHEQIE11DetIds[0]).readoutFrameSize()
           //      :
           QIE11DigiCollection::MAXSAMPLES));
-
+#endif
   // Step C: Invoke the algorithm, getting back outputs.
   if (isHCAL && hbhegeo) {
     if (theHBHEDigitizer)
@@ -522,7 +540,7 @@ void HcalDigitizer::finalizeEvent(edm::Event &e, const edm::EventSetup &eventSet
   e.put(std::move(hbheQIE11Result), "HBHEQIE11DigiCollection");
 
   if (debugCS_) {
-    std::unique_ptr<CaloSamplesCollection> csResult(new CaloSamplesCollection());
+    std::unique_ptr<CaloSamplesCollection> csResult = std::make_unique<CaloSamplesCollection>();
     // smush together all the results
     if (theHBHEDigitizer)
       csResult->insert(
@@ -549,7 +567,7 @@ void HcalDigitizer::finalizeEvent(edm::Event &e, const edm::EventSetup &eventSet
   }
 
   if (injectTestHits_) {
-    std::unique_ptr<edm::PCaloHitContainer> pcResult(new edm::PCaloHitContainer());
+    std::unique_ptr<edm::PCaloHitContainer> pcResult = std::make_unique<edm::PCaloHitContainer>();
     pcResult->insert(pcResult->end(), injectedHits_.begin(), injectedHits_.end());
     e.put(std::move(pcResult), "HcalHits");
   }

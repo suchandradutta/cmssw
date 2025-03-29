@@ -1,3 +1,4 @@
+<use name="CondFormats/SiStripObjects"/>
 <use name="CalibFormats/SiStripObjects"/>
 <use name="DataFormats/SiStripDigi"/>
 <use name="FWCore/ParameterSet"/>

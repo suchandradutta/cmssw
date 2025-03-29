@@ -97,10 +97,18 @@ SiStripDigitizer::SiStripDigitizer(const edm::ParameterSet& conf,
   producesCollector.produces<bool>("SimulatedAPVDynamicGain").setBranchAlias(alias + "SimulatedAPVDynamicGain");
   producesCollector.produces<std::vector<std::pair<int, std::bitset<6>>>>("AffectedAPVList")
       .setBranchAlias(alias + "AffectedAPV");
-  for (auto const& trackerContainer : trackerContainers) {
-    edm::InputTag tag(hitsProducer, trackerContainer);
-    iC.consumes<std::vector<PSimHit>>(edm::InputTag(hitsProducer, trackerContainer));
-  }
+
+  //  const std::set<std::string> hit_producers = {hitsProducer, hitsProducerPU};
+  std::map<std::string, std::vector<std::string>> pmap = {
+    {hitsProducer, trackerContainers},
+    {hitsProducerPU, trackerContainersPU}
+  };
+  for (auto const& ip: pmap) {
+    for (auto const& ic: ip.second) {
+      iC.consumes<std::vector<PSimHit>>(edm::InputTag(ip.first, ic));
+    }
+  }    
+
   edm::Service<edm::RandomNumberGenerator> rng;
   if (!rng.isAvailable()) {
     throw cms::Exception("Configuration")
@@ -258,11 +266,11 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
   }
   std::vector<edm::DetSet<SiStripDigi>> theDigiVector;
   std::vector<edm::DetSet<SiStripRawDigi>> theRawDigiVector;
-  std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> theStripAmplitudeVector(new edm::DetSetVector<SiStripRawDigi>());
-  std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> theStripAmplitudeVectorPostAPV(
-      new edm::DetSetVector<SiStripRawDigi>());
-  std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> theStripAPVBaselines(new edm::DetSetVector<SiStripRawDigi>());
-  std::unique_ptr<edm::DetSetVector<StripDigiSimLink>> pOutputDigiSimLink(new edm::DetSetVector<StripDigiSimLink>);
+  std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> theStripAmplitudeVector = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+  std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> theStripAmplitudeVectorPostAPV
+    = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+  std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> theStripAPVBaselines = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+  std::unique_ptr<edm::DetSetVector<StripDigiSimLink>> pOutputDigiSimLink = std::make_unique<edm::DetSetVector<StripDigiSimLink>>();
 
   const TrackerTopology* tTopo = &iSetup.getData(tTopoToken_);
 
@@ -333,12 +341,12 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
     std::cout << " SiStripDigitizer::finalize  Size of Digis " << totalDigis << std::endl;
 #endif    
     // Step C: create output collection
-    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_virginraw(new edm::DetSetVector<SiStripRawDigi>());
-    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_scopemode(new edm::DetSetVector<SiStripRawDigi>());
-    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_processedraw(new edm::DetSetVector<SiStripRawDigi>());
-    std::unique_ptr<edm::DetSetVector<SiStripDigi>> output(new edm::DetSetVector<SiStripDigi>(theDigiVector));
-    std::unique_ptr<std::vector<std::pair<int, std::bitset<6>>>> AffectedAPVList(
-        new std::vector<std::pair<int, std::bitset<6>>>(theAffectedAPVvector));
+    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_virginraw = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_scopemode = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_processedraw = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+    std::unique_ptr<edm::DetSetVector<SiStripDigi>> output = std::make_unique<edm::DetSetVector<SiStripDigi>>(theDigiVector);
+    std::unique_ptr<std::vector<std::pair<int, std::bitset<6>>>> AffectedAPVList
+      = std::make_unique<std::vector<std::pair<int, std::bitset<6>>>>(theAffectedAPVvector);
 
     // Step D: write output to file
     iEvent.put(std::move(output), ZSDigi);
@@ -355,11 +363,11 @@ void SiStripDigitizer::finalizeEvent(edm::Event& iEvent, edm::EventSetup const& 
           std::move(pOutputDigiSimLink));  // The previous EDProducer didn't name this collection so I won't either
   } else {
     // Step C: create output collection
-    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_virginraw(
-        new edm::DetSetVector<SiStripRawDigi>(theRawDigiVector));
-    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_scopemode(new edm::DetSetVector<SiStripRawDigi>());
-    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_processedraw(new edm::DetSetVector<SiStripRawDigi>());
-    std::unique_ptr<edm::DetSetVector<SiStripDigi>> output(new edm::DetSetVector<SiStripDigi>());
+    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_virginraw
+      = std::make_unique<edm::DetSetVector<SiStripRawDigi>>(theRawDigiVector);
+    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_scopemode = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+    std::unique_ptr<edm::DetSetVector<SiStripRawDigi>> output_processedraw = std::make_unique<edm::DetSetVector<SiStripRawDigi>>();
+    std::unique_ptr<edm::DetSetVector<SiStripDigi>> output = std::make_unique<edm::DetSetVector<SiStripDigi>>();
 
     // Step D: write output to file
     iEvent.put(std::move(output), ZSDigi);
