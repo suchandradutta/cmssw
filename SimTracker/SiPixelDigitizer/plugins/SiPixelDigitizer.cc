@@ -228,6 +228,7 @@ namespace cms {
       edm::InputTag tag(hitsProducer, *i);
 
       iEvent.getByLabel(tag, simHits);
+      if (!simHits.isValid()) continue;      
 #ifdef EDM_ML_DEBUG
       std::cout << " SiPixelDigitizer::accumulate " << " Accumulating SimHits for Signals with InputTag " << tag << std::endl;
 #endif      
@@ -240,8 +241,7 @@ namespace cms {
       // as though they were on the end of this collection.
       // Note that this is only used for creating digi-sim links (if configured to do so).
       //       std::cout << "index offset, current hit count = " << crossingSimHitIndexOffset_[tag.encode()] << ", " << simHits->size() << std::endl;
-      if (simHits.isValid())
-        crossingSimHitIndexOffset_[tag.encode()] += simHits->size();
+      crossingSimHitIndexOffset_[tag.encode()] += simHits->size();
     }
   }
 
@@ -254,6 +254,8 @@ namespace cms {
       edm::InputTag tag(hitsProducerPU, *i);
 
       iEvent.getByLabel(tag, simHits);
+      
+      if (!simHits.isValid()) continue;      
 #ifdef EDM_ML_DEBUG
       std::cout << " SiPixelDigitizer::accumulate " << " Accumulating SimHits for PUs with InputTag " << tag << std::endl;
 #endif      
@@ -293,7 +295,7 @@ namespace cms {
       }
       iEvent.put(std::move(PixelFEDChannelCollection_));
     }
-
+    int totalDigis = 0; 
     for (const auto& iu : pDD->detUnits()) {
       if (iu->type().isTrackerPixel()) {
         //
@@ -368,7 +370,8 @@ namespace cms {
         }
         if (!tempSHcollector.data.empty()) {
           theExtraSimHitInfoVector.push_back(std::move(tempSHcollector));
-        }
+        }	
+	totalDigis += collector.data.size();
       }
     }
     _pixeldigialgo->resetSimHitMaps();
@@ -379,8 +382,11 @@ namespace cms {
       = std::make_unique<edm::DetSetVector<PixelDigiSimLink>>(theDigiLinkVector);
     std::unique_ptr<edm::DetSetVector<PixelSimHitExtraInfo>> outputExtraSim
       = std::make_unique<edm::DetSetVector<PixelSimHitExtraInfo>>(theExtraSimHitInfoVector);
-
-    // Step D: write output to file
+ 
+#ifdef EDM_ML_DEBUG
+    std::cout << " SiPixelDigitizer::finalize  Size of Digis " << totalDigis << std::endl;
+#endif    
+   // Step D: write output to file
     iEvent.put(std::move(output));
     iEvent.put(std::move(outputlink));
     if (store_SimHitEntryExitPoints_)

@@ -79,27 +79,27 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
       m_EEs25notCont(params.getParameter<double>("EEs25notContainment")),
 
       m_readoutFrameSize(ecalPh1::sampleSize),
-      m_ParameterMap(new EcalSimParameterMap(params.getParameter<double>("simHitToPhotoelectronsBarrel"),
-                                             params.getParameter<double>("simHitToPhotoelectronsEndcap"),
-                                             params.getParameter<double>("photoelectronsToAnalogBarrel"),
-                                             params.getParameter<double>("photoelectronsToAnalogEndcap"),
-                                             params.getParameter<double>("samplingFactor"),
-                                             params.getParameter<double>("timePhase"),
-                                             m_readoutFrameSize,
-                                             params.getParameter<int>("binOfMaximum"),
-                                             params.getParameter<bool>("doPhotostatistics"),
-                                             params.getParameter<bool>("syncPhase"))),
+      m_ParameterMap(std::make_unique<EcalSimParameterMap>(params.getParameter<double>("simHitToPhotoelectronsBarrel"),
+							   params.getParameter<double>("simHitToPhotoelectronsEndcap"),
+							   params.getParameter<double>("photoelectronsToAnalogBarrel"),
+							   params.getParameter<double>("photoelectronsToAnalogEndcap"),
+							   params.getParameter<double>("samplingFactor"),
+							   params.getParameter<double>("timePhase"),
+							   m_readoutFrameSize,
+							   params.getParameter<int>("binOfMaximum"),
+							   params.getParameter<bool>("doPhotostatistics"),
+							   params.getParameter<bool>("syncPhase"))),
 
       m_apdDigiTag(params.getParameter<std::string>("apdDigiTag")),
-      m_apdParameters(new APDSimParameters(params.getParameter<bool>("apdAddToBarrel"),
-                                           m_apdSeparateDigi,
-                                           params.getParameter<double>("apdSimToPELow"),
-                                           params.getParameter<double>("apdSimToPEHigh"),
-                                           params.getParameter<double>("apdTimeOffset"),
-                                           params.getParameter<double>("apdTimeOffWidth"),
-                                           params.getParameter<bool>("apdDoPEStats"),
-                                           m_apdDigiTag,
-                                           params.getParameter<std::vector<double>>("apdNonlParms"))),
+      m_apdParameters(std::make_unique<APDSimParameters>(params.getParameter<bool>("apdAddToBarrel"),
+							 m_apdSeparateDigi,
+							 params.getParameter<double>("apdSimToPELow"),
+							 params.getParameter<double>("apdSimToPEHigh"),
+							 params.getParameter<double>("apdTimeOffset"),
+							 params.getParameter<double>("apdTimeOffWidth"),
+							 params.getParameter<bool>("apdDoPEStats"),
+							 m_apdDigiTag,
+							 params.getParameter<std::vector<double>>("apdNonlParms"))),
 
       m_componentDigiTag(params.getParameter<std::string>("componentDigiTag")),
       m_componentParameters(
@@ -117,14 +117,14 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
                                                      params.getParameter<bool>("syncPhase"))),
 
       m_APDResponse(!m_apdSeparateDigi ? nullptr
-                                       : new EBHitResponse(m_ParameterMap.get(),
-                                                           &m_EBShape,
-                                                           true,
-                                                           false,
-                                                           m_apdParameters.get(),
-                                                           &m_APDShape,
-                                                           m_componentParameters.get(),
-                                                           &m_ComponentShapes)),
+		    : std::make_unique<EBHitResponse>(m_ParameterMap.get(),
+						      &m_EBShape,
+						      true,
+						      false,
+						      m_apdParameters.get(),
+						      &m_APDShape,
+						      m_componentParameters.get(),
+						      &m_ComponentShapes)),
 
       m_ComponentResponse(!m_componentSeparateDigi
                               ? nullptr
@@ -138,18 +138,18 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
                                     m_componentParameters.get(),
                                     &m_ComponentShapes)),  // check if that false is correct // TODO HERE JCH
 
-      m_EBResponse(new EBHitResponse(m_ParameterMap.get(),
-                                     &m_EBShape,
-                                     false,  // barrel
-                                     false,  // normal non-component shape based
-                                     m_apdParameters.get(),
-                                     &m_APDShape,
-                                     m_componentParameters.get(),
-                                     &m_ComponentShapes)),
+      m_EBResponse(std::make_unique<EBHitResponse>(m_ParameterMap.get(),
+						  &m_EBShape,
+						  false,  // barrel
+						   false,  // normal non-component shape based
+						   m_apdParameters.get(),
+						   &m_APDShape,
+						   m_componentParameters.get(),
+						   &m_ComponentShapes)),
 
-      m_EEResponse(new EEHitResponse(m_ParameterMap.get(), &m_EEShape)),
-      m_ESResponse(new ESHitResponse(m_ParameterMap.get(), &m_ESShape)),
-      m_ESOldResponse(new CaloHitResponse(m_ParameterMap.get(), &m_ESShape)),
+      m_EEResponse(std::make_unique<EEHitResponse>(m_ParameterMap.get(), &m_EEShape)),
+      m_ESResponse(std::make_unique<ESHitResponse>(m_ParameterMap.get(), &m_ESShape)),
+      m_ESOldResponse(std::make_unique<CaloHitResponse>(m_ParameterMap.get(), &m_ESShape)),
 
       m_addESNoise(params.getParameter<bool>("doESNoise")),
       m_PreMix1(params.getParameter<bool>("EcalPreMixStage1")),
@@ -161,15 +161,15 @@ EcalDigiProducer::EcalDigiProducer(const edm::ParameterSet &params, edm::Consume
       m_doEE(params.getParameter<bool>("doEE")),
       m_doES(params.getParameter<bool>("doES")),
 
-      m_ESElectronicsSim(m_doFastES ? nullptr : new ESElectronicsSim(m_addESNoise)),
+      m_ESElectronicsSim(m_doFastES ? nullptr : std::make_unique<ESElectronicsSim>(m_addESNoise)),
 
       m_ESOldDigitizer(m_doFastES ? nullptr
-                                  : new ESOldDigitizer(m_ESOldResponse.get(), m_ESElectronicsSim.get(), m_addESNoise)),
+		       : std::make_unique<ESOldDigitizer>(m_ESOldResponse.get(), m_ESElectronicsSim.get(), m_addESNoise)),
 
-      m_ESElectronicsSimFast(!m_doFastES ? nullptr : new ESElectronicsSimFast(m_addESNoise, m_PreMix1)),
+      m_ESElectronicsSimFast(!m_doFastES ? nullptr : std::make_unique<ESElectronicsSimFast>(m_addESNoise, m_PreMix1)),
 
       m_ESDigitizer(!m_doFastES ? nullptr
-                                : new ESDigitizer(m_ESResponse.get(), m_ESElectronicsSimFast.get(), m_addESNoise)),
+		    : std::make_unique<ESDigitizer>(m_ESResponse.get(), m_ESElectronicsSimFast.get(), m_addESNoise)),
 
       m_APDDigitizer(nullptr),
       m_ComponentDigitizer(nullptr),
@@ -381,19 +381,24 @@ void EcalDigiProducer::accumulateCaloHits(HitsHandle const &ebHandle,
 
 void EcalDigiProducer::accumulate(edm::Event const &e, edm::EventSetup const &eventSetup) {
   // Step A: Get Inputs
-  const edm::Handle<std::vector<PCaloHit>> &ebHandle = e.getHandle(m_HitsEBToken_);
+  edm::Handle<std::vector<PCaloHit>> ebHandle;
   if (m_doEB) {
+    ebHandle = e.getHandle(m_HitsEBToken_);
     m_EBShape.setEventSetup(eventSetup);
     m_APDShape.setEventSetup(eventSetup);
     m_ComponentShapes.setEventSetup(eventSetup);
   }
 
-  const edm::Handle<std::vector<PCaloHit>> &eeHandle = e.getHandle(m_HitsEEToken_);
+  edm::Handle<std::vector<PCaloHit>> eeHandle;
   if (m_doEE) {
+    eeHandle = e.getHandle(m_HitsEEToken_);    
     m_EEShape.setEventSetup(eventSetup);
   }  
 
-  const edm::Handle<std::vector<PCaloHit>> &esHandle = e.getHandle(m_HitsESToken_);
+  edm::Handle<std::vector<PCaloHit>> esHandle(nullptr);
+  if (m_doES) {
+    esHandle = e.getHandle(m_HitsESToken_);
+  }    
 #ifdef EDM_ML_DEBUG
   std::cout << " EcalDigiProducer::accumulate Signal Hits with Tag " << m_hitsProducerTag <<  std::endl;
 #endif  
@@ -429,9 +434,9 @@ void EcalDigiProducer::accumulate(PileUpEventPrincipal const &e,
 
 void EcalDigiProducer::finalizeEvent(edm::Event &event, edm::EventSetup const &eventSetup) {
   // Step B: Create empty output
-  std::unique_ptr<EBDigiCollection> apdResult(!m_apdSeparateDigi || !m_doEB ? nullptr : new EBDigiCollection());
+  std::unique_ptr<EBDigiCollection> apdResult = (!m_apdSeparateDigi || !m_doEB ? nullptr : std::make_unique<EBDigiCollection>());
   std::unique_ptr<EBDigiCollection> componentResult(!m_componentSeparateDigi || !m_doEB ? nullptr
-                                                                                        : new EBDigiCollection());
+						    : std::make_unique<EBDigiCollection>());
   std::unique_ptr<EBDigiCollection> barrelResult = std::make_unique<EBDigiCollection>();
   std::unique_ptr<EEDigiCollection> endcapResult = std::make_unique<EEDigiCollection>();
   std::unique_ptr<ESDigiCollection> preshowerResult = std::make_unique<ESDigiCollection>();

@@ -99,8 +99,6 @@ HcalDigitizer::HcalDigitizer(const edm::ParameterSet &ps, edm::ConsumesCollector
       deliveredLumi(0.),
       agingFlagHB(ps.getParameter<bool>("HBDarkening")),
       agingFlagHE(ps.getParameter<bool>("HEDarkening")),
-      //      zdcToken_(iC.consumes(edm::InputTag(hitsProducer_, "ZDCHITS"))),
-      //      hcalToken_(iC.consumes(edm::InputTag(hitsProducer_, "HcalHits"))),
       m_HBDarkening(nullptr),
       m_HEDarkening(nullptr),
       m_HFRecalibration(nullptr),
@@ -482,16 +480,7 @@ void HcalDigitizer::finalizeEvent(edm::Event &e, const edm::EventSetup &eventSet
                                   //      theParameterMap->simParameters(theHBHEQIE11DetIds[0]).readoutFrameSize()
           //      :
           QIE11DigiCollection::MAXSAMPLES);
-#if 0
-  std::unique_ptr<QIE10DigiCollection> hfQIE10Result(new QIE10DigiCollection(
-      !theHFQIE10DetIds.empty() ? theHFQIE10Response.get()->getReadoutFrameSize(theHFQIE10DetIds[0])
-                                : QIE10DigiCollection::MAXSAMPLES));
-  std::unique_ptr<QIE11DigiCollection> hbheQIE11Result(new QIE11DigiCollection(
-      !theHBHEQIE11DetIds.empty() ? theHBHESiPMResponse.get()->getReadoutFrameSize(theHBHEQIE11DetIds[0]) :
-                                  //      theParameterMap->simParameters(theHBHEQIE11DetIds[0]).readoutFrameSize()
-          //      :
-          QIE11DigiCollection::MAXSAMPLES));
-#endif
+
   // Step C: Invoke the algorithm, getting back outputs.
   if (isHCAL && hbhegeo) {
     if (theHBHEDigitizer)

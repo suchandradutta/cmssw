@@ -169,6 +169,11 @@ void SiStripDigitizer::accumulate(edm::Event const& iEvent, edm::EventSetup cons
       tofBin = StripDigiSimLink::HighTof;
 
     iEvent.getByLabel(tag, simHits);
+    
+    if (!simHits.isValid()) continue;      
+#ifdef EDM_ML_DEBUG
+    std::cout << " SiStripDigitizer::accumulate " << " Accumulating SimHits for Signals with InputTag " << tag << std::endl;
+#endif      
     accumulateStripHits(simHits, tTopo, crossingSimHitIndexOffset_[tag.encode()], tofBin);
     // Now that the hits have been processed, I'll add the amount of hits in this crossing on to
     // the global counter. Next time accumulateStripHits() is called it will count the sim hits
@@ -197,6 +202,11 @@ void SiStripDigitizer::accumulate(PileUpEventPrincipal const& iEvent,
       tofBin = StripDigiSimLink::HighTof;
 
     iEvent.getByLabel(tag, simHits);
+    if (!simHits.isValid()) continue;      
+#ifdef EDM_ML_DEBUG
+    std::cout << " SiStripDigitizer::accumulate " << " Accumulating SimHits for PUs with InputTag " << tag << std::endl;
+#endif      
+    
     accumulateStripHits(simHits, tTopo, crossingSimHitIndexOffset_[tag.encode()], tofBin);
     // Now that the hits have been processed, I'll add the amount of hits in this crossing on to
     // the global counter. Next time accumulateStripHits() is called it will count the sim hits
