@@ -10,7 +10,6 @@ hcalSimBlock = cms.PSet(
     # whether cells with MC signal get noise added
     doNoise = cms.bool(True),
     killHE = cms.bool(False),
-    doZDCDigi = cms.bool(True),
     HcalPreMixStage1 = cms.bool(False),
     HcalPreMixStage2 = cms.bool(False),
     # whether cells with no MC signal get an empty signal created
@@ -21,6 +20,7 @@ hcalSimBlock = cms.PSet(
     doTimeSlew = cms.bool(True),
     doHFWindow = cms.bool(False),
     hitsProducer = cms.string('g4SimHits'),
+    hitsProducerPU = cms.string('g4SimHits'),
     DelivLuminosity = cms.double(0),
     TestNumbering = cms.bool(False),
     doNeutralDensityFilter = cms.bool(True),
@@ -46,7 +46,14 @@ hcalSimBlock = cms.PSet(
 )
 
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
-fastSim.toModify( hcalSimBlock, hitsProducer = "fastSimProducer" )
+fastSim.toModify( hcalSimBlock,
+                  hitsProducer   = cms.string('fastSimProducer'), 
+                  hitsProducerPU = cms.string('fastSimProducer') )
+
+from Configuration.ProcessModifiers.fastSimPU_cff import fastSimPU
+fastSimPU.toModify( hcalSimBlock,
+                  hitsProducer   = cms.string('g4SimHits'),                     
+                  hitsProducerPU = cms.string('fastSimProducer') )
 
 from Configuration.ProcessModifiers.premix_stage1_cff import premix_stage1
 premix_stage1.toModify(hcalSimBlock,
@@ -60,16 +67,8 @@ premix_stage1.toModify(hcalSimBlock,
 
 # test numbering not used in fastsim
 from Configuration.Eras.Modifier_run2_HCAL_2017_cff import run2_HCAL_2017
-(run2_HCAL_2017 & ~fastSim).toModify( hcalSimBlock, TestNumbering = True )
+(run2_HCAL_2017 & ~fastSim).toModify( hcalSimBlock, TestNumbering = cms.bool(True) )
 
 # remove HE processing for phase 2, completely put in HGCal land
-# Also inhibit ZDC digitization
 from Configuration.Eras.Modifier_phase2_hgcal_cff import phase2_hgcal
-phase2_hgcal.toModify(hcalSimBlock,
-                      doZDCDigi = False,
-                      killHE = True
-)
-
-# inhibit ZDC digitization
-from Configuration.Eras.Modifier_zdcNoDigi_cff import zdcNoDigi
-zdcNoDigi.toModify(hcalSimBlock, doZDCDigi = False )
+phase2_hgcal.toModify(hcalSimBlock, killHE = cms.bool(True) )

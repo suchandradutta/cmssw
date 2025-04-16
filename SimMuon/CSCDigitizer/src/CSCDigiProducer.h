@@ -27,8 +27,7 @@ public:
 private:
   CSCDigitizer theDigitizer;
   CSCStripConditions *theStripConditions;
-
-  edm::EDGetTokenT<CrossingFrame<PSimHit>> cf_token;
+  std::vector<edm::EDGetTokenT<CrossingFrame<PSimHit>>> cf_tokens;
   edm::ESGetToken<CSCGeometry, MuonGeometryRecord> geom_Token;
   edm::ESGetToken<MagneticField, IdealMagneticFieldRecord> magfield_Token;
   edm::ESGetToken<ParticleDataTable, edm::DefaultRecord> pdt_Token;

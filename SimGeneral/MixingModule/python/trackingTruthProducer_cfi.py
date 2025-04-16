@@ -21,12 +21,14 @@ trackingParticles = cms.PSet(
 			cms.InputTag('g4SimHits','TrackerHitsTECLowTof'),
 			cms.InputTag('g4SimHits','TrackerHitsTECHighTof') ),
 		pixel = cms.VInputTag(cms.InputTag( 'g4SimHits','TrackerHitsPixelBarrelLowTof'),
-        	cms.InputTag('g4SimHits','TrackerHitsPixelBarrelHighTof'),
-        	cms.InputTag('g4SimHits','TrackerHitsPixelEndcapLowTof'),
-        	cms.InputTag('g4SimHits','TrackerHitsPixelEndcapHighTof') )
+              	        cms.InputTag('g4SimHits','TrackerHitsPixelBarrelHighTof'),
+        	        cms.InputTag('g4SimHits','TrackerHitsPixelEndcapLowTof'),
+   	                cms.InputTag('g4SimHits','TrackerHitsPixelEndcapHighTof') ),
 	),
 	simTrackCollection = cms.InputTag('g4SimHits'),
 	simVertexCollection = cms.InputTag('g4SimHits'),
+	simTrackCollectionPU = cms.InputTag('g4SimHits'),
+	simVertexCollectionPU = cms.InputTag('g4SimHits'),
 	genParticleCollection = cms.InputTag('genParticles'),
 	removeDeadModules = cms.bool(False), # currently not implemented
 	volumeRadius = cms.double(120.0),
@@ -36,7 +38,6 @@ trackingParticles = cms.PSet(
 	allowDifferentSimHitProcesses = cms.bool(False), # should be True for FastSim, False for FullSim
 	HepMCProductLabel = cms.InputTag('generatorSmeared')
 )
-
 from Configuration.Eras.Modifier_fastSim_cff import fastSim
 fastSim.toModify(trackingParticles,
     # for unknown reasons, fastsim needs this flag on
@@ -48,9 +49,42 @@ fastSim.toModify(trackingParticles,
                               cms.InputTag('MuonSimHits','MuonRPCHits') ),
         trackerAndPixel = cms.VInputTag( cms.InputTag('fastSimProducer','TrackerHits') )
     ),
-    simTrackCollection = 'fastSimProducer',
-    simVertexCollection = 'fastSimProducer'
+     simTrackCollection    = cms.InputTag('fastSimProducer'),
+     simVertexCollection   = cms.InputTag('fastSimProducer'),
+     simTrackCollectionPU  = cms.InputTag('fastSimProducer'),
+     simVertexCollectionPU = cms.InputTag('fastSimProducer')
 )
+
+from Configuration.ProcessModifiers.fastSimPU_cff import fastSimPU
+fastSimPU.toModify(trackingParticles,
+    simHitCollections = cms.PSet(
+		muon = cms.VInputTag(
+                        cms.InputTag('g4SimHits','MuonDTHits'),
+			cms.InputTag('g4SimHits','MuonCSCHits'),
+			cms.InputTag('g4SimHits','MuonRPCHits'),
+                        cms.InputTag('MuonSimHits','MuonDTHits'),
+                        cms.InputTag('MuonSimHits','MuonCSCHits'),
+                        cms.InputTag('MuonSimHits','MuonRPCHits') ),
+		tracker = cms.VInputTag(
+                        cms.InputTag('g4SimHits','TrackerHitsTIBLowTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTIBHighTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTIDLowTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTIDHighTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTOBLowTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTOBHighTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTECLowTof'),
+			cms.InputTag('g4SimHits','TrackerHitsTECHighTof')),
+		pixel = cms.VInputTag(
+                        cms.InputTag('g4SimHits','TrackerHitsPixelBarrelLowTof'),
+           	        cms.InputTag('g4SimHits','TrackerHitsPixelBarrelHighTof'),
+        	        cms.InputTag('g4SimHits','TrackerHitsPixelEndcapLowTof'),
+           	        cms.InputTag('g4SimHits','TrackerHitsPixelEndcapHighTof')),
+        trackerAndPixel = cms.VInputTag( cms.InputTag('fastSimProducer','TrackerHits') ) 
+    ),        
+     simTrackCollectionPU = cms.InputTag('fastSimProducer'),
+     simVertexCollectionPU = cms.InputTag('fastSimProducer')
+)                   
+                   
 
 from Configuration.Eras.Modifier_run2_GEM_2017_cff import run2_GEM_2017
 run2_GEM_2017.toModify(trackingParticles, simHitCollections = dict(

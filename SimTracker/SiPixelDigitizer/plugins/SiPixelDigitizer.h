@@ -74,9 +74,7 @@ namespace cms {
     bool firstInitializeEvent_;
     bool firstFinalizeEvent_;
     bool applyLateReweighting_;
-    bool usePixelExtraLiteFormat_;
     const bool store_SimHitEntryExitPoints_;
-    const bool store_SimHitEntryExitPointsLite_;
     bool makeDigiSimLinks_;
     std::unique_ptr<SiPixelDigitizerAlgorithm> _pixeldigialgo;
     /** @brief Offset to add to the index of each sim hit to account for which crossing it's in.
@@ -89,9 +87,11 @@ namespace cms {
 * The key is the name of the sim hit collection. */
     std::map<std::string, size_t> crossingSimHitIndexOffset_;
 
-    typedef std::vector<std::string> vstring;
+    using vstring = std::vector<std::string>;
     const std::string hitsProducer;
+    const std::string hitsProducerPU;    
     const vstring trackerContainers;
+    const vstring trackerContainersPU;    
     const TrackerGeometry* pDD = nullptr;
     const MagneticField* pSetup = nullptr;
     std::map<unsigned int, PixelGeomDetUnit const*> detectorUnits;

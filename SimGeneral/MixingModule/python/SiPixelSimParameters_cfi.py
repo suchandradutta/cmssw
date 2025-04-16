@@ -50,15 +50,18 @@ SiPixelSimBlock = cms.PSet(
     KillBadFEDChannels = cms.bool(False),
     UseReweighting = cms.bool(False),
     applyLateReweighting = cms.bool(False),
-    usePixelExtraLiteFormat = cms.bool(False),
     store_SimHitEntryExitPoints = cms.bool(False),
-    store_SimHitEntryExitPointsLite = cms.bool(False),
     PrintClusters = cms.bool(False),
     PrintTemplates = cms.bool(False),
     DoPixelAging = cms.bool(False),
     ReadoutNoiseInElec = cms.double(350.0),
     deltaProductionCut = cms.double(0.03),
     RoutList = cms.vstring(
+        'TrackerHitsPixelBarrelLowTof', 
+        'TrackerHitsPixelBarrelHighTof', 
+        'TrackerHitsPixelEndcapLowTof', 
+        'TrackerHitsPixelEndcapHighTof'),
+    RoutListPU = cms.vstring(
         'TrackerHitsPixelBarrelLowTof', 
         'TrackerHitsPixelBarrelHighTof', 
         'TrackerHitsPixelEndcapLowTof', 
@@ -140,6 +143,14 @@ premix_stage1.toModify(SiPixelSimBlock,
     KillBadFEDChannels = False, #done in second step
     killModules = False #done in second step
 )
+# when FastSim events as PileUP events during mixing
+from Configuration.ProcessModifiers.fastSimPU_cff import fastSimPU
+fastSimPU.toModify(SiPixelSimBlock,
+                   RoutListPU = cms.vstring('TrackerHits'))
+from Configuration.Eras.Modifier_fastSim_cff import fastSim
+fastSim.toModify(SiPixelSimBlock,
+                   RoutList = cms.vstring('TrackerHits'),
+                   RoutListPU = cms.vstring('TrackerHits'))
 
 # Threshold in electrons are the Official CRAFT09 numbers:
 # FPix(smearing)/BPix(smearing) = 2480(160)/2730(200)

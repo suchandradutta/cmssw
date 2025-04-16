@@ -26,7 +26,7 @@
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "DataFormats/Provenance/interface/Provenance.h"
-#include "DataFormats/Provenance/interface/ProductDescription.h"
+#include "DataFormats/Provenance/interface/BranchDescription.h"
 #include "SimDataFormats/CrossingFrame/interface/CrossingFramePlaybackInfoExtended.h"
 #include "SimDataFormats/CrossingFrame/interface/CrossingFramePlaybackInfoNew.h"
 #include "FWCore/Utilities/interface/TypeID.h"
@@ -109,7 +109,9 @@ namespace edm {
 
         LogInfo("MixingModule") << "Will mix " << object << "s with InputTag= " << tag.encode() << ", label will be "
                                 << label;
-        //            std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#ifdef EDM_ML_DEBUG
+        std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#endif	
 
       } else if (object == "RecoTrack") {
         InputTag tag;
@@ -131,7 +133,9 @@ namespace edm {
 
         LogInfo("MixingModule") << "Will mix " << object << "s with InputTag= " << tag.encode() << ", label will be "
                                 << label;
-        //std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#ifdef EDM_ML_DEBUG
+        std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#endif	
 
       } else if (object == "SimVertex") {
         InputTag tag;
@@ -151,7 +155,9 @@ namespace edm {
 
         LogInfo("MixingModule") << "Will mix " << object << "s with InputTag " << tag.encode() << ", label will be "
                                 << label;
-        //            std::cout <<"Will mix "<<object<<"s with InputTag "<<tag.encode()<<", label will be "<<label<<std::endl;
+#ifdef EDM_ML_DEBUG
+	std::cout <<"Will mix "<<object<<"s with InputTag "<<tag.encode()<<", label will be "<<label<<std::endl;
+#endif	
 
       } else if (object == "HepMCProduct") {
         InputTag tag;
@@ -170,7 +176,9 @@ namespace edm {
 
         LogInfo("MixingModule") << "Will mix " << object << "s with InputTag= " << tag.encode() << ", label will be "
                                 << label;
-        //            std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#ifdef EDM_ML_DEBUG
+        std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#endif
         for (size_t i = 1; i < tags.size(); ++i) {
           InputTag fallbackTag = tags[i];
           std::string fallbackLabel;
@@ -203,14 +211,23 @@ namespace edm {
 
           LogInfo("MixingModule") << "Will mix " << object << "s with InputTag= " << tag.encode() << ", label will be "
                                   << label;
-          //              std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#ifdef EDM_ML_DEBUG
+          std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+#endif	  
         }
 
       } else if (object == "PSimHit") {
+#ifdef EDM_ML_DEBUG
+        std::cout << " MixingModule Constructor for PSimHit " << std::endl;
+#endif	
         std::vector<std::string> subdets = pset.getParameter<std::vector<std::string> >("subdets");
         std::vector<std::string> crossingFrames =
             pset.getUntrackedParameter<std::vector<std::string> >("crossingFrames", std::vector<std::string>());
         sort_all(crossingFrames);
+#ifdef EDM_ML_DEBUG
+        for (auto const& xframes : crossingFrames) std::cout << " MixingModule::MixingModule object ==  PSimHit ==> Crossing Frames "
+							     << xframes << std::endl;
+#endif	
         std::vector<std::string> pcrossingFrames =
             pset.getUntrackedParameter<std::vector<std::string> >("pcrossingFrames", std::vector<std::string>());
         sort_all(pcrossingFrames);
@@ -225,6 +242,9 @@ namespace edm {
           branchesActivate(TypeID(typeid(std::vector<PSimHit>)).friendlyClassName(), subdets[ii], tag, label);
           adjustersObjects_.push_back(new Adjuster<std::vector<PSimHit> >(tag, consumesCollector(), wrapLongTimes_));
           if (binary_search_all(crossingFrames, tag.instance())) {
+#ifdef EDM_ML_DEBUG
+	    std::cout << " Binary Search Result " << tag.instance() << " tags[ii] " << tags[ii] << std::endl;
+#endif	    
             bool makePCrossingFrame = binary_search_all(pcrossingFrames, tag.instance());
             workersObjects_.push_back(new MixingWorker<PSimHit>(minBunch_,
                                                                 maxBunch_,
@@ -236,6 +256,20 @@ namespace edm {
                                                                 tag,
                                                                 tagCF,
                                                                 makePCrossingFrame));
+#ifdef EDM_ML_DEBUG
+	    std::cout << " Creating MixingWorker with " <<
+	      " minBunch_ " << minBunch_ <<
+	      " maxBunch_ " << maxBunch_ << 
+	      " bunchSpace_ " << bunchSpace_ << 
+	      " subdets[ii] " << subdets[ii] <<  
+	      " label " << label << 
+	      " labelCF " << labelCF << 
+	      " maxNbSources_ " << maxNbSources_ << 
+	      " tag " << tag <<
+              " tagCF " << tagCF <<
+	      " makePCrossingFrame " << makePCrossingFrame << std::endl;
+#endif	
+	     
             produces<CrossingFrame<PSimHit> >(label);
             if (makePCrossingFrame) {
               produces<PCrossingFrame<PSimHit> >(label);
@@ -245,8 +279,11 @@ namespace edm {
 
           LogInfo("MixingModule") << "Will mix " << object << "s with InputTag= " << tag.encode() << ", label will be "
                                   << label;
-          //              std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<<std::endl;
+	  //          std::cout <<"Will mix "<<object<<"s with InputTag= "<<tag.encode()<<", label will be "<<label<< " and LabelCF " << labelCF<<std::endl;
         }
+#ifdef EDM_ML_DEBUG
+        std::cout << " Worker Objects Size " << workersObjects_.size() << std::endl;
+#endif	
       } else {
         LogWarning("MixingModule")
             << "You have asked to mix an unknown type of object(" << object
@@ -306,10 +343,14 @@ namespace edm {
                                       const std::string& subdet,
                                       InputTag& tag,
                                       std::string& label) {
+#ifdef EDM_ML_DEBUG
+    std::cout << " MixingModule::branchesActivate " << " friendlyName " << friendlyName << " subdet " << subdet
+	      << " tag " << tag << " label " << label << std::endl;
+#endif    
     label = tag.label() + tag.instance();
     wantedBranches_.push_back(friendlyName + '_' + tag.label() + '_' + tag.instance());
 
-    //if useCurrentProcessOnly, we have to change the input tag
+    //if useCurrentProcessOnly, we  have to change the input tag
     if (useCurrentProcessOnly_) {
       const std::string processName = edm::Service<edm::service::TriggerNamesService>()->getProcessName();
       tag = InputTag(tag.label(), tag.instance(), processName);
@@ -326,8 +367,18 @@ namespace edm {
     }
     if (workers_.empty()) {
       for (auto const& worker : workersObjects_) {
+	//bool result = worker->checkSignal(e);
+#ifdef EDM_ML_DEBUG
+	std::cout << " MixingModule::checkSignal " << std::boolalpha << " skipSignal_: "
+		  << skipSignal_ << ", MixingWorker:checkSignal: " << worker->checkSignal(e) << std::endl;
+#endif	
+	//        if (skipSignal_ or result) {
         if (skipSignal_ or worker->checkSignal(e)) {
           workers_.push_back(worker);
+#ifdef EDM_ML_DEBUG	  
+	  std::cout << " MixingModule::checkSignal " << " Worker with InputTag " << worker->getInputTag()
+		    << " stored " << std::endl;
+#endif	  
         }
       }
     }
@@ -358,11 +409,14 @@ namespace edm {
   }
 
   void MixingModule::addSignals(const edm::Event& e, const edm::EventSetup& setup) {
-    if (skipSignal_) {
-      return;
-    }
+    //    if (skipSignal_) {
+    //      return;
+    //    }
 
     LogDebug("MixingModule") << "===============> adding signals for " << e.id();
+#ifdef EDM_ML_DEBUG
+    std::cout << "MixingModule::addSignals "<< "===============> adding signals for " << e.id() << std::endl;
+#endif    
 
     accumulateEvent(e, setup);
     // fill in signal part of CrossingFrame
@@ -391,10 +445,8 @@ namespace edm {
     PileUpEventPrincipal pep(eventPrincipal, &moduleCallingContext, bunchCrossing);
 
     accumulateEvent(pep, setup, streamID);
-
     for (auto const& worker : workers_) {
       LogDebug("MixingModule") << " merging Event:  id " << eventPrincipal.id();
-      //      std::cout <<"PILEALLWORKERS merging Event:  id " << eventPrincipal.id() << std::endl;
 
       worker->addPileups(eventPrincipal, &moduleCallingContext, eventId);
     }
@@ -404,7 +456,6 @@ namespace edm {
 
   void MixingModule::doPileUp(edm::Event& e, const edm::EventSetup& setup) {
     using namespace std::placeholders;
-
     // Don't allocate because PileUp will do it for us.
     std::vector<edm::SecondaryEventIDAndFileInfo> recordEventID;
     std::vector<size_t> sizes;
@@ -499,9 +550,11 @@ namespace edm {
           bunchCrossingList, numInteractionList, TrueInteractionList, eventInfoList, bunchSpace_);
     }
 
-    //    for (int bunchIdx = minBunch_; bunchIdx <= maxBunch_; ++bunchIdx) {
-    //  std::cout << " bunch ID, Pileup, True " << bunchIdx << " " << PileupList[bunchIdx-minBunch_] << " " <<  TrueNumInteractions_[bunchIdx-minBunch_] << std::endl;
-    //}
+#ifdef EDM_ML_DEBUG
+    for (int bunchIdx = minBunch_; bunchIdx <= maxBunch_; ++bunchIdx) {
+      std::cout << " bunch ID, Pileup, True " << bunchIdx << " " << PileupList[bunchIdx-minBunch_] << " " <<  TrueNumInteractions_[bunchIdx-minBunch_] << std::endl;
+    }
+#endif    
 
     for (int bunchIdx = minBunch_; bunchIdx <= maxBunch_; ++bunchIdx) {
       for (size_t setBcrIdx = 0; setBcrIdx < workers_.size(); ++setBcrIdx) {
