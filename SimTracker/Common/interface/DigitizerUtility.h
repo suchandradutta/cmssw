@@ -99,11 +99,34 @@ namespace digitizerUtility {
           _simInfoList.push_back({frac, nullptr});
       }
     }
+    Ph2Amplitude(float amp, const std::vector<std::pair<float, std::unique_ptr<SimHitInfo>>>& list) {
+      _amp = amp;
+      for (auto const& el: list) {
+        if (el.first > -0.5)
+          _simInfoList.emplace_back(el.first, std::make_unique<SimHitInfo>(*el.second));
+      }
+    }
+    // Move constructor to handle std::unique_ptr properly
+    Ph2Amplitude(Ph2Amplitude&& other) noexcept 
+        : _amp(other._amp), _simInfoList(std::move(other._simInfoList)) {}
+
+    // Move assignment operator
+    Ph2Amplitude& operator=(Ph2Amplitude&& other) noexcept {
+      if (this != &other) {
+         _amp = other._amp;
+         _simInfoList = std::move(other._simInfoList);
+      }
+      return *this;
+    }
+    // Delete copy semantics (unique_ptr cannot be copied)
+    Ph2Amplitude(const Ph2Amplitude&) = delete;
+    Ph2Amplitude& operator=(const Ph2Amplitude&) = delete;
 
     // can be used as a float by convers.
     operator float() const { return _amp; }
     float ampl() const { return _amp; }
     const std::vector<std::pair<float, std::unique_ptr<SimHitInfo> > >& simInfoList() const { return _simInfoList; }
+    //std::vector<std::pair<float, std::unique_ptr<SimHitInfo> > > simInfoList() const { return _simInfoList; }
 
     void operator+=(const Ph2Amplitude& other) {
       _amp += other._amp;

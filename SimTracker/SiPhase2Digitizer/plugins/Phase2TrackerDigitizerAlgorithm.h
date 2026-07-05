@@ -230,6 +230,8 @@ protected:
   const SubdetEfficiencies subdetEfficiencies_;
   float calcQ(float x);
 
+  // get information for the most energetic SimHit
+  const digitizerUtility::SimHitInfo* getMaxSimHitInfo(const digitizerUtility::Ph2Amplitude&  sig_data);
   // For random numbers
   std::unique_ptr<CLHEP::RandGaussQ> gaussDistribution_;
 

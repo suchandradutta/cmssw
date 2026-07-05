@@ -646,8 +646,19 @@ void Phase2TrackerDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetU
   int numRows = topol->nrows();
 
   for (auto& s : theSignal) {
-    float signalInElectrons = s.second.ampl();  // signal in electrons
-
+     digitizerUtility::Ph2Amplitude& sig_data = s.second;
+    float signalInElectrons = sig_data.ampl();  // signal in electrons
+    
+    const digitizerUtility::SimHitInfo* hitInfoMax = getMaxSimHitInfo(sig_data);
+    float    ctime  = 0.0;
+    uint32_t hindx  = 0;
+    uint32_t tbin   = 0;
+    if (hitInfoMax != nullptr) {
+      ctime = hitInfoMax->time();
+      hindx = hitInfoMax->hitIndex();
+      tbin  = hitInfoMax->hitIndex();
+    }
+      
     std::pair<int, int> hitChan;
     if (pixelFlag_)
       hitChan = PixelDigi::channelToPixel(s.first);
@@ -656,30 +667,42 @@ void Phase2TrackerDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetU
 
     float signalInElectrons_Xtalk = signalInElectrons * interstripCoupling_;
     // subtract the charge which will be shared
-    s.second.set(signalInElectrons - signalInElectrons_Xtalk);
+    sig_data.set(signalInElectrons - signalInElectrons_Xtalk);
 
+    auto newPh2Ampl = digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk*0.5, nullptr, -1,ctime, hindx, tbin);
     if (hitChan.first != 0) {
       auto XtalkPrev = std::make_pair(hitChan.first - 1, hitChan.second);
       int chanXtalkPrev = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
-      signalNew.emplace(chanXtalkPrev, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk * 0.5, nullptr, -1.0));
+      
+      if (signalNew.find(chanXtalkPrev) != signalNew.end()) signalNew[chanXtalkPrev] += newPh2Ampl;
+      else signalNew.emplace(chanXtalkPrev, std::move(newPh2Ampl));
     }
     if (hitChan.first < numRows - 1) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
       int chanXtalkNext = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
-      signalNew.emplace(chanXtalkNext, digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk * 0.5, nullptr, -1.0));
+      if (signalNew.find(chanXtalkNext) != signalNew.end()) signalNew[chanXtalkNext] += newPh2Ampl;
+      else signalNew.emplace(chanXtalkNext, std::move(newPh2Ampl));
     }
   }
+  for (auto const& [chan, sig_data] : signalNew) {
+    auto [it, inserted] = theSignal.try_emplace(chan, sig_data.ampl(), sig_data.simInfoList());
+    if (!inserted) it->second += sig_data;
+  }
+#if 0
   for (auto const& l : signalNew) {
     int chan = l.first;
+    const digitizerUtility::Ph2Amplitude& ph2Ampl = l.second;        
     auto iter = theSignal.find(chan);
     if (iter != theSignal.end()) {
-      theSignal[chan] += l.second.ampl();
+      theSignal[chan] += ph2Ampl;
     } else {
-      theSignal.emplace(chan, digitizerUtility::Ph2Amplitude(l.second.ampl(), nullptr, -1.0));
+      theSignal.emplace(chan, std::move(l.second));
+      //theSignal[chan] = std::move(l.second);
     }
   }
+#endif
 }
 
 // ======================================================================
@@ -971,12 +994,14 @@ void Phase2TrackerDigitizerAlgorithm::digitize(const Phase2TrackerGeomDetUnit* p
     const digitizerUtility::Ph2Amplitude& sig_data = s.second;
     float signalInElectrons = sig_data.ampl();
 
-    const auto& info_list = sig_data.simInfoList();
-    const digitizerUtility::SimHitInfo* hitInfo = nullptr;
-    if (!info_list.empty())
-      hitInfo = std::max_element(info_list.begin(), info_list.end())->second.get();
+    // const auto& info_list = sig_data.simInfoList();
+    // const digitizerUtility::SimHitInfo* hitInfo = nullptr;
+    // if (!info_list.empty())
+    // hitInfo = std::max_element(info_list.begin(), info_list.end())->second.get();
+    
+    const digitizerUtility::SimHitInfo* hitInfoMax = getMaxSimHitInfo(sig_data);
 
-    if (isAboveThreshold(hitInfo, signalInElectrons, theThresholdInE)) {  // check threshold
+    if (isAboveThreshold(hitInfoMax, signalInElectrons, theThresholdInE)) {  // check threshold
       digitizerUtility::DigiSimInfo info;
       info.sig_tot = convertSignalToAdc(detID, signalInElectrons, theThresholdInE);  // adc
       info.ot_bit = signalInElectrons > theHIPThresholdInE ? true : false;
@@ -1030,4 +1055,14 @@ float Phase2TrackerDigitizerAlgorithm::calcQ(float x) {
 
   auto xx = std::min(0.5f * x * x, p1);
   return 0.5f * (1.f - std::copysign(std::sqrt(1.f - unsafe_expf<4>(-xx * (1.f + p2 / (1.f + p3 * xx)))), x));
+}
+const digitizerUtility::SimHitInfo* Phase2TrackerDigitizerAlgorithm::getMaxSimHitInfo(const digitizerUtility::Ph2Amplitude&  sig_data){
+   const auto& info_list = sig_data.simInfoList();
+   const digitizerUtility::SimHitInfo* maxHitInfo = nullptr;
+   if (!info_list.empty())
+     maxHitInfo = std::max_element(info_list.begin(), info_list.end(),
+				[] (const auto& lhs, const auto& rhs) {
+				  return(lhs.first > rhs.first);
+				})->second.get();
+   return maxHitInfo;
 }
