@@ -669,40 +669,28 @@ void Phase2TrackerDigitizerAlgorithm::add_cross_talk(const Phase2TrackerGeomDetU
     // subtract the charge which will be shared
     sig_data.set(signalInElectrons - signalInElectrons_Xtalk);
 
-    auto newPh2Ampl = digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk*0.5, nullptr, -1,ctime, hindx, tbin);
+    auto ph2Amp = digitizerUtility::Ph2Amplitude(signalInElectrons_Xtalk, nullptr, -1,ctime, hindx, tbin);
     if (hitChan.first != 0) {
       auto XtalkPrev = std::make_pair(hitChan.first - 1, hitChan.second);
       int chanXtalkPrev = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkPrev.first, XtalkPrev.second);
       
-      if (signalNew.find(chanXtalkPrev) != signalNew.end()) signalNew[chanXtalkPrev] += newPh2Ampl;
-      else signalNew.emplace(chanXtalkPrev, std::move(newPh2Ampl));
+      auto [it, inserted] = signalNew.try_emplace(chanXtalkPrev,std::move(ph2Amp));
+      if (!inserted) it->second += ph2Amp;
     }
     if (hitChan.first < numRows - 1) {
       auto XtalkNext = std::make_pair(hitChan.first + 1, hitChan.second);
       int chanXtalkNext = pixelFlag_ ? PixelDigi::pixelToChannel(XtalkNext.first, XtalkNext.second)
                                      : Phase2TrackerDigi::pixelToChannel(XtalkNext.first, XtalkNext.second);
-      if (signalNew.find(chanXtalkNext) != signalNew.end()) signalNew[chanXtalkNext] += newPh2Ampl;
-      else signalNew.emplace(chanXtalkNext, std::move(newPh2Ampl));
+
+      auto [it, inserted] = signalNew.try_emplace(chanXtalkNext,std::move(ph2Amp));
+      if (!inserted) it->second += ph2Amp;
     }
   }
-  for (auto const& [chan, sig_data] : signalNew) {
-    auto [it, inserted] = theSignal.try_emplace(chan, sig_data.ampl(), sig_data.simInfoList());
-    if (!inserted) it->second += sig_data;
+  for (auto const& [chan, ph2amplitude] : signalNew) {
+    auto [it, inserted] = theSignal.try_emplace(chan, ph2amplitude.ampl(), ph2amplitude.simInfoList());
+    if (!inserted) it->second += ph2amplitude;
   }
-#if 0
-  for (auto const& l : signalNew) {
-    int chan = l.first;
-    const digitizerUtility::Ph2Amplitude& ph2Ampl = l.second;        
-    auto iter = theSignal.find(chan);
-    if (iter != theSignal.end()) {
-      theSignal[chan] += ph2Ampl;
-    } else {
-      theSignal.emplace(chan, std::move(l.second));
-      //theSignal[chan] = std::move(l.second);
-    }
-  }
-#endif
 }
 
 // ======================================================================
